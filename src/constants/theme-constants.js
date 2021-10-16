@@ -7,17 +7,19 @@ const theme = {
     yellow: `#F5C451`,
     purple: `#B838D8`,
     grey: `#AEAEAE`,
-    faded_red: `#F6DFDF`,
+    fadedred: `#F6DFDF`,
     excel: `#1D6F42`,
+    darkblue: `#1F2E6A`,
 
     background: {
         primary: `#FFFFFF`,
-        secondary: `#F6F4ED`,
+        secondary: `#F5F5F5`,
         support: `#EFEFEF`,
     },
 
     text: {
-        primary: `#000000`,
+        primary: `#292D3F`,
+        secondary: `#9A9A9A`,
     },
 
     shadow: {

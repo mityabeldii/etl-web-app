@@ -4,8 +4,14 @@ body {
         "Droid Sans", "Helvetica Neue";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background: #f5f5f5;
+    color: #292d3f;
 }
 
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+a {
+    text-decoration: none;
 }
