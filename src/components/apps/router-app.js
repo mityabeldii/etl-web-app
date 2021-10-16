@@ -6,23 +6,25 @@ import styled from "styled-components";
 import Menu from "../tools/menu";
 import { RowWrapper, Container, Frame } from "../ui-kit/styled-templates";
 
-import DataSourceslistPage from "../pages/data-sources-page";
+import DataSourcesPage from "../pages/data-sources-page";
 
 import CreateDataSourceModal from "../modals/create-data-source-modal";
+import EditDataSourceModal from "../modals/edit-data-source-modal";
 
 const RouterApp = () => {
     return (
         <>
             <CreateDataSourceModal />
+            <EditDataSourceModal />
             
             <RowWrapper>
                 <Menu />
                 <Wrapper>
                     <Container>
                         <Switch>
-                            <Route exact path={`/datasource`} component={DataSourceslistPage} />
+                            <Route exact path={`/datasource`} component={DataSourcesPage} />
                             <Route path={`/`}>
-                                <Redirect to={`/`} />
+                                <Redirect to={`/datasource`} />
                             </Route>
                         </Switch>
                     </Container>

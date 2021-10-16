@@ -1,7 +1,8 @@
 /*eslint-disable*/
-import { SORT_ORDERS, TABLES, STATUSES, ROLES } from "./config";
+import { SORT_ORDERS, TABLES, STATUSES, ROLES, MODALS, FORMS } from "./config";
 import { putStorage, mergeStorage } from "../hooks/useStorage";
 import { linkTo } from "../utils/common-helper";
+import { eventDispatch } from "../hooks/useEventListener";
 
 const PropertyOwnerTable = {
     defaultSort: {
@@ -25,6 +26,10 @@ const PropertyOwnerTable = {
                 leftIcon: `edit`,
                 extra: `box-shadow: unset; padding: 8px; min-width: unset;`,
                 leftIconStyles: `margin-right: 0;`,
+                onClick: (row) => {
+                    putStorage(`forms.${FORMS.EDIT_DATA_SOURCE_MODAL}`, row);
+                    eventDispatch(`OPEN_${MODALS.EDIT_DATA_SOURCE_MODAL}_MODAL`);
+                },
             },
         },
         {

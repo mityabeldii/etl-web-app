@@ -18,19 +18,19 @@ const schema = (yup) =>
         password: yup.string().required(`Это поле обязательно`),
     });
 
-const CreateDataSouceModal = () => {
-    const { Form, onSubmit, setValue, clearForm } = useForm({ name: FORMS.CREATE_DATA_SOURCE_MODAL, schema });
+const EditDataSourceModal = () => {
+    const { Form, onSubmit, setValue, clearForm } = useForm({ name: FORMS.EDIT_DATA_SOURCE_MODAL, schema });
     const handleSubmit = (data) => {
         console.log(data);
     };
     const closeModal = () => {
         clearForm();
-        eventDispatch(`CLOSE_${MODALS.CREATE_DATA_SOURCE_MODAL}_MODAL`);
+        eventDispatch(`CLOSE_${MODALS.EDIT_DATA_SOURCE_MODAL}_MODAL`);
     };
     return (
-        <PopUpWrapper onSubmit={onSubmit(handleSubmit)} name={MODALS.CREATE_DATA_SOURCE_MODAL} onClickOutside={closeModal}>
+        <PopUpWrapper onSubmit={onSubmit(handleSubmit)} name={MODALS.EDIT_DATA_SOURCE_MODAL} onClickOutside={closeModal}>
             <Form extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
-                <H1 extra={`width: 100%; margin-bottom: 24px;`}>Добавить источник данных</H1>
+                <H1 extra={`width: 100%; margin-bottom: 24px;`}>Редактировать источник данных</H1>
                 <Control.Row>
                     <Control.Input name={`name`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />
                     <Control.Input name={`host`} label={`Хост`} placeholder={`IP-адрес хоста`} isRequired />
@@ -51,8 +51,8 @@ const CreateDataSouceModal = () => {
                     <Button background={`grey`} variant={`outlined`} extra={`margin-left: calc(50% + 8px);`} type={`cancel`} onClick={closeModal}>
                         Отменить
                     </Button>
-                    <Button background={`orange`} type={`submit`}>
-                        Добавить
+                    <Button background={`green`} type={`submit`}>
+                        Сохранить
                     </Button>
                 </Control.Row>
             </Form>
@@ -60,5 +60,5 @@ const CreateDataSouceModal = () => {
     );
 };
 
-export default CreateDataSouceModal;
+export default EditDataSourceModal;
 /*eslint-enable*/
