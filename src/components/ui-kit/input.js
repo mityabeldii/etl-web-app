@@ -66,8 +66,8 @@ export const StyledInput = styled.input`
     height: 100%;
     padding: 7px 20px;
     border-radius: 4px;
-    border: 1px solid grey;
-    background: transparent;
+    border: 1px solid #DADADA;
+    background: ${({ theme }) => theme.background.secondary};
     color: ${({ theme }) => theme.text.primary};
     display: flex;
     flex: 1;

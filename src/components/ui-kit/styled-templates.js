@@ -1,18 +1,24 @@
 /*eslint-disable*/
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import { Link } from "react-router-dom";
+import _ from "lodash";
 
-import { createId, getElementClassPath, sleep } from "../../utils/common-helper";
+import { createId, getElementClassPath, getElementParrentsPath, sleep } from "../../utils/common-helper";
+import CaseHelper from "../../utils/case-helper";
 
 import ImportInput from "./input";
+import ImportTextarea from "./textarea";
+
+import { EVENTS } from "../../constants/config";
 
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import useComponentSize from "../../hooks/useComponentSize";
 import useEventListener from "../../hooks/useEventListener";
-import { EVENTS } from "../../constants/config";
+import { useStorageListener } from "../../hooks/useStorage";
 
 export const Input = (props) => <ImportInput {...props} />;
+export const Textarea = (props) => <ImportTextarea {...props} />;
 
 export const Frame = styled.div`
     display: flex;
@@ -138,8 +144,8 @@ export const Form = styled.form`
     align-items: flex-start;
 
     > * {
-        width: 100%;
-        margin-bottom: 15px;
+        /* width: 100%; */
+        /* margin-bottom: 15px; */
 
         &:last-child {
             margin-bottom: 0;
@@ -161,49 +167,121 @@ export const Spinner = styled(Frame)`
 
 /* CONTROL */
 
+const useFormName = () => {
+    const ref = useRef();
+    const [formName, setFormName] = useState();
+    useEffect(() => {
+        setFormName(getElementParrentsPath(ref.current)?.find?.((i) => i?.nodeName === `FORM`)?.attributes?.name?.value);
+    }, [ref]);
+    return { controllerRef: ref, formName };
+};
+
 export const ControlWrapper = (props) => {
-    const { error, extra = `` } = props;
+    const { name = ``, label = ``, isRequired = false, controlStyles = ``, children } = props;
+    const { controllerRef, formName } = useFormName();
+    const message = useStorageListener((state) => state?.formsErrors ?? {})?.[formName]?.[name]?.message;
+    const value = useStorageListener((state) => state?.forms ?? {})?.[formName]?.[name] ?? ``;
+
+    const childrenWithProps = React.Children.map(children, (child) => {
+        if (React.isValidElement(child)) {
+            return React.cloneElement(child, { value, formName, onChange: () => {} });
+        }
+        return child;
+    });
+
     return (
-        <Frame {...props} extra={`margin-bottom: 15px; align-items: flex-start; > * { width: 100%; };` + extra}>
-            {props.children}
-            <ErrorLabel>{error}</ErrorLabel>
+        <Frame {...props} ref={controllerRef} extra={`align-items: flex-start;` + controlStyles}>
+            <ControlLabel required={isRequired}>
+                {label} {label ? `:` : ``}
+            </ControlLabel>
+            {childrenWithProps}
+            <ErrorLabel>{CaseHelper.toSentance(message)}</ErrorLabel>
         </Frame>
     );
 };
 
+export const ControlLabel = styled(Frame)`
+    color: ${({ theme }) => theme.text.primary};
+    margin-bottom: 8px;
+    width: auto !important;
+    flex-direction: row;
+    font-size: 14px;
+    line-height: 20px;
+
+    ${({ theme, required = false }) =>
+        required &&
+        css`
+            &:after {
+                content: "*";
+                margin-left: 5px;
+                color: ${theme.red};
+            }
+        `}
+`;
+
 export const ErrorLabel = styled(Frame)`
     color: ${(props) => props.theme.red};
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    height: 20px;
+    margin-top: 5px;
     width: auto !important;
 `;
 
 export const Control = {
     Input: (props) => {
-        const { errors, name } = props;
+        const { extra = `` } = props;
         return (
-            <ControlWrapper error={errors?.[name]?.message}>
-                <Input {...props} />
+            <ControlWrapper {...props}>
+                <Input {...props} extra={`width: 100%;` + extra} />
+            </ControlWrapper>
+        );
+    },
+    Textarea: (props) => {
+        const { extra = `` } = props;
+        return (
+            <ControlWrapper {...props}>
+                <Textarea {...props} extra={`width: 100%;` + extra} />
             </ControlWrapper>
         );
     },
     Password: (props) => {
-        const { errors, name } = props;
+        const { extra = `` } = props;
         return (
-            <ControlWrapper error={errors?.[name]?.message}>
-                <Input type={`password`} {...props} />
+            <ControlWrapper {...props}>
+                <Input type={`password`} {...props} extra={`width: 100%;` + extra} />
             </ControlWrapper>
         );
     },
     Checkbox: (props) => {
-        const { errors, name, onClick = () => {}, checked, label = `Check me`, extra = `` } = props;
+        const { errors, name, onClick = () => {}, checked, label = `Check me`, extra = ``, controlStyles = `` } = props;
         return (
-            <ControlWrapper
-                error={errors?.[name]?.message}
-                extra={`flex-direction: row; align-items: center; > * { width: auto; };` + extra}
-                onClick={onClick}
-            >
+            <ControlWrapper {...props} extra={`flex-direction: row; align-items: center; > * { width: auto; };` + controlStyles}>
                 <Checkbox checked={checked} onChange={() => {}} {...props} />
                 <Frame extra={`margin-left: 5px;`}>{label}</Frame>
             </ControlWrapper>
+        );
+    },
+    Row: (props) => {
+        const { children, extra } = props;
+        return (
+            <RowWrapper
+                extra={
+                    css`
+                        > * {
+                            width: 100%;
+                            flex: 1;
+                            margin-right: 16px;
+                            &:last-child {
+                                margin-right: unset;
+                            }
+                        }
+                    ` + extra
+                }
+            >
+                {children}
+            </RowWrapper>
         );
     },
 };
@@ -273,7 +351,11 @@ export const ButtonWrapper = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0px 4px 12px rgba(237, 105, 75, 0.15);
+    ${({ variant, disabled }) =>
+        (variant !== `outlined`) & !disabled &&
+        css`
+            box-shadow: 0px 4px 12px rgba(237, 105, 75, 0.15);
+        `}
 
     &:hover {
         opacity: 0.8;
@@ -298,28 +380,24 @@ export const ButtonWrapper = styled.button`
             return (
                 {
                     contained: css`
-                        background: ${background};
+                        background: ${_.get(theme, background) ?? background};
                     `,
                     outlined: css`
                         background: transparent;
-                        border: 1px solid ${background};
-                        color: ${background};
+                        border: 1px solid ${_.get(theme, background) ?? background};
+                        color: ${_.get(theme, background) ?? background};
                     `,
                     plain: css`
                         background: transparent;
-                        color: ${background};
+                        color: ${_.get(theme, background) ?? background};
 
                         &:hover {
                             background: ${({ theme }) => theme.background.secondary};
                         }
                     `,
-                    orange: css`
-                        background: ${theme.orange};
-                        color: white;
-                    `,
                 }?.[variant ?? `primary`] ??
                 css`
-                    background: ${background};
+                    background: ${_.get(theme, background) ?? background};
                 `
             );
         })()}

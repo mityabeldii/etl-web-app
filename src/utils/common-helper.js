@@ -141,6 +141,19 @@ const CommonHelper = {
         goToParent(element);
         return path;
     },
+
+    getElementParrentsPath: (element) => {
+        let path = [];
+        path.push(element);
+        const goToParent = (element) => {
+            path.push(element);
+            if (element?.parentNode) {
+                goToParent(element?.parentNode);
+            }
+        };
+        goToParent(element);
+        return path;
+    },
 };
 
 export default CommonHelper;
@@ -159,6 +172,7 @@ export const {
     downloadURI,
     objectCompare,
     getElementClassPath,
+    getElementParrentsPath,
 } = CommonHelper;
 
 export const isna = (item) => [undefined, null, ``].includes(item);

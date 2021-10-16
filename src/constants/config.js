@@ -15,5 +15,9 @@ export const TABLES = {
 };
 
 export const MODALS = {
-    UPDATE_STATUS: "UPDATE_STATUS",
+    CREATE_DATA_SOURCE_MODAL: "CREATE_DATA_SOURCE_MODAL",
+};
+
+export const FORMS = {
+    CREATE_DATA_SOURCE_MODAL: "CREATE_DATA_SOURCE_MODAL",
 };

@@ -10,7 +10,7 @@ import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 
 const PopUpWrapper = (props) => {
-    const { name = ``, disableDarkOverlay = false, extra = ``, preventClosing = false, withCross = true } = props;
+    const { name = ``, disableDarkOverlay = false, extra = ``, preventClosing = false, withCross = true, onClickOutside = () => {} } = props;
 
     const [visible, setVisible] = useState(false);
     const [shouldRender, setShouldRender] = useState(visible);
@@ -34,6 +34,7 @@ const PopUpWrapper = (props) => {
     }, [visible]);
 
     const onClose = () => {
+        onClickOutside?.();
         window.dispatchEvent(new CustomEvent(`CLOSE_${name}_MODAL`));
     };
     useOnClickOutside(ref, onClose);
@@ -88,11 +89,11 @@ const Cross = styled.img.attrs(() => {
 `;
 
 const OpenProjectTab = styled(Frame)`
-    min-width: 350px;
+    min-width: 700px;
     height: auto;
     padding: 30px 30px;
-    padding: 30px 50px;
-    border-radius: 12px;
+    padding: 35px 30px;
+    border-radius: 4px;
     background: ${(props) => (props.theme.name === `light` ? props.theme.background.primary : props.theme.background.primary)};
     position: fixed;
     top: 50%;

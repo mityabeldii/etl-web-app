@@ -6,14 +6,15 @@ import styled from "styled-components";
 import Menu from "../tools/menu";
 import { RowWrapper, Container, Frame } from "../ui-kit/styled-templates";
 
-import DataSourceslistPage from "../pages/data-sourceslist-page";
+import DataSourceslistPage from "../pages/data-sources-page";
 
-// import UpdateStatusModal from "../modals/update-status-modal";
+import CreateDataSourceModal from "../modals/create-data-source-modal";
 
 const RouterApp = () => {
     return (
         <>
-            {/* <UpdateStatusModal /> */}
+            <CreateDataSourceModal />
+            
             <RowWrapper>
                 <Menu />
                 <Wrapper>
