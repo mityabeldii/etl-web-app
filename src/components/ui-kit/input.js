@@ -50,7 +50,7 @@ const Span = styled.span`
     display: flex;
     position: relative;
 
-    ${(props) => props.extra}
+    /* ${(props) => props.extra} */
 `;
 
 export const StyledInput = styled.input`
@@ -58,19 +58,21 @@ export const StyledInput = styled.input`
         outline: none;
     }
 
-    ${(props) => props.extra}
-
     width: 100%;
     height: 100%;
     padding: 6px 10px;
     border-radius: 4px;
     border: 1px solid grey;
+    background: transparent;
+    color: ${({ theme }) => theme.text.primary};
     display: flex;
     flex: 1;
     margin: 0;
     font-size: inherit;
 
     ${({ rightIcon }) => rightIcon && `padding-right: 30px;`}
+
+    ${({ extra }) => extra}
 `;
 
 export default Input;

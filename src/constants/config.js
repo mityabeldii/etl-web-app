@@ -11,10 +11,7 @@ export const SORT_ORDERS = {
 };
 
 export const TABLES = {
-    PROPERTY_OWNER: "property-owner",
-    PROPERTY: "property",
-    TASKS: "tasks",
-    USERS: "users",
+    DATA_SOURSE_LIST: "DATA_SOURSE_LIST",
 };
 
 export const MODALS = {

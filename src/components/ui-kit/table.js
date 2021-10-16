@@ -18,7 +18,7 @@ import useEventListener from "../../hooks/useEventListener";
 const Table = (props) => {
     const {
         extra = ``,
-        selectable = true,
+        selectable = false,
         name,
         sortable = true,
         columns = [],
@@ -31,6 +31,8 @@ const Table = (props) => {
             console.log(`> > > FETCH < < <`);
         },
         dependencies = {},
+        tableStyles = ``,
+        paginationStyles = ``,
     } = props;
     if (!name) {
         throw new Error(`[table.js] - name is not  defined`);
@@ -53,7 +55,8 @@ const Table = (props) => {
         putStorage(`tables.${name}.sort`, [{ field, order }]);
     };
     const { pagination = {} } = tableState;
-    const { currentPage = 0, perPage = paginationOptions?.[0] ?? 1, pageCount = 1 } = pagination;
+    const { currentPage = 0, perPage = paginationOptions?.[0] ?? 1, pageCount = 1, totalCount = 1 } = pagination;
+    const maxPageNumber = Math.ceil(totalCount / perPage);
     const debouncedParams = useDebounce(JSON.stringify({ filters }), 300);
     useEffect(async () => {
         if (!tableState?.sort) {
@@ -66,8 +69,8 @@ const Table = (props) => {
     }, [JSON.stringify({ debouncedParams, sort, name, currentPage, perPage, dependencies })]);
 
     return (
-        <>
-            <STable extra={extra}>
+        <TableWrapper>
+            <STable extra={tableStyles}>
                 <STr>
                     {selectable && <STh extra={`flex: unset; width: 40px;`}></STh>}
                     {columns.map((column, index) => {
@@ -195,49 +198,92 @@ const Table = (props) => {
                 ))}
             </STable>
             {widthPagination && (
-                <RowWrapper extra={`margin-top: 20px; justify-content: flex-start; > * { margin-right: 10px; };`}>
-                    <Frame>Rows per page:</Frame>
-                    <Select
-                        options={paginationOptions.map((i) => ({ value: i, label: i }))}
-                        extra={`width: 100px;`}
-                        value={perPage ?? paginationOptions?.[0] ?? 0}
-                        onChange={(e) => {
-                            putStorage(`tables.${name}.pagination.perPage`, e.target.value);
-                        }}
-                    />
-                    <Frame>
-                        Page: {currentPage + 1} of {pageCount}
+                <PaginationWrapper extra={paginationStyles}>
+                    <Frame extra={`width: 350px;`} />
+                    <Frame extra={`flex-direction: row; justify-content: center;`}>
+                        {new Array(6)
+                            .fill(0)
+                            .map((item, index) => currentPage - 3 + index)
+                            .filter((i) => i >= 0 && i >= currentPage - 1 && i < maxPageNumber)
+                            .slice(0, 3)
+                            .map((item, index) => (
+                                <PageNumberWrapper
+                                    key={index}
+                                    selected={currentPage === item}
+                                    onClick={() => {
+                                        putStorage(`tables.${name}.pagination.currentPage`, item);
+                                    }}
+                                >
+                                    {item + 1}
+                                </PageNumberWrapper>
+                            ))}
                     </Frame>
-                    <PaginationArrow
-                        extra={`transform: rotate(180deg);`}
-                        onClick={() => {
-                            putStorage(`tables.${name}.pagination.currentPage`, Math.max(currentPage - 1, 0));
-                        }}
-                        disabled={currentPage + 1 <= 1}
-                    />
-                    <PaginationArrow
-                        onClick={() => {
-                            putStorage(`tables.${name}.pagination.currentPage`, Math.min(currentPage + 1, pageCount - 1));
-                        }}
-                        disabled={currentPage + 1 >= pageCount}
-                    />
-                </RowWrapper>
+                    <Frame extra={`flex-direction: row; width: 350px; justify-content: flex-end;`}>
+                        <Frame
+                            extra={({ theme }) => css`
+                                font-size: 14px;
+                                line-height: 20px;
+                                text-align: right;
+                                margin-right: 16px;
+                                color: ${theme.text.secondary};
+                            `}
+                        >
+                            Показывать строк:
+                        </Frame>
+                        <Select
+                            options={paginationOptions.map((i) => ({ value: i, label: i }))}
+                            extra={`width: 76px;`}
+                            value={perPage ?? paginationOptions?.[0] ?? 0}
+                            onChange={(e) => {
+                                putStorage(`tables.${name}.pagination.perPage`, e.target.value);
+                            }}
+                        />
+                    </Frame>
+                </PaginationWrapper>
             )}
-        </>
+        </TableWrapper>
     );
 };
 
-const AuthPageImage = styled(Frame)`
-    width: 70%;
-    height: 50%;
-    min-width: 691px;
-    background: url("${require(`../../assets/images/loginpicture_.png`).default}") no-repeat center left / contain;
+const PageNumberWrapper = styled(Frame)`
+    width: 34px;
+    height: 34px;
+    background: ${({ theme, selected = false }) => (selected ? theme.darkblue : theme.background.secondary)};
+    margin-right: 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 20px;
+    color: ${({ theme, selected = false }) => (selected ? `#FFFFFF` : theme.text.primary)};
+    font-weight: ${({ selected = false }) => (selected ? `bold` : `regular`)};
+    cursor: pointer;
 `;
 
-const PaginationArrow = styled(Frame).attrs((props) => ({
-    ...props,
-    onClick: props?.disabled ? () => {} : props?.onClick,
-}))`
+const TableWrapper = styled(Frame)`
+    width: 100%;
+    /* height: 100%; */
+    background: ${({ theme }) => theme.background.primary};
+    border: 1px solid #dadada;
+    border-radius: 4px;
+`;
+
+const PaginationWrapper = styled(RowWrapper)`
+    margin-top: 20px;
+    justify-content: space-between;
+    padding: 20px 20px 20px 120px;
+    box-sizing: border-box;
+    border-top: 1px solid #dadada;
+
+    > * {
+        margin-right: 10px;
+    }
+`;
+
+const PaginationArrow = styled(Frame).attrs((props) => {
+    return {
+        ...props,
+        onClick: props?.disabled ? () => {} : props?.onClick,
+    };
+})`
     width: 20px;
     height: 20px;
     background: url("${require(`../../assets/icons/arrow-right.svg`).default}") no-repeat center center / contain;

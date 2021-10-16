@@ -33,13 +33,19 @@ export const RowWrapper = styled(Frame)`
 `;
 
 export const H1 = styled(Frame)`
-    font-size: 28px;
-    font-weight: 500;
-    margin-bottom: 15px;
-    color: ${(props) => props.theme.blue};
     width: auto !important;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 24px;
+    color: ${({ theme }) => theme.text.primary};
 
     ${({ extra }) => extra}
+`;
+
+export const Container = styled(Frame)`
+    width: 100%;
+    max-width: 1170px;
+    min-width: 700px;
 `;
 
 /* CHECKBOX */
@@ -73,6 +79,7 @@ const SwitchKnob = styled.label`
     border: 1px solid ${({ theme }) => theme.grey};
     cursor: pointer;
     transition: 0.2s;
+
     &::after {
         content: "";
         display: block;
@@ -214,9 +221,9 @@ export const Button = (props) => {
 
     const newExtra =
         ({
-            [ASYNC_STATUSES.PENDING]: ({theme}) => `background: ${theme.grey} !important;`,
-            [ASYNC_STATUSES.SUCCESS]: ({theme}) => `background: ${theme.green} !important;`,
-            [ASYNC_STATUSES.ERROR]: ({theme}) => `background: ${theme.red} !important;`,
+            [ASYNC_STATUSES.PENDING]: ({ theme }) => `background: ${theme.grey} !important;`,
+            [ASYNC_STATUSES.SUCCESS]: ({ theme }) => `background: ${theme.green} !important;`,
+            [ASYNC_STATUSES.ERROR]: ({ theme }) => `background: ${theme.red} !important;`,
         }?.[status] ?? ``) + extra;
 
     const newOnClick = async (e) => {
@@ -254,7 +261,7 @@ export const ButtonWrapper = styled.button`
     color: white;
     font-weight: bold;
     font-size: inherit;
-    padding: 8px 8px;
+    padding: 8px 24px;
     min-width: 164px;
     border-radius: 4px;
     border: 0px;
@@ -264,6 +271,7 @@ export const ButtonWrapper = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0px 4px 12px rgba(237, 105, 75, 0.15);
 
     &:hover {
         opacity: 0.8;
@@ -276,6 +284,7 @@ export const ButtonWrapper = styled.button`
                 content: "";
                 width: 20px;
                 height: 20px;
+                margin-right: 8px;
                 background: url("${require(`../../assets/icons/${leftIcon}.svg`).default}") no-repeat center center / contain;
             }
         `}
@@ -296,6 +305,10 @@ export const ButtonWrapper = styled.button`
                     plain: css`
                         background: ${theme.background.support};
                         color: ${background};
+                    `,
+                    orange: css`
+                        background: ${theme.orange};
+                        color: white;
                     `,
                 }?.[variant ?? `primary`] ??
                 css`

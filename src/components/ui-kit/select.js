@@ -1,6 +1,6 @@
 /*eslint-disable*/
 import { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import Input from "./input";
 import { Dropdown, Frame } from "./styled-templates";
@@ -17,15 +17,25 @@ const Select = (props) => {
         <Dropdown
             id={dropdownId}
             wrapperStyles={extra}
-            toggleStyles={`width: 100%; * { cursor: pointer; }`}
-            menuStyles={`width: calc(100% - 20px);`}
+            toggleStyles={css`
+                width: 100%;
+                * {
+                    cursor: pointer;
+                }
+            `}
+            menuStyles={css`
+                width: calc(100% - 20px);
+            `}
             toggle={
                 <Input
                     value={value ?? ``}
                     readOnly
-                    extra={`width: 100%;`}
-                    rightIcon={`arrow-right`}
-                    rightIconStyles={`transform: rotate(90deg) translate(-50%, 5px);`}
+                    extra={css`
+                        width: 100%;
+                        background: ${({ theme }) => theme.background.secondary};
+                        border: 1px solid ${({ theme }) => theme.grey};
+                    `}
+                    rightIcon={`select-arrow`}
                     placeholder={placeholder}
                 />
             }

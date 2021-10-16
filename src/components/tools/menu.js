@@ -6,7 +6,7 @@ import styled, { css } from "styled-components";
 import { Frame, RowWrapper } from "../ui-kit/styled-templates";
 
 const menuSections = [
-    { label: `Источники данных`, icon: `menu-data-source`, items: [{ label: `Список источников данных`, link: `/data-sourceslist-list` }] },
+    { label: `Источники данных`, icon: `menu-data-source`, items: [{ label: `Список источников данных`, link: `/data-sources` }] },
     {
         label: `Структура хранилища`,
         icon: `menu-storage-structure`,
@@ -15,7 +15,7 @@ const menuSections = [
             { label: `Хранилище`, link: `/storage` },
         ],
     },
-    { label: `ETL-процессы`, icon: `menu-etl-processes`, items: [{ label: `Список ETL-процессов`, link: `/etl-processes-list` }] },
+    { label: `ETL-процессы`, icon: `menu-etl-processes`, items: [{ label: `Список ETL-процессов`, link: `/etl-processes` }] },
     {
         label: `Мониторинг ETL-процессов`,
         icon: `menu-monitoring`,
@@ -128,6 +128,7 @@ const CompanyName = styled(Frame)`
 const Wrapper = styled(Frame)`
     background: ${({ theme }) => theme.background.primary};
     width: 270px;
+    min-width: 270px;
     height: 100vh;
     justify-content: flex-start;
     padding-top: 28px;
