@@ -1,5 +1,5 @@
 import { ThemeProvider } from "styled-components";
-import { HashRouter as Router } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 
 import RouterApp from "./components/apps/router-app";
 
@@ -14,9 +14,9 @@ const App = () => {
     return (
         <StorageProvider>
             <ThemeProvider theme={theme}>
-                <Router>
+                <HashRouter>
                     <RouterApp />
-                </Router>
+                </HashRouter>
             </ThemeProvider>
         </StorageProvider>
     );

@@ -3,6 +3,7 @@ import { Button, H1, RowWrapper } from "../ui-kit/styled-templates";
 import Table from "../ui-kit/table";
 
 import { TABLES } from "../../constants/config";
+import tablesColumns from "../../constants/tables-columns";
 
 const DataSourceslistPage = () => {
     return (
@@ -13,7 +14,7 @@ const DataSourceslistPage = () => {
                     Добавить источник
                 </Button>
             </RowWrapper>
-            <Table name={TABLES.DATA_SOURSE_LIST} />
+            <Table name={TABLES.DATA_SOURSE_LIST} {...tablesColumns[TABLES.DATA_SOURSE_LIST]} />
         </>
     );
 };

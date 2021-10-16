@@ -20,7 +20,7 @@ const Table = (props) => {
         extra = ``,
         selectable = false,
         name,
-        sortable = true,
+        sortable = false,
         columns = [],
         selectionLimit = Infinity,
         widthPagination = true,
@@ -33,6 +33,7 @@ const Table = (props) => {
         dependencies = {},
         tableStyles = ``,
         paginationStyles = ``,
+        rows = [],
     } = props;
     if (!name) {
         throw new Error(`[table.js] - name is not  defined`);
@@ -40,7 +41,7 @@ const Table = (props) => {
     const tables = useStorageListener((state) => state?.tables ?? {});
     const tableState = tables?.[name] ?? {};
 
-    const { rows = [] } = tableState;
+    // const { rows = [] } = tableState;
 
     const { selectedRows = [] } = tableState;
     const setSelectedRows = (newValue = []) => {
@@ -71,7 +72,7 @@ const Table = (props) => {
     return (
         <TableWrapper>
             <STable extra={tableStyles}>
-                <STr>
+                <STr extra={({ theme }) => `border-bottom: 1px solid #DADADA; padding: 20px; box-sizing: border-box;`}>
                     {selectable && <STh extra={`flex: unset; width: 40px;`}></STh>}
                     {columns.map((column, index) => {
                         return (
@@ -106,8 +107,7 @@ const Table = (props) => {
                         );
                     })}
                 </STr>
-                <STr>
-                    {/* {selectable && <STh extra={`flex: unset; width: 40px;`}><Checkbox onChange={(e) => {}} /></STh>} */}
+                {/* <STr>
                     {selectable && (
                         <STh extra={`flex: unset; width: 40px;`} title={`Select all`}>
                             <Checkbox
@@ -152,8 +152,8 @@ const Table = (props) => {
                             </STh>
                         );
                     })}
-                </STr>
-                {rows.map((row, row_index) => (
+                </STr> */}
+                {rows?.map?.((row, row_index) => (
                     <STr key={row_index}>
                         {selectable && (
                             <STd extra={`flex: unset; width: 40px;`}>
@@ -189,7 +189,7 @@ const Table = (props) => {
                                                     {column?.cell?.children}
                                                 </Button>
                                             ),
-                                        }?.[column?.cell?.type]
+                                        }?.[column?.cell?.type ?? `text`]
                                     }
                                 </STd>
                             );
@@ -267,11 +267,11 @@ const TableWrapper = styled(Frame)`
 `;
 
 const PaginationWrapper = styled(RowWrapper)`
-    margin-top: 20px;
+    /* margin-top: 20px; */
     justify-content: space-between;
     padding: 20px 20px 20px 120px;
     box-sizing: border-box;
-    border-top: 1px solid #dadada;
+    /* border-top: 1px solid #dadada; */
 
     > * {
         margin-right: 10px;
@@ -343,6 +343,9 @@ const STh = styled(Frame)`
     width: 100%;
     flex: 1;
     flex-direction: row;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 20px;
 
     ${({ extra }) => extra}
 `;
@@ -352,6 +355,9 @@ const STr = styled(Frame)`
     flex-direction: row;
     width: 100%;
     justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #DADADA;
 
     ${({ extra }) => extra}
 `;
@@ -359,15 +365,6 @@ const STr = styled(Frame)`
 const STable = styled(Frame)`
     width: 100%;
     border-collapse: collapse;
-
-    > * {
-        &:nth-child(2n) {
-            background: ${({ theme }) => theme.background.support};
-        }
-        &:nth-child(2) {
-            background: transparent;
-        }
-    }
 
     ${({ extra }) => extra}
 `;

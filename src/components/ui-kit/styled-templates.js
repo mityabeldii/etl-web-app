@@ -277,7 +277,7 @@ export const ButtonWrapper = styled.button`
         opacity: 0.8;
     }
 
-    ${({ leftIcon }) =>
+    ${({ leftIcon, leftIconStyles = `` }) =>
         leftIcon &&
         css`
             &:before {
@@ -286,6 +286,7 @@ export const ButtonWrapper = styled.button`
                 height: 20px;
                 margin-right: 8px;
                 background: url("${require(`../../assets/icons/${leftIcon}.svg`).default}") no-repeat center center / contain;
+                ${leftIconStyles}
             }
         `}
 
@@ -303,8 +304,12 @@ export const ButtonWrapper = styled.button`
                         color: ${background};
                     `,
                     plain: css`
-                        background: ${theme.background.support};
+                        background: transparent;
                         color: ${background};
+
+                        &:hover {
+                            background: ${({ theme }) => theme.background.secondary};
+                        }
                     `,
                     orange: css`
                         background: ${theme.orange};

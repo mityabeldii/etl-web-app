@@ -19,7 +19,7 @@ const RouterApp = () => {
                 <Wrapper>
                     <Container>
                         <Switch>
-                            <Route exact path={`/data-sources`} component={DataSourceslistPage} />
+                            <Route exact path={`/datasource`} component={DataSourceslistPage} />
                             <Route path={`/`}>
                                 <Redirect to={`/`} />
                             </Route>
