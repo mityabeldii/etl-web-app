@@ -1,25 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import { ThemeProvider } from "styled-components";
+import { HashRouter as Router } from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import UserApp from "./components/apps/user-app";
+
+import theme from "./constants/theme-constants";
+import { setUpInterceptors } from "./utils/api-helper";
+
+import { StorageProvider } from "./hooks/useStorage";
+
+setUpInterceptors();
+
+const App = () => {
+    return (
+        <StorageProvider>
+            <ThemeProvider theme={theme}>
+                <Router>
+                    <UserApp />
+                </Router>
+            </ThemeProvider>
+        </StorageProvider>
+    );
+};
 
 export default App;
