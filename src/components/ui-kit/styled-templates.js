@@ -214,9 +214,9 @@ export const Button = (props) => {
 
     const newExtra =
         ({
-            [ASYNC_STATUSES.PENDING]: `background: grey !important;`,
-            [ASYNC_STATUSES.SUCCESS]: `background: green !important;`,
-            [ASYNC_STATUSES.ERROR]: `background: red !important;`,
+            [ASYNC_STATUSES.PENDING]: ({theme}) => `background: ${theme.grey} !important;`,
+            [ASYNC_STATUSES.SUCCESS]: ({theme}) => `background: ${theme.green} !important;`,
+            [ASYNC_STATUSES.ERROR]: ({theme}) => `background: ${theme.red} !important;`,
         }?.[status] ?? ``) + extra;
 
     const newOnClick = async (e) => {
@@ -255,6 +255,7 @@ export const ButtonWrapper = styled.button`
     font-weight: bold;
     font-size: inherit;
     padding: 8px 8px;
+    min-width: 164px;
     border-radius: 4px;
     border: 0px;
     box-sizing: border-box;

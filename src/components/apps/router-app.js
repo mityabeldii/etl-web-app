@@ -5,7 +5,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 // import HomePage from "../pages/home-page";
 // import UpdateStatusModal from "../modals/update-status-modal";
 
-const UserApp = () => {
+const RouterApp = () => {
     return (
         <>
             {/* <UpdateStatusModal /> */}
@@ -19,5 +19,5 @@ const UserApp = () => {
     );
 };
 
-export default UserApp;
+export default RouterApp;
 /*eslint-enable*/

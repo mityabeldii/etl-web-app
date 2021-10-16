@@ -1,10 +1,13 @@
 /*eslint-disable*/
 const theme = {
-
-    blue: `#385088`,
-    red: `#FF6B6B`,
-    green: `#00C421`,
-    grey: `#858585`,
+    blue: `#5488C7`,
+    red: `#E74040`,
+    orange: `#ED694B`,
+    green: `#6AB04C`,
+    yellow: `#F5C451`,
+    purple: `#B838D8`,
+    grey: `#AEAEAE`,
+    faded_red: `#F6DFDF`,
     excel: `#1D6F42`,
 
     background: {

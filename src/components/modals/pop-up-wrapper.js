@@ -67,10 +67,10 @@ const ChildrenWrapper = styled(Frame)`
     }
 `;
 
-let Cross = styled.img.attrs(() => {
+const Cross = styled.img.attrs(() => {
     let img;
     try {
-        img = require(`../../assets/icons/pop-up-cross.svg`).default;
+        img = require(`../../assets/icons/close.svg`).default;
     } catch (error) {}
     return { src: img };
 })`

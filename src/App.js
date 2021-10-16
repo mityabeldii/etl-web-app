@@ -1,7 +1,7 @@
 import { ThemeProvider } from "styled-components";
 import { HashRouter as Router } from "react-router-dom";
 
-import UserApp from "./components/apps/user-app";
+import RouterApp from "./components/apps/router-app";
 
 import theme from "./constants/theme-constants";
 import { setUpInterceptors } from "./utils/api-helper";
@@ -15,7 +15,7 @@ const App = () => {
         <StorageProvider>
             <ThemeProvider theme={theme}>
                 <Router>
-                    <UserApp />
+                    <RouterApp />
                 </Router>
             </ThemeProvider>
         </StorageProvider>
