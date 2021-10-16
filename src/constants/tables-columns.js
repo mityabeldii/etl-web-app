@@ -39,7 +39,7 @@ const PropertyOwnerTable = {
             },
         },
     ],
-    rows: new Array(5).fill({
+    rows: new Array(10).fill({
         name: `suspendisse`,
         description: `Id diam maecenas ultricies mi eget mauris pharetra`,
         host: `207.208.244.194`,

@@ -46,6 +46,8 @@ export const Container = styled(Frame)`
     width: 100%;
     max-width: 1170px;
     min-width: 700px;
+
+    min-height: min-content;
 `;
 
 /* CHECKBOX */

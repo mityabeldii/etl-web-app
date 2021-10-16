@@ -1,5 +1,7 @@
 /*eslint-disable*/
-import { Button, H1, RowWrapper } from "../ui-kit/styled-templates";
+import styled, { css } from "styled-components";
+
+import { Button, H1, RowWrapper, Input } from "../ui-kit/styled-templates";
 import Table from "../ui-kit/table";
 
 import { TABLES } from "../../constants/config";
@@ -14,10 +16,26 @@ const DataSourceslistPage = () => {
                     Добавить источник
                 </Button>
             </RowWrapper>
-            <Table name={TABLES.DATA_SOURSE_LIST} {...tablesColumns[TABLES.DATA_SOURSE_LIST]} />
+            <Table name={TABLES.DATA_SOURSE_LIST} {...tablesColumns[TABLES.DATA_SOURSE_LIST]} extraHeader={<Search />} />
         </>
     );
 };
+
+const Search = styled(Input).attrs((props) => {
+    return {
+        ...props,
+        placeholder: `Название или хост источника`,
+        leftIcon: `search`,
+        leftIconStyles: `left: 20px;`,
+        extra: css`
+            width: 100%;
+            border: 0px;
+            padding: 20px 30px 20px calc(30px + 20px + 12px);
+            border-bottom: 1px solid #dadada;
+            border-radius: 0px;
+        `,
+    };
+})``;
 
 export default DataSourceslistPage;
 /*eslint-enable*/

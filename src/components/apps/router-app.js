@@ -36,8 +36,12 @@ const Wrapper = styled(Frame)`
     flex: 1;
     min-height: 100vh;
     justify-content: flex-start;
-    padding: 36px 0;
+    padding: 35px 0;
     box-sizing: border-box;
+    flex: 1;
+    display: flex;
+    overflow: auto;
+    max-height: 100vh;
 `;
 
 export default RouterApp;

@@ -3,10 +3,11 @@ import React, { useState } from "react";
 import styled from "styled-components";
 
 const Input = (props) => {
-    const { type = `text`, extra = ``, rightIcon, rightIconStyles = `` } = props;
+    const { type = `text`, extra = ``, rightIcon, rightIconStyles = ``, leftIcon, leftIconStyles = `` } = props;
     const [passwordVisible, setPasswordVisible] = useState(false);
     return (
         <Span type={type} extra={extra}>
+            {leftIcon && <Icon src={leftIcon} extra={`right: unset; left: 5px;` + leftIconStyles} />}
             <StyledInput {...props} type={type === `password` && passwordVisible ? `text` : type} />
             {type === `password` ? (
                 <Eye
@@ -50,7 +51,10 @@ const Span = styled.span`
     display: flex;
     position: relative;
 
-    /* ${(props) => props.extra} */
+    ${(props) => props.extra}
+
+    border: unset;
+    padding: unset;
 `;
 
 export const StyledInput = styled.input`
@@ -69,6 +73,13 @@ export const StyledInput = styled.input`
     flex: 1;
     margin: 0;
     font-size: inherit;
+
+    ::-webkit-input-placeholder {
+        color: ${({ theme }) => theme.text.secondary};
+    }
+    :-ms-input-placeholder {
+        color: ${({ theme }) => theme.text.secondary};
+    }
 
     ${({ rightIcon }) => rightIcon && `padding-right: 30px;`}
 

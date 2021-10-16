@@ -23,7 +23,8 @@ const Table = (props) => {
         sortable = false,
         columns = [],
         selectionLimit = Infinity,
-        widthPagination = true,
+        withPagination = true,
+        withHeader = true,
         paginationOptions = [10, 25, 50, 100, 500],
         defaultSort,
         idColumnName = `id`,
@@ -33,6 +34,7 @@ const Table = (props) => {
         dependencies = {},
         tableStyles = ``,
         paginationStyles = ``,
+        extraHeader,
         rows = [],
     } = props;
     if (!name) {
@@ -71,41 +73,43 @@ const Table = (props) => {
 
     return (
         <TableWrapper>
+            {extraHeader}
             <STable extra={tableStyles}>
                 <STr extra={({ theme }) => `border-bottom: 1px solid #DADADA; padding: 20px; box-sizing: border-box;`}>
                     {selectable && <STh extra={`flex: unset; width: 40px;`}></STh>}
-                    {columns.map((column, index) => {
-                        return (
-                            <STh key={index} extra={column?.extra ?? ``}>
-                                <Frame
-                                    extra={`flex-direction: row; cursor: pointer;`}
-                                    onClick={() => {
-                                        setSort(
-                                            column?.name,
-                                            column?.name === sort?.field
-                                                ? { [SORT_ORDERS.ASC]: SORT_ORDERS.DESC, [SORT_ORDERS.DESC]: SORT_ORDERS.ASC }?.[sort?.order] ??
-                                                      SORT_ORDERS.DESC
-                                                : SORT_ORDERS.DESC
-                                        );
-                                    }}
-                                >
-                                    {column.label}
-                                    {sortable && column.sortable !== false && (
-                                        <Frame extra={`margin-left: 10px; cursor: pointer;`}>
-                                            <SortArrow
-                                                extra={`opacity: ${
-                                                    sort?.field === column.name && sort?.order === SORT_ORDERS.ASC ? 1 : 0.2
-                                                }; transform: rotate(180deg);`}
-                                            />
-                                            <SortArrow
-                                                extra={`opacity: ${sort?.field === column.name && sort?.order === SORT_ORDERS.DESC ? 1 : 0.2};`}
-                                            />
-                                        </Frame>
-                                    )}
-                                </Frame>
-                            </STh>
-                        );
-                    })}
+                    {withHeader &&
+                        columns.map((column, index) => {
+                            return (
+                                <STh key={index} extra={column?.extra ?? ``}>
+                                    <Frame
+                                        extra={`flex-direction: row; cursor: pointer;`}
+                                        onClick={() => {
+                                            setSort(
+                                                column?.name,
+                                                column?.name === sort?.field
+                                                    ? { [SORT_ORDERS.ASC]: SORT_ORDERS.DESC, [SORT_ORDERS.DESC]: SORT_ORDERS.ASC }?.[sort?.order] ??
+                                                          SORT_ORDERS.DESC
+                                                    : SORT_ORDERS.DESC
+                                            );
+                                        }}
+                                    >
+                                        {column.label}
+                                        {sortable && column.sortable !== false && (
+                                            <Frame extra={`margin-left: 10px; cursor: pointer;`}>
+                                                <SortArrow
+                                                    extra={`opacity: ${
+                                                        sort?.field === column.name && sort?.order === SORT_ORDERS.ASC ? 1 : 0.2
+                                                    }; transform: rotate(180deg);`}
+                                                />
+                                                <SortArrow
+                                                    extra={`opacity: ${sort?.field === column.name && sort?.order === SORT_ORDERS.DESC ? 1 : 0.2};`}
+                                                />
+                                            </Frame>
+                                        )}
+                                    </Frame>
+                                </STh>
+                            );
+                        })}
                 </STr>
                 {/* <STr>
                     {selectable && (
@@ -197,7 +201,7 @@ const Table = (props) => {
                     </STr>
                 ))}
             </STable>
-            {widthPagination && (
+            {withPagination && (
                 <PaginationWrapper extra={paginationStyles}>
                     <Frame extra={`width: 350px;`} />
                     <Frame extra={`flex-direction: row; justify-content: center;`}>
@@ -357,7 +361,7 @@ const STr = styled(Frame)`
     justify-content: space-between;
     padding: 20px;
     box-sizing: border-box;
-    border-bottom: 1px solid #DADADA;
+    border-bottom: 1px solid #dadada;
 
     ${({ extra }) => extra}
 `;
