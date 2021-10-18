@@ -1,6 +1,7 @@
 /*eslint-disable*/
 import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
+import { Link } from "react-router-dom";
 import _ from "lodash";
 
 import { Frame, Checkbox, Input, Button, RowWrapper } from "./styled-templates";
@@ -35,7 +36,8 @@ const Table = (props) => {
         tableStyles = ``,
         paginationStyles = ``,
         extraHeader,
-        rows = [],
+        useBackendProcessing = true,
+        rows: propRows = [],
     } = props;
     if (!name) {
         throw new Error(`[table.js] - name is not  defined`);
@@ -43,7 +45,7 @@ const Table = (props) => {
     const tables = useStorageListener((state) => state?.tables ?? {});
     const tableState = tables?.[name] ?? {};
 
-    // const { rows = [] } = tableState;
+    const { rows = [] } = tableState;
 
     const { selectedRows = [] } = tableState;
     const setSelectedRows = (newValue = []) => {
@@ -68,17 +70,25 @@ const Table = (props) => {
         if (!tableState?.pagination) {
             putStorage(`tables.${name}.pagination`, { currentPage, perPage }, { silent: true });
         }
-        const newData = await fetchFunction();
+        if (useBackendProcessing) {
+            const newData = await fetchFunction();
+        }
     }, [JSON.stringify({ debouncedParams, sort, name, currentPage, perPage, dependencies })]);
+
+    useEffect(async () => {
+        if (!useBackendProcessing) {
+            const newData = await fetchFunction();
+        }
+    }, []);
 
     return (
         <TableWrapper>
             {extraHeader}
             <STable extra={tableStyles}>
-                <STr extra={({ theme }) => `border-bottom: 1px solid #DADADA; padding: 20px; box-sizing: border-box;`}>
-                    {selectable && <STh extra={`flex: unset; width: 40px;`}></STh>}
-                    {withHeader &&
-                        columns.map((column, index) => {
+                {withHeader && (
+                    <STr extra={({ theme }) => `border-bottom: 1px solid #DADADA; padding: 20px; box-sizing: border-box;`}>
+                        {selectable && <STh extra={`flex: unset; width: 40px;`}></STh>}
+                        {columns.map((column, index) => {
                             return (
                                 <STh key={index} extra={column?.extra ?? ``}>
                                     <Frame
@@ -110,7 +120,8 @@ const Table = (props) => {
                                 </STh>
                             );
                         })}
-                </STr>
+                    </STr>
+                )}
                 {/* <STr>
                     {selectable && (
                         <STh extra={`flex: unset; width: 40px;`} title={`Select all`}>
@@ -157,49 +168,56 @@ const Table = (props) => {
                         );
                     })}
                 </STr> */}
-                {rows?.map?.((row, row_index) => (
-                    <STr key={row_index}>
-                        {selectable && (
-                            <STd extra={`flex: unset; width: 40px;`}>
-                                <Checkbox
-                                    disabled={!selectedRows.includes(row?.[idColumnName]) && selectedRows.length === selectionLimit}
-                                    checked={selectedRows.includes(row?.[idColumnName])}
-                                    onChange={(e) => {
-                                        setSelectedRows(togglePush(selectedRows, row?.[idColumnName]));
-                                    }}
-                                />
-                            </STd>
-                        )}
-                        {columns.map((column, column_index) => {
-                            return (
-                                <STd
-                                    key={column_index}
-                                    extra={column?.extra ?? ``}
-                                    clickable={column?.onCellClick}
-                                    onClick={() => {
-                                        column?.onCellClick?.(row?.[column?.name]);
-                                    }}
-                                >
-                                    {
-                                        {
-                                            text: column?.transform?.(row?.[column?.name]) ?? row?.[column?.name],
-                                            button: (
-                                                <Button
-                                                    {...(column?.cell ?? {})}
-                                                    onClick={(e) => {
-                                                        column?.cell?.onClick?.(row);
-                                                    }}
-                                                >
-                                                    {column?.cell?.children}
-                                                </Button>
-                                            ),
-                                        }?.[column?.cell?.type ?? `text`]
-                                    }
+                {(rows.length === 0 && propRows ? propRows : rows)
+                    ?.filter?.((i) => useBackendProcessing || true)
+                    ?.map?.((row, row_index) => (
+                        <STr key={row_index}>
+                            {selectable && (
+                                <STd extra={`flex: unset; width: 40px;`}>
+                                    <Checkbox
+                                        disabled={!selectedRows.includes(row?.[idColumnName]) && selectedRows.length === selectionLimit}
+                                        checked={selectedRows.includes(row?.[idColumnName])}
+                                        onChange={(e) => {
+                                            setSelectedRows(togglePush(selectedRows, row?.[idColumnName]));
+                                        }}
+                                    />
                                 </STd>
-                            );
-                        })}
-                    </STr>
-                ))}
+                            )}
+                            {columns.map((column, column_index) => {
+                                return (
+                                    <STd
+                                        key={column_index}
+                                        extra={column?.extra ?? ``}
+                                        clickable={column?.onCellClick}
+                                        onClick={() => {
+                                            column?.onCellClick?.({ row, column: column?.name, value: row?.[column?.name] });
+                                        }}
+                                    >
+                                        {
+                                            {
+                                                text: column?.transform?.(row?.[column?.name]) ?? row?.[column?.name],
+                                                button: (
+                                                    <Button
+                                                        {...(column?.cell ?? {})}
+                                                        onClick={(e) => {
+                                                            column?.cell?.onClick?.(row);
+                                                        }}
+                                                    >
+                                                        {column?.cell?.children}
+                                                    </Button>
+                                                ),
+                                                link: (
+                                                    <Link to={column?.cell?.to?.({ row, column: column?.name, value: row?.[column?.name] })}>
+                                                        {column?.transform?.(row?.[column?.name]) ?? row?.[column?.name]}
+                                                    </Link>
+                                                ),
+                                            }?.[column?.cell?.type ?? `text`]
+                                        }
+                                    </STd>
+                                );
+                            })}
+                        </STr>
+                    ))}
             </STable>
             {withPagination && (
                 <PaginationWrapper extra={paginationStyles}>

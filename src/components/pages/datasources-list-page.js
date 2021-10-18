@@ -1,5 +1,6 @@
 /*eslint-disable*/
 import styled, { css } from "styled-components";
+import { useLocation } from "react-router";
 
 import { Button, H1, RowWrapper, Input } from "../ui-kit/styled-templates";
 import Table from "../ui-kit/table";
@@ -8,22 +9,41 @@ import { MODALS, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
 import { eventDispatch } from "../../hooks/useEventListener";
 
-const DataSourcesPage = () => {
+import DatasourceAPI from "../../api/datasource-api";
+import { useStorageListener } from "../../hooks/useStorage";
+
+const DatasourcesListPage = () => {
     const openCreateDataSourceModal = () => {
         eventDispatch(`OPEN_${MODALS.CREATE_DATA_SOURCE_MODAL}_MODAL`);
     };
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
-                <H1>Источники данных</H1>
+                <Heading>
+                    Источники данных
+                </Heading>
                 <Button leftIcon={`plus-in-circle-white`} background={`orange`} onClick={openCreateDataSourceModal}>
                     Добавить источник
                 </Button>
             </RowWrapper>
-            <Table name={TABLES.DATA_SOURSE_LIST} {...tablesColumns[TABLES.DATA_SOURSE_LIST]} extraHeader={<Search />} />
+            <Table
+                name={TABLES.DATASOURCE_LIST}
+                fetchFunction={DatasourceAPI.getDatasources}
+                {...tablesColumns[TABLES.DATASOURCE_LIST]}
+                extraHeader={<Search />}
+            />
         </>
     );
 };
+
+const Heading = styled(H1)`
+    line-height: 36px;
+
+    span {
+        margin-left: 5px;
+        color: ${({ theme }) => theme.blue};
+    }
+`;
 
 const Search = styled(Input).attrs((props) => {
     return {
@@ -42,5 +62,5 @@ const Search = styled(Input).attrs((props) => {
     };
 })``;
 
-export default DataSourcesPage;
+export default DatasourcesListPage;
 /*eslint-enable*/

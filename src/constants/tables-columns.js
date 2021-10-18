@@ -1,22 +1,27 @@
 /*eslint-disable*/
 import { SORT_ORDERS, TABLES, STATUSES, ROLES, MODALS, FORMS } from "./config";
 import { putStorage, mergeStorage } from "../hooks/useStorage";
-import { linkTo } from "../utils/common-helper";
+import { createId, linkTo } from "../utils/common-helper";
 import { eventDispatch } from "../hooks/useEventListener";
 
-const PropertyOwnerTable = {
-    defaultSort: {
-        field: `clientID`,
-        order: SORT_ORDERS.DESC,
-    },
-    idColumnName: `clientID`,
+const DatasourceList = {
+    useBackendProcessing: false,
+    idColumnName: `id`,
     columns: [
-        { name: `name`, label: `Имя` },
-        { name: `description`, label: `Описание` },
-        { name: `host`, label: `Хост` },
-        { name: `port`, label: `Порт` },
-        { name: `base`, label: `База` },
-        { name: `schema`, label: `Схема` },
+        {
+            name: `name`,
+            extra: `flex: 2;`,
+            label: `Имя`,
+            cell: {
+                type: `link`,
+                to: ({ row }) => `/datasources/${row?.id}`,
+            },
+        },
+        { name: `description`, extra: `flex: 2;`, label: `Описание` },
+        { name: `host`, extra: `flex: 2;`, label: `Хост` },
+        { name: `port`, extra: `flex: 1;`, label: `Порт` },
+        { name: `url`, extra: `flex: 5;`, label: `База` },
+        { name: `schema`, extra: `flex: 2;`, label: `Схема` },
         {
             name: `editbutton`,
             extra: `width: 40px; flex: unset;`,
@@ -44,18 +49,25 @@ const PropertyOwnerTable = {
             },
         },
     ],
-    rows: new Array(10).fill({
-        name: `suspendisse`,
-        description: `Id diam maecenas ultricies mi eget mauris pharetra`,
-        host: `207.208.244.194`,
-        port: `8679`,
-        base: `suspendisse`,
-        schema: `ipsum`,
-    }),
+};
+
+const DatasourceTableStructure = {
+    useBackendProcessing: false,
+    withPagination: false,
+    withHeader: false,
+    columns: [{ name: `name`, extra: `font-weight: bold;` }, { name: `type` }],
+};
+
+const DatasourceTablePreview = {
+    useBackendProcessing: false,
+    withPagination: false,
+    columns: [{ name: `name`, extra: `font-weight: bold;` }, { name: `type` }],
 };
 
 const tablesColumns = {
-    [TABLES.DATA_SOURSE_LIST]: PropertyOwnerTable,
+    [TABLES.DATASOURCE_LIST]: DatasourceList,
+    [TABLES.DATASOURCE_TABLE_STRUCTURE]: DatasourceTableStructure,
+    [TABLES.DATASOURCE_TABLE_PREVIEW]: DatasourceTablePreview,
 };
 
 export default tablesColumns;

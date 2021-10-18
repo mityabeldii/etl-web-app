@@ -1,4 +1,4 @@
-export const API_URL = `https://gnx.dev.softlab360.com`;
+export const base_url = `http://65.108.61.88:8087/etl`;
 
 export const EVENTS = {
     UPDATE_STORAGE: "UPDATE_STORAGE",
@@ -11,7 +11,9 @@ export const SORT_ORDERS = {
 };
 
 export const TABLES = {
-    DATA_SOURSE_LIST: "DATA_SOURSE_LIST",
+    DATASOURCE_LIST: "DATASOURCE_LIST",
+    DATASOURCE_TABLE_STRUCTURE: "DATASOURCE_TABLE_STRUCTURE",
+    DATASOURCE_TABLE_PREVIEW: "DATASOURCE_TABLE_PREVIEW",
 };
 
 export const MODALS = {

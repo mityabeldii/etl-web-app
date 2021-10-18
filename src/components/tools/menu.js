@@ -6,7 +6,7 @@ import styled, { css } from "styled-components";
 import { Frame, RowWrapper } from "../ui-kit/styled-templates";
 
 const menuSections = [
-    { label: `Источники данных`, icon: `menu-data-source`, items: [{ label: `Список источников данных`, link: `/datasource` }] },
+    { label: `Источники данных`, icon: `menu-data-source`, items: [{ label: `Список источников данных`, link: `/datasources` }] },
     {
         label: `Структура хранилища`,
         icon: `menu-storage-structure`,

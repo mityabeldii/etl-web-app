@@ -39,6 +39,7 @@ export const handleSuccess = (response) => {
 };
 
 export let handleError = (error) => {
+    console.error(error);
     if (!Array.isArray(error) && typeof error?.message === `string` && !Array.isArray(error?.response?.data)) {
         objectPut(error, `response.data`, [error?.response?.data]);
     }
