@@ -57,6 +57,23 @@ const HomeAPI = {
             }
         });
     },
+
+    async getDatasourceTablePreview(id, tableName) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.get(`${base_url}/api/v1/query/${id}/${tableName}`)).data;
+                putStorage(
+                    `datasources.preview`,
+                    Object.values(
+                        Object.fromEntries([{ id, [tableName]: response }, ...getStorage((state) => state?.datasources?.data ?? [])].map((i) => [i?.id, i]))
+                    )
+                );
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
 };
 
 export default HomeAPI;

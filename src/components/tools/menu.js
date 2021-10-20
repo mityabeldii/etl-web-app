@@ -1,7 +1,8 @@
 /*eslint-disable*/
 import { Fragment } from "react";
 import { useLocation, Link } from "react-router-dom";
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
+import { useStorageListener } from "../../hooks/useStorage";
 
 import { Frame, RowWrapper } from "../ui-kit/styled-templates";
 
@@ -108,7 +109,7 @@ const Title = styled(RowWrapper)`
         content: "";
         width: 50px;
         height: 50px;
-        margin-right: 20px; 
+        margin-right: 20px;
         background: url("${require(`../../assets/images/etl-logo.png`).default}") no-repeat center center / contain;
     }
 `;

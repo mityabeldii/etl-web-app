@@ -4,7 +4,7 @@ import moment from "moment-timezone";
 
 import { eventDispatch } from "../hooks/useEventListener";
 import { getStorage, putStorage } from "../hooks/useStorage";
-import { objectPut } from "./common-helper";
+import { objectPut, sleep } from "./common-helper";
 
 export const getToken = () => {
     let token = localStorage.getItem(`auth_token_gnx`);
@@ -70,6 +70,7 @@ export const loadingCounterWrapper = async (action) => {
     } catch (error) {
         throw error;
     } finally {
+        await sleep(100)
         putStorage(`loading_counter`, Math.max((window?.storage?.loading_counter ?? 0) - 1, 0));
     }
 };

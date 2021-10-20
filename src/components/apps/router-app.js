@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React from "react";
+import React, { Suspense } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import styled from "styled-components";
 
@@ -11,24 +11,28 @@ import DatasourcePage from "../pages/datasource-page";
 
 import CreateDataSourceModal from "../modals/create-data-source-modal";
 import EditDataSourceModal from "../modals/edit-data-source-modal";
+import DatasourceAdHocQueryModal from "../modals/datasource-ad-hoc-query-modal";
 
 const RouterApp = () => {
     return (
         <>
             <CreateDataSourceModal />
             <EditDataSourceModal />
-            
+            <DatasourceAdHocQueryModal />
+
             <RowWrapper>
                 <Menu />
                 <Wrapper>
                     <Container>
-                        <Switch>
-                            <Route exact path={`/datasources`} component={DatasourcesListPage} />
-                            <Route exact path={`/datasources/:selectedSourceId`} component={DatasourcePage} />
-                            <Route path={`/`}>
-                                <Redirect to={`/datasources`} />
-                            </Route>
-                        </Switch>
+                        <Suspense fallback={`Loading`}>
+                            <Switch>
+                                <Route exact path={`/datasources`} component={DatasourcesListPage} />
+                                <Route exact path={`/datasources/:selectedSourceId`} component={DatasourcePage} />
+                                <Route path={`/`}>
+                                    <Redirect to={`/datasources`} />
+                                </Route>
+                            </Switch>
+                        </Suspense>
                     </Container>
                 </Wrapper>
             </RowWrapper>

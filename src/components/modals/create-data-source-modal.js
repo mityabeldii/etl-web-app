@@ -2,7 +2,8 @@
 import styled, { css } from "styled-components";
 import { MODALS, FORMS } from "../../constants/config";
 
-import { Frame, Button, Input, Dropdown, H1, P, Link, Control } from "../ui-kit/styled-templates";
+import { Frame, Button, Input, Dropdown, H1, P, Link } from "../ui-kit/styled-templates";
+import { Control } from "../ui-kit/control";
 import PopUpWrapper from "./pop-up-wrapper";
 
 import useForm from "../../hooks/useForm";
@@ -28,8 +29,8 @@ const CreateDataSouceModal = () => {
         eventDispatch(`CLOSE_${MODALS.CREATE_DATA_SOURCE_MODAL}_MODAL`);
     };
     return (
-        <PopUpWrapper onSubmit={onSubmit(handleSubmit)} name={MODALS.CREATE_DATA_SOURCE_MODAL} onClickOutside={closeModal}>
-            <Form extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
+        <PopUpWrapper name={MODALS.CREATE_DATA_SOURCE_MODAL} onClickOutside={closeModal}>
+            <Form onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
                 <H1 extra={`width: 100%; margin-bottom: 24px;`}>Добавить источник данных</H1>
                 <Control.Row>
                     <Control.Input name={`name`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />

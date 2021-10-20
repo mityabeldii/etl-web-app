@@ -15,17 +15,21 @@ import { useStorageListener } from "../../hooks/useStorage";
 import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
 
 const DatasourcePage = () => {
-    const { pathname, search } = useLocation();
+    const { pathname } = useLocation();
     const { selectedSourceId } = useParams();
     const selectedSource = useStorageListener(
         (state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows?.find?.((i) => i?.id == selectedSourceId) ?? {}
     );
     const tables = useStorageListener((state) => state?.datasources?.tables?.find?.((i) => i?.id === selectedSourceId)?.tables ?? []);
-    const { table: selectedTable } = QSToObject(search);
+    const [selectedTable, setSelectedTable] = useState();
     const structure =
         useStorageListener((state) => state?.datasources?.structures ?? [])
             ?.find?.((i) => i?.id === selectedSourceId)
             ?.data?.tables?.find?.((i) => i?.name === selectedTable)?.columns ?? [];
+    const preview =
+        useStorageListener((state) => state?.datasources?.preview ?? [])
+            ?.find?.((i) => i?.id === selectedSourceId)
+            ?.[selectedTable]?.rows?.map?.((i) => Object.fromEntries(i?.cells?.map?.((i) => [i?.column, i?.value]))) ?? [];
 
     useEffect(() => {
         DatasourceAPI.getDatasources();
@@ -37,10 +41,17 @@ const DatasourcePage = () => {
     }, [selectedSourceId]);
 
     useEffect(() => {
+        if (selectedSourceId && selectedTable) {
+            DatasourceAPI.getDatasourceTablePreview(selectedSourceId, selectedTable);
+        }
+    }, [selectedSourceId, selectedTable]);
+
+    useEffect(() => {
         if (!selectedTable || (tables?.indexOf?.(selectedTable) < 0 && tables?.length > 0)) {
-            linkTo(`${pathname}${objectToQS({ table: tables[0] })}`);
+            setSelectedTable(tables[0]);
         }
     }, [JSON.stringify({ selectedTable, tables })]);
+
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
@@ -55,11 +66,17 @@ const DatasourcePage = () => {
                 <Frame>
                     <H1 extra={`font-size: 18px; margin-bottom: 16px; width: 100% !important; align-items: flex-start;`}>Таблицы</H1>
                     {tables.map((item, index) => (
-                        <Link key={index} to={`${pathname}${objectToQS({ table: item })}`}>
-                            <ShemaName selected={selectedTable === item}>{item}</ShemaName>
-                        </Link>
+                        <ShemaName
+                            key={index}
+                            selected={selectedTable === item}
+                            onClick={() => {
+                                setSelectedTable(item);
+                            }}
+                        >
+                            {item}
+                        </ShemaName>
                     ))}
-                    <Button background={`blue`} extra={`margin-top: 24px; width: 190px;`}>
+                    <Button background={`blue`} extra={`margin-top: 24px; width: 190px;`} onClick={() => {eventDispatch(`OPEN_${MODALS.DATASOURCE_AD_HOC_QUERY_MODAL}_MODAL`)}} >
                         Ad-Hoc запрос
                     </Button>
                 </Frame>
@@ -71,7 +88,11 @@ const DatasourcePage = () => {
                     <TableStructureHeadeing extra={`margin-top: 40px;`}>
                         Предпросмотр таблицы <span>{selectedTable}</span>
                     </TableStructureHeadeing>
-                    <Table name={TABLES.DATASOURCE_TABLE_PREVIEW} {...tablesColumns[TABLES.DATASOURCE_TABLE_PREVIEW]} />
+                    <Table
+                        name={TABLES.DATASOURCE_TABLE_PREVIEW}
+                        columns={Object.keys(preview?.[0] ?? {})?.map?.((i) => ({ name: i, label: i }))}
+                        rows={preview}
+                    />
                 </Frame>
             </RowWrapper>
         </>

@@ -30,7 +30,7 @@ const Table = (props) => {
         defaultSort,
         idColumnName = `id`,
         fetchFunction = () => {
-            console.log(`> > > FETCH < < <`);
+            // console.log(`> > > FETCH < < <`);
         },
         dependencies = {},
         tableStyles = ``,
@@ -207,7 +207,7 @@ const Table = (props) => {
                                                     </Button>
                                                 ),
                                                 link: (
-                                                    <Link to={column?.cell?.to?.({ row, column: column?.name, value: row?.[column?.name] })}>
+                                                    <Link to={column?.cell?.to?.({ row, column: column?.name, value: row?.[column?.name] }) ?? `/`}>
                                                         {column?.transform?.(row?.[column?.name]) ?? row?.[column?.name]}
                                                     </Link>
                                                 ),
