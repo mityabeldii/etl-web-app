@@ -64,10 +64,35 @@ const DatasourceTablePreview = {
     columns: [{ name: `name`, extra: `font-weight: bold;` }, { name: `type` }],
 };
 
+const ProcessesList = {
+    useBackendProcessing: false,
+    withPagination: false,
+    columns: [
+        {
+            name: `name`,
+            label: `Активность`,
+            cell: {
+                type: `switch`,
+                onChange: ({ row }) => {
+                    console.log(row);
+                },
+            },
+        },
+        { name: `type`, label: `Имя процесса`, cell: { type: `process_name` } },
+        { name: `type`, label: `Расписание`, cell: { type: `crontab` } },
+        { name: `123`, label: `Расписание`, transform: (d) => d },
+        { name: `processEndDate`, label: `Посл. запуск` },
+        { name: `processStartDate`, label: `След. запуск` },
+        { name: `234`, label: `Статистика`, cell: { type: `statistics` } },
+        { name: `morebutton`, label: ``, cell: { type: `process_more_button`, } },
+    ],
+};
+
 const tablesColumns = {
     [TABLES.DATASOURCE_LIST]: DatasourceList,
     [TABLES.DATASOURCE_TABLE_STRUCTURE]: DatasourceTableStructure,
     [TABLES.DATASOURCE_TABLE_PREVIEW]: DatasourceTablePreview,
+    [TABLES.PROCESSES_LIST]: ProcessesList,
 };
 
 export default tablesColumns;

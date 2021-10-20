@@ -6,26 +6,14 @@ import useEventListener, { eventDispatch } from "./useEventListener";
 import { objectPut, objectMerge, objectCopy, objectCompare, createId, isna, path } from "../utils/common-helper";
 import { EVENTS } from "../constants/config";
 
-const useUnmounted = (fn = () => {}) => {
-    useEffect(() => {
-        return fn;
-    }, []);
-};
-
 export const useStorageListener = (getPathContent) => {
     if (typeof getPathContent === `string`) {
         getPathContent = path(getPathContent);
     }
     const [state, setState] = useState(objectCopy(getPathContent(window.storage)));
-    let isMounted = true;
-    useUnmounted(() => (isMounted = false));
     useEventListener(EVENTS.UPDATE_STORAGE, (d) => {
         if (!objectCompare(getPathContent(window.storage), state)) {
-            setTimeout(() => {
-                if (isMounted) {
-                    setState(objectCopy(getPathContent(window.storage)));
-                }
-            }, 0);
+            setState(objectCopy(getPathContent(window.storage)));
         }
     });
     return state;

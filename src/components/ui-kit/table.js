@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import { Link } from "react-router-dom";
 import _ from "lodash";
 
-import { Frame, Checkbox, Input, Button, RowWrapper } from "./styled-templates";
+import { Frame, Checkbox, Input, Button, RowWrapper, Switch } from "./styled-templates";
 import Select from "./select";
 
 import { convertHex } from "../../utils/colors-helper";
@@ -210,6 +210,13 @@ const Table = (props) => {
                                                     <Link to={column?.cell?.to?.({ row, column: column?.name, value: row?.[column?.name] }) ?? `/`}>
                                                         {column?.transform?.(row?.[column?.name]) ?? row?.[column?.name]}
                                                     </Link>
+                                                ),
+                                                switch: (
+                                                    <Switch
+                                                        checked={column?.transform?.(row?.[column?.name]) ?? row?.[column?.name]}
+                                                        onChange={() => {}}
+                                                        {...column?.cell}
+                                                    />
                                                 ),
                                             }?.[column?.cell?.type ?? `text`]
                                         }

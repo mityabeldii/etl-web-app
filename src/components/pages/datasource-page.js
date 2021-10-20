@@ -66,7 +66,7 @@ const DatasourcePage = () => {
                 <Frame>
                     <H1 extra={`font-size: 18px; margin-bottom: 16px; width: 100% !important; align-items: flex-start;`}>Таблицы</H1>
                     {tables.map((item, index) => (
-                        <ShemaName
+                        <SchemaName
                             key={index}
                             selected={selectedTable === item}
                             onClick={() => {
@@ -74,9 +74,15 @@ const DatasourcePage = () => {
                             }}
                         >
                             {item}
-                        </ShemaName>
+                        </SchemaName>
                     ))}
-                    <Button background={`blue`} extra={`margin-top: 24px; width: 190px;`} onClick={() => {eventDispatch(`OPEN_${MODALS.DATASOURCE_AD_HOC_QUERY_MODAL}_MODAL`)}} >
+                    <Button
+                        background={`blue`}
+                        extra={`margin-top: 24px; width: 190px;`}
+                        onClick={() => {
+                            eventDispatch(`OPEN_${MODALS.DATASOURCE_AD_HOC_QUERY_MODAL}_MODAL`);
+                        }}
+                    >
                         Ad-Hoc запрос
                     </Button>
                 </Frame>
@@ -116,7 +122,7 @@ const TableStructureHeadeing = styled(Frame)`
     ${({ extra }) => extra}
 `;
 
-const ShemaName = styled(Button).attrs((props) => {
+const SchemaName = styled(Button).attrs((props) => {
     return {
         ...props,
         variant: `outlined`,
@@ -127,6 +133,12 @@ const ShemaName = styled(Button).attrs((props) => {
     margin-bottom: 12px;
     justify-content: flex-start;
     color: ${({ theme }) => theme.text.primary};
+
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
 
     ${({ selected = false, theme = {} }) => selected && `background: ${theme.background.primary};`}
 

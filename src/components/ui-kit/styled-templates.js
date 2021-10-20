@@ -64,8 +64,11 @@ export const Checkbox = styled.input.attrs((props) => {
         type: `checkbox`,
     };
 })`
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
+    background: ${({ theme }) => theme.background.secondary};
+    border: 1px solid #C0C0C0;
+    border-radius: 4px;
     cursor: pointer;
 `;
 
