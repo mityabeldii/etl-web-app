@@ -1,10 +1,11 @@
 /*eslint-disable*/
 import React, { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { Link } from "react-router-dom";
 import _ from "lodash";
+import Markdown from "markdown-to-jsx";
 
-import { Frame, Checkbox, Input, Button, RowWrapper, Switch } from "./styled-templates";
+import { Frame, Checkbox, Input, Button, RowWrapper, Switch, Dropdown } from "./styled-templates";
 import Select from "./select";
 
 import { convertHex } from "../../utils/colors-helper";
@@ -184,18 +185,19 @@ const Table = (props) => {
                                 </STd>
                             )}
                             {columns.map((column, column_index) => {
+                                const cellState = { row, column: column?.name, value: row?.[column?.name] };
                                 return (
                                     <STd
                                         key={column_index}
-                                        extra={column?.extra ?? ``}
+                                        extra={(column?.extra ?? ``) + (column?.cell?.extra ?? ``)}
                                         clickable={column?.onCellClick}
                                         onClick={() => {
-                                            column?.onCellClick?.({ row, column: column?.name, value: row?.[column?.name] });
+                                            column?.onCellClick?.(cellState);
                                         }}
                                     >
                                         {
                                             {
-                                                text: column?.transform?.(row?.[column?.name]) ?? row?.[column?.name],
+                                                text: <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name]}</Markdown>,
                                                 button: (
                                                     <Button
                                                         {...(column?.cell ?? {})}
@@ -207,15 +209,76 @@ const Table = (props) => {
                                                     </Button>
                                                 ),
                                                 link: (
-                                                    <Link to={column?.cell?.to?.({ row, column: column?.name, value: row?.[column?.name] }) ?? `/`}>
-                                                        {column?.transform?.(row?.[column?.name]) ?? row?.[column?.name]}
+                                                    <Link to={column?.cell?.to?.(cellState) ?? `/`}>
+                                                        {column?.transform?.(cellState) ?? row?.[column?.name]}
                                                     </Link>
                                                 ),
                                                 switch: (
                                                     <Switch
-                                                        checked={column?.transform?.(row?.[column?.name]) ?? row?.[column?.name]}
                                                         onChange={() => {}}
                                                         {...column?.cell}
+                                                        checked={(column?.transform?.(cellState) ?? row?.[column?.name]) === true}
+                                                    />
+                                                ),
+                                                process_name: (
+                                                    <Frame extra={`flex-direction: row;`}>
+                                                        <Markdown>{`**${row?.name}**\n\n${row?.description}`}</Markdown>
+                                                        {row?.in_progress && <SpinningArrows />}
+                                                    </Frame>
+                                                ),
+                                                crontab: (
+                                                    <Frame extra={`flex-direction: row;`}>
+                                                        <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name]}</Markdown>
+                                                        <Info />
+                                                    </Frame>
+                                                ),
+                                                statistics: (
+                                                    <Frame
+                                                        extra={`flex-direction: row; > * { margin-left: 8px; &:nth-child { margin-left: 0px; }; };`}
+                                                    >
+                                                        {[`success`, `in_progress`, `error`, `force_completed`].map((status, index) => {
+                                                            return (
+                                                                <StatisticsItem
+                                                                    key={index}
+                                                                    status={status}
+                                                                    value={(column?.transform?.(cellState) ?? row?.[column?.name])?.[status] ?? `*`}
+                                                                />
+                                                            );
+                                                        })}
+                                                    </Frame>
+                                                ),
+                                                process_more_button: (
+                                                    <Dropdown
+                                                        toggle={<MoreButton />}
+                                                        menu={
+                                                            <>
+                                                                {[
+                                                                    { label: `Редактировать атрибуты`, src: `processes-more-edit-attributes` },
+                                                                    { label: `Удалить процесс`, src: `processes-more-delete`, muted: true },
+                                                                    { label: `Просмотреть конфигурацию`, src: `processes-more-config-preview` },
+                                                                    { label: `Редактировать конфигурацию`, src: `processes-more-config-edit` },
+                                                                    { label: `История запусков процесса`, src: `processes-more-launches-history` },
+                                                                    { label: `История запусков задач`, src: `processes-more-tasks-history` },
+                                                                    { label: `Ручной запуск`, src: `processes-more-manual-start` },
+                                                                ].map((item, index) => {
+                                                                    return <StatisticsMoreOption key={index} {...item} />;
+                                                                })}
+                                                            </>
+                                                        }
+                                                        menuStyles={({ theme }) =>
+                                                            css`
+                                                                padding: 0;
+                                                                background: ${theme.background.secondary};
+                                                                filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.05));
+                                                                border: 1px solid #d1d1d1;
+                                                                > * {
+                                                                    border-bottom: 1px solid #d1d1d1;
+                                                                    &:last-child {
+                                                                        border-bottom: 0px;
+                                                                    }
+                                                                }
+                                                            `
+                                                        }
                                                     />
                                                 ),
                                             }?.[column?.cell?.type ?? `text`]
@@ -273,6 +336,103 @@ const Table = (props) => {
         </TableWrapper>
     );
 };
+
+const StatisticsMoreOption = styled(Frame)`
+    width: 275px;
+    padding: 15px 18px;
+    flex-direction: row;
+    justify-content: flex-start;
+    cursor: default;
+    opacity: 0.5;
+
+    ${({ muted = false }) =>
+        !muted &&
+        css`
+            cursor: pointer;
+            opacity: 1;
+        `}
+
+    ${({ muted = false }) =>
+        !muted &&
+        css`
+            &:hover {
+                &:after {
+                    transform: translate(2px, 0);
+                }
+            }
+        `}
+
+    &:before {
+        content: "";
+        width: 16px;
+        height: 16px;
+        background: url("${({ src }) => require(`../../assets/icons/${src}.svg`).default}") no-repeat center center / contain;
+        margin-right: 8px;
+    }
+
+    &:after {
+        content: "${({ label = `` }) => label}";
+        transition: 0.2s;
+    }
+`;
+
+const MoreButton = styled(Frame)`
+    width: 20px;
+    height: 20px;
+    background: url("${require(`../../assets/icons/more-vert.svg`).default}") no-repeat center center / contain;
+    cursor: pointer;
+`;
+
+const StatisticsItem = styled(Frame)`
+    width: 24px;
+    height: 24px;
+    border: 2px solid
+        ${({ theme, status = `force_completed` }) =>
+            ({
+                success: theme.green,
+                in_progress: theme.yellow,
+                error: theme.red,
+                force_completed: theme.grey,
+            }?.[status ?? `force_completed`])};
+    border-radius: 50%;
+
+    &:after {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 12px;
+        line-height: 20px;
+        content: "${({ value = 0 }) => value}";
+    }
+`;
+
+const Info = styled(Frame)`
+    width: 16px;
+    height: 16px;
+    background: url("${require(`../../assets/icons/info.svg`).default}") no-repeat center center / contain;
+    margin-left: 8px;
+`;
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+`;
+
+const SpinningArrows = styled(Frame)`
+    margin-left: 8px;
+    margin-bottom: 24px;
+    width: 16px;
+    height: 16px;
+    background: url("${require(`../../assets/icons/spinning-arrows.svg`).default}") no-repeat center center / contain;
+    animation: ${rotate} 3s linear infinite;
+`;
 
 const PageNumberWrapper = styled(Frame)`
     width: 34px;
@@ -350,7 +510,7 @@ const STd = styled(Frame)`
     flex: 1;
     flex-direction: row;
 
-    overflow: hidden;
+    /* overflow: hidden; */
     white-space: nowrap;
 
     ${({ clickable }) =>

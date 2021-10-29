@@ -67,74 +67,111 @@ export const Checkbox = styled.input.attrs((props) => {
     width: 20px;
     height: 20px;
     background: ${({ theme }) => theme.background.secondary};
-    border: 1px solid #C0C0C0;
+    border: 1px solid #c0c0c0;
     border-radius: 4px;
     cursor: pointer;
 `;
 
 /* SWITCH */
 
+// const SwitchWrapper = styled(Frame)`
+//     position: relative;
+//     * {
+//         cursor: pointer;
+//     }
+
+//     ${({ disabled = false }) =>
+//         disabled &&
+//         css`
+//             * {
+//                 cursor: default;
+//             }
+//         `}
+
+//     ${({ extra }) => extra}
+// `;
+
+// const SwitchKnob = styled.label`
+//     position: absolute;
+//     left: 0;
+//     width: 2.25em;
+//     height: 1.25em;
+//     border-radius: 15px;
+//     background: ${({ theme }) => theme.background.primary};
+//     border: 1px solid ${({ theme }) => theme.grey};
+//     cursor: pointer;
+//     transition: 0.2s;
+//     background: ${({ theme }) => theme.grey};
+
+//     &::after {
+//         content: "";
+//         display: block;
+//         border-radius: 50%;
+//         width: 1em;
+//         height: 1em;
+//         transition: 0.2s;
+//         position: absolute;
+//         top: 50%;
+//         transform: translate(2px, -50%);
+//         background: white;
+//     }
+// `;
+
+// const SwitchBox = styled.input`
+//     opacity: 0;
+//     z-index: 1;
+//     border-radius: 15px;
+//     width: 2.25em;
+//     height: 1em;
+//     &:checked + ${SwitchKnob} {
+//         background: ${({ theme }) => theme.blue};
+//         border: 1px solid ${({ theme }) => theme.blue};
+//         &::after {
+//             content: "";
+//             display: block;
+//             border-radius: 50%;
+//             width: 1em;
+//             height: 1em;
+//             transform: translate(calc(2.25em - 1em - 2px), -50%);
+//             transition: 0.2s;
+//             background: white;
+//         }
+//     }
+// `;
+
+// export const Switch = (props) => {
+//     const { name = `checkbox`, extra = `` } = props;
+//     console.log(props);
+//     return (
+//         <SwitchWrapper extra={extra}>
+//             <SwitchBox id={name} type={`checkbox`} {...props} />
+//             <SwitchKnob htmlFor={name} />
+//         </SwitchWrapper>
+//     );
+// };
+
 const SwitchWrapper = styled(Frame)`
     position: relative;
-
-    ${({ extra }) => extra}
-`;
-
-const SwitchKnob = styled.label`
-    position: absolute;
-    left: 0;
     width: 2.25em;
     height: 1.25em;
-    border-radius: 15px;
-    background: ${({ theme }) => theme.background.primary};
-    border: 1px solid ${({ theme }) => theme.grey};
-    cursor: pointer;
-    transition: 0.2s;
-
-    &::after {
+    border-radius: 1em;
+    background: ${({ theme, checked = false }) => (checked ? theme.blue : theme.grey)};
+    cursor: ${({ disabled = false }) => (disabled ? `default` : `pointer`)};
+    &:after {
         content: "";
-        display: block;
-        border-radius: 50%;
+        transition: 0.2s;
         width: 1em;
         height: 1em;
-        background: ${({ theme }) => theme.grey};
-        transition: 0.2s;
+        background: white;
+        border-radius: 1em;
         position: absolute;
-        top: 50%;
-        transform: translate(2px, -50%);
-    }
-`;
-
-const SwitchBox = styled.input`
-    opacity: 0;
-    z-index: 1;
-    border-radius: 15px;
-    width: 2.25em;
-    height: 1em;
-    &:checked + ${SwitchKnob} {
-        background: ${({ theme }) => theme.green};
-        border: 1px solid ${({ theme }) => theme.green};
-        &::after {
-            content: "";
-            display: block;
-            border-radius: 50%;
-            width: 1em;
-            height: 1em;
-            transform: translate(calc(2.25em - 1em - 2px), -50%);
-            transition: 0.2s;
-            background: white;
-        }
+        ${({ checked = false }) => (checked ? `right` : `left`)}: 0.125em;
     }
 `;
 
 export const Switch = (props) => {
-    const { name = `checkbox`, extra = `` } = props;
-    return (
-        <SwitchWrapper extra={extra}>
-            <SwitchBox id={name} type={`checkbox`} {...props} />
-            <SwitchKnob htmlFor={name} />
-        </SwitchWrapper>
-    );
+    const { name = `checkbox`, extra = ``, checked = false, onChange = () => {} } = props;
+    return <SwitchWrapper onClick={onChange} checked={checked} />;
 };
 
 /* FORM */
