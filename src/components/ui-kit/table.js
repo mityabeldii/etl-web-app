@@ -218,7 +218,10 @@ const Table = (props) => {
                                     crontab: (
                                         <Frame extra={`flex-direction: row;`}>
                                             <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name]}</Markdown>
-                                            <Tooltip label={`В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n2021-01-11 14:15`} children={<Info />} />
+                                            <Tooltip
+                                                label={`В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n2021-01-11 14:15`}
+                                                children={<Info />}
+                                            />
                                         </Frame>
                                     ),
                                     statistics: (
@@ -226,6 +229,7 @@ const Table = (props) => {
                                             {Object.keys(PROCESS_STATUS).map((status, index) => {
                                                 return (
                                                     <Tooltip
+                                                        key={index}
                                                         label={PROCESS_STATUS?.[status]}
                                                         children={
                                                             <StatisticsItem

@@ -360,7 +360,15 @@ const DropdownStyles = {
         border: 1px solid ${({ theme }) => theme.background.secondary};
 
         position: absolute;
-        top: ${({ toggleSize }) => toggleSize.height}px;
+        ${({ direction, toggleSize }) =>
+            ({
+                down: css`
+                    top: ${({ toggleSize }) => toggleSize.height}px;
+                `,
+                up: css`
+                    bottom: ${({ toggleSize }) => toggleSize.height}px;
+                `,
+            }?.[direction ?? `down`])}
         right: 0;
         z-index: 2;
         visibility: ${({ visible }) => (visible ? `visible` : `hidden`)};
@@ -377,6 +385,7 @@ export const Dropdown = (props) => {
     const menuRef = useRef();
     const toggleRef = useRef();
     const uniqueId = useRef(createId());
+    const [direction, setDirection] = useState(`down`);
     useOnClickOutside(menuRef, (e) => {
         const isCurrentDropdown = e.path.map((i) => i.className?.includes?.(uniqueId.current)).filter((i) => i).length === 0;
         if (isCurrentDropdown) {
@@ -399,15 +408,23 @@ export const Dropdown = (props) => {
             setOpened(false);
         }
     };
-    const handleToggleClick = () => {
+    const handleToggleClick = (event) => {
         setOpened(!opened);
+        setDirection(window?.innerHeight - event?.screenY > menuRef?.current?.clientHeight ? `down` : `up`);
     };
     return (
         <DropdownStyles.Wrapper extra={wrapperStyles} className={uniqueId.current}>
             <DropdownStyles.Toggle ref={toggleRef} extra={toggleStyles} onClick={handleToggleClick}>
                 {toggle}
             </DropdownStyles.Toggle>
-            <DropdownStyles.Menu ref={menuRef} visible={opened} extra={menuStyles} toggleSize={toggleSize} onClick={handleMenuItemClick}>
+            <DropdownStyles.Menu
+                ref={menuRef}
+                visible={opened}
+                extra={menuStyles}
+                toggleSize={toggleSize}
+                onClick={handleMenuItemClick}
+                direction={direction}
+            >
                 {menu}
             </DropdownStyles.Menu>
         </DropdownStyles.Wrapper>
