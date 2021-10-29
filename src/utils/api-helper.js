@@ -7,7 +7,7 @@ import { getStorage, putStorage } from "../hooks/useStorage";
 import { objectPut, sleep } from "./common-helper";
 
 export const getToken = () => {
-    let token = localStorage.getItem(`auth_token_gnx`);
+    const token = localStorage.getItem(`auth_token_etl`);
     return token;
 };
 

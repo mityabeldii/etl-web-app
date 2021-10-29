@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import { ThemeProvider } from "styled-components";
 import { HashRouter } from "react-router-dom";
 
@@ -8,7 +9,7 @@ import { setUpInterceptors } from "./utils/api-helper";
 
 import { StorageProvider } from "./hooks/useStorage";
 
-setUpInterceptors();
+// setUpInterceptors();
 
 const App = () => {
     return (
@@ -23,3 +24,5 @@ const App = () => {
 };
 
 export default App;
+
+/*eslint-enable*/
