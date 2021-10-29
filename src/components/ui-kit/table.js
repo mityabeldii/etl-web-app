@@ -261,9 +261,13 @@ const Table = (props) => {
                                                         { label: `Редактировать конфигурацию`, src: `processes-more-config-edit` },
                                                         { label: `История запусков процесса`, src: `processes-more-launches-history` },
                                                         { label: `История запусков задач`, src: `processes-more-tasks-history` },
-                                                        { label: `Ручной запуск`, src: `processes-more-manual-start` },
+                                                        {
+                                                            label: `Ручной запуск`,
+                                                            src: `processes-more-manual-start`,
+                                                            tooltip: { label: `Невозможно запустить активный процесс`, side: `left` },
+                                                        },
                                                     ].map((item, index) => {
-                                                        return (
+                                                        const children = (
                                                             <StatisticsMoreOption
                                                                 key={index}
                                                                 {...item}
@@ -272,6 +276,7 @@ const Table = (props) => {
                                                                 }}
                                                             />
                                                         );
+                                                        return item?.tooltip ? <Tooltip {...item?.tooltip} children={children} /> : children;
                                                     })}
                                                 </>
                                             }
@@ -301,7 +306,7 @@ const Table = (props) => {
                                             column?.onCellClick?.(cellState);
                                         }}
                                     >
-                                        {column?.tooltip ? <Tooltip label={column?.tooltip} children={cellContent} /> : cellContent}
+                                        {column?.tooltip ? <Tooltip {...column?.tooltip} children={cellContent} /> : cellContent}
                                     </STd>
                                 );
                             })}

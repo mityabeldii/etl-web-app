@@ -6,13 +6,13 @@ import Markdown from "markdown-to-jsx";
 import { Frame } from "../ui-kit/styled-templates";
 
 const Tooltip = (props = {}) => {
-    const { children, label = `` } = props;
+    const { children, label = ``, side = `top` } = props;
     return (
-        <TooltipCard>
-            <TooltipText>
-                {children}
-            </TooltipText>
-            <TooltipBox><Markdown>{label}</Markdown></TooltipBox>
+        <TooltipCard side={side}>
+            <TooltipText>{children}</TooltipText>
+            <TooltipBox side={side}>
+                <Markdown>{label}</Markdown>
+            </TooltipBox>
         </TooltipCard>
     );
 };
@@ -29,16 +29,37 @@ const TooltipBox = styled(Frame)`
     visibility: hidden;
     opacity: 0;
     position: absolute;
-    top: -11px;
-    left: 50%;
-    transform: translate(-50%, calc(-100% - 3px));
     font-weight: normal;
     font-size: 12px;
     line-height: 16px;
 
+    ${({ side = `top` }) =>
+        ({
+            top: css`
+                top: -11px;
+                left: 50%;
+                transform: translate(-50%, calc(-100% - 3px));
+            `,
+            right: css`
+                right: -50%;
+                top: 50%;
+                transform: translate(calc(50% + 3px), -50%);
+            `,
+            bottom: css`
+                bottom: -11px;
+                left: 50%;
+                transform: translate(-50%, calc(100% + 3px));
+            `,
+            left: css`
+                left: -50%;
+                top: 50%;
+                transform: translate(calc(-50% - 3px), -50%);
+            `,
+        }?.[side])}
+
     * {
-        color: #FFFFFF;
-    };
+        color: #ffffff;
+    }
 
     &:after {
         content: "";
@@ -48,9 +69,26 @@ const TooltipBox = styled(Frame)`
         border-right: 6px solid transparent;
         border-bottom: 6px solid #222222;
         opacity: 0.85;
-        transform: rotate(180deg) translate(0, -0.5px);
         position: absolute;
-        top: 100%;
+        ${({ side = `top` }) =>
+            ({
+                top: css`
+                    top: 100%;
+                    transform: rotate(-180deg) translate(0, 0px);
+                `,
+                right: css`
+                    right: 100%;
+                    transform: rotate(-90deg) translate(0, 2.5px);
+                `,
+                bottom: css`
+                    bottom: 100%;
+                    transform: rotate(0deg) translate(0, 0.5px);
+                `,
+                left: css`
+                    left: 100%;
+                    transform: rotate(90deg) translate(0, 2.5px);
+                `,
+            }?.[side])}
     }
 `;
 
@@ -59,7 +97,29 @@ const TooltipCard = styled.div`
     & ${TooltipText}:hover + ${TooltipBox} {
         visibility: visible;
         opacity: 1;
-        transform: translate(-50%, -100%);
+        ${({ side = `top` }) =>
+            ({
+                top: css`
+                    top: -11px;
+                    left: 50%;
+                    transform: translate(-50%, calc(-100% - 0px));
+                `,
+                right: css`
+                    right: -50%;
+                    top: 50%;
+                    transform: translate(calc(50% - 0px), -50%);
+                `,
+                bottom: css`
+                    bottom: -11px;
+                    left: 50%;
+                    transform: translate(-50%, calc(100% + 0px));
+                `,
+                left: css`
+                    left: -50%;
+                    top: 50%;
+                    transform: translate(calc(-50% + 0px), -50%);
+                `,
+            }?.[side])}
     }
 `;
 

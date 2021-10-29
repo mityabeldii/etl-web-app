@@ -373,7 +373,7 @@ const DropdownStyles = {
         z-index: 2;
         visibility: ${({ visible }) => (visible ? `visible` : `hidden`)};
         opacity: ${({ visible }) => (visible ? 1 : 0)};
-        transform: translate(0, ${({ visible }) => (visible ? 5 : -15)}px);
+        transform: translate(0, ${({ visible, direction = `down` }) => (visible ? { down: 5, up: -5 }?.[direction] : -15)}px);
 
         ${({ extra }) => extra}
     `,
