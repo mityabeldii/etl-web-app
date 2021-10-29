@@ -13,6 +13,8 @@ import ETLProcessesListPage from "../pages/etl-processes-list-page";
 import CreateDataSourceModal from "../modals/create-data-source-modal";
 import EditDataSourceModal from "../modals/edit-data-source-modal";
 import DatasourceAdHocQueryModal from "../modals/datasource-ad-hoc-query-modal";
+import CreateProcessModal from "../modals/create-process-modal";
+import EditProcessAttributesModal from "../modals/edit-process-attributes-modal";
 
 const RouterApp = () => {
     return (
@@ -20,6 +22,8 @@ const RouterApp = () => {
             <CreateDataSourceModal />
             <EditDataSourceModal />
             <DatasourceAdHocQueryModal />
+            <CreateProcessModal />
+            <EditProcessAttributesModal/>
 
             <RowWrapper>
                 <Menu />

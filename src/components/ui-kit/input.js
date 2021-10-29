@@ -1,6 +1,6 @@
 /*eslint-disable*/
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 const Input = (props) => {
     const { type = `text`, extra = ``, rightIcon, rightIconStyles = ``, leftIcon, leftIconStyles = `` } = props;
@@ -66,13 +66,21 @@ export const StyledInput = styled.input`
     height: 100%;
     padding: 7px 20px;
     border-radius: 4px;
-    border: 1px solid #DADADA;
+    border: 1px solid #dadada;
     background: ${({ theme }) => theme.background.secondary};
     color: ${({ theme }) => theme.text.primary};
     display: flex;
     flex: 1;
     margin: 0;
     font-size: inherit;
+
+    ${({ readOnly }) =>
+        readOnly &&
+        css`
+            cursor: default;
+            background: #ebebeb;
+            color: #67686D;
+        `}
 
     ::-webkit-input-placeholder {
         color: ${({ theme }) => theme.text.secondary};

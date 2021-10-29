@@ -14,8 +14,8 @@ import { createId, togglePush } from "../../utils/common-helper";
 import { getStorage, mergeStorage, putStorage, useStorageListener } from "../../hooks/useStorage";
 import useDebounce from "../../hooks/useDebounde";
 
-import { EVENTS, SORT_ORDERS } from "../../constants/config";
-import useEventListener from "../../hooks/useEventListener";
+import { EVENTS, MODALS, SORT_ORDERS } from "../../constants/config";
+import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 
 const Table = (props) => {
     const {
@@ -253,7 +253,13 @@ const Table = (props) => {
                                                         menu={
                                                             <>
                                                                 {[
-                                                                    { label: `Редактировать атрибуты`, src: `processes-more-edit-attributes` },
+                                                                    {
+                                                                        label: `Редактировать атрибуты`,
+                                                                        src: `processes-more-edit-attributes`,
+                                                                        onClick: ({ row }) => {
+                                                                            eventDispatch(`OPEN_${MODALS.EDIT_PROCESS_ATTRIBUTES}_MODAL`, row);
+                                                                        },
+                                                                    },
                                                                     { label: `Удалить процесс`, src: `processes-more-delete`, muted: true },
                                                                     { label: `Просмотреть конфигурацию`, src: `processes-more-config-preview` },
                                                                     { label: `Редактировать конфигурацию`, src: `processes-more-config-edit` },
@@ -261,7 +267,15 @@ const Table = (props) => {
                                                                     { label: `История запусков задач`, src: `processes-more-tasks-history` },
                                                                     { label: `Ручной запуск`, src: `processes-more-manual-start` },
                                                                 ].map((item, index) => {
-                                                                    return <StatisticsMoreOption key={index} {...item} />;
+                                                                    return (
+                                                                        <StatisticsMoreOption
+                                                                            key={index}
+                                                                            {...item}
+                                                                            onClick={() => {
+                                                                                item?.onClick?.(cellState);
+                                                                            }}
+                                                                        />
+                                                                    );
                                                                 })}
                                                             </>
                                                         }

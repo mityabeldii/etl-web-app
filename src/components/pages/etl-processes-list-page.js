@@ -13,14 +13,14 @@ import DatasourceAPI from "../../api/datasource-api";
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
 
 const ETLProcessesListPage = () => {
-    const openCreateDataSourceModal = () => {
-        eventDispatch(`OPEN_${MODALS.CREATE_DATA_SOURCE_MODAL}_MODAL`);
+    const openCreateProcessModal = () => {
+        eventDispatch(`OPEN_${MODALS.CREATE_PROCESS_MODAL}_MODAL`);
     };
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Heading>ETL-процессы</Heading>
-                <Button leftIcon={`plus-in-circle-white`} background={`orange`} onClick={openCreateDataSourceModal}>
+                <Button leftIcon={`plus-in-circle-white`} background={`orange`} onClick={openCreateProcessModal}>
                     Добавить процесс
                 </Button>
             </RowWrapper>
