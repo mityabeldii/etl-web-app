@@ -32,3 +32,10 @@ export const FORMS = {
     CREATE_PROCESS_MODAL: "CREATE_PROCESS_MODAL",
     EDIT_PROCESS_ATTRIBUTES: "EDIT_PROCESS_ATTRIBUTES",
 };
+
+export const PROCESS_STATUS = {
+    success: "Успешно",
+    in_progress: "В процессе",
+    error: "Ошибка",
+    force_completed: "Завершен принудительно",
+};

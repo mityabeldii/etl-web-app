@@ -72,6 +72,7 @@ const ProcessesList = {
         {
             name: `active`,
             label: `Активность`,
+            tooltip: `Активировать процесс`,
             cell: {
                 type: `switch`,
                 onChange: ({ row }) => {
@@ -84,6 +85,7 @@ const ProcessesList = {
         {
             name: `lastDate`,
             label: `Посл. запуск`,
+            tooltip: `В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n 2021-01-11 14:15`,
             transform: ({ row }) => `${row.lastDate}\n\n${row.lastStatus}`,
             cell: {
                 extra: `* { line-height: 8px; };`,

@@ -14,8 +14,9 @@ import { createId, togglePush } from "../../utils/common-helper";
 import { getStorage, mergeStorage, putStorage, useStorageListener } from "../../hooks/useStorage";
 import useDebounce from "../../hooks/useDebounde";
 
-import { EVENTS, MODALS, SORT_ORDERS } from "../../constants/config";
+import { EVENTS, MODALS, PROCESS_STATUS, SORT_ORDERS } from "../../constants/config";
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
+import Tooltip from "./tooltip";
 
 const Table = (props) => {
     const {
@@ -186,6 +187,107 @@ const Table = (props) => {
                             )}
                             {columns.map((column, column_index) => {
                                 const cellState = { row, column: column?.name, value: row?.[column?.name] };
+                                const cellContent = {
+                                    text: <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name]}</Markdown>,
+                                    button: (
+                                        <Button
+                                            {...(column?.cell ?? {})}
+                                            onClick={(e) => {
+                                                column?.cell?.onClick?.(row);
+                                            }}
+                                        >
+                                            {column?.cell?.children}
+                                        </Button>
+                                    ),
+                                    link: (
+                                        <Link to={column?.cell?.to?.(cellState) ?? `/`}>{column?.transform?.(cellState) ?? row?.[column?.name]}</Link>
+                                    ),
+                                    switch: (
+                                        <Switch
+                                            onChange={() => {}}
+                                            {...column?.cell}
+                                            checked={(column?.transform?.(cellState) ?? row?.[column?.name]) === true}
+                                        />
+                                    ),
+                                    process_name: (
+                                        <Frame extra={`flex-direction: row;`}>
+                                            <Markdown>{`**${row?.name}**\n\n${row?.description}`}</Markdown>
+                                            {row?.in_progress && <Tooltip label={`Процесс запущен`} children={<SpinningArrows />} />}
+                                        </Frame>
+                                    ),
+                                    crontab: (
+                                        <Frame extra={`flex-direction: row;`}>
+                                            <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name]}</Markdown>
+                                            <Tooltip label={`В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n2021-01-11 14:15`} children={<Info />} />
+                                        </Frame>
+                                    ),
+                                    statistics: (
+                                        <Frame extra={`flex-direction: row; > * { margin-left: 8px; &:nth-child { margin-left: 0px; }; };`}>
+                                            {Object.keys(PROCESS_STATUS).map((status, index) => {
+                                                return (
+                                                    <Tooltip
+                                                        label={PROCESS_STATUS?.[status]}
+                                                        children={
+                                                            <StatisticsItem
+                                                                key={index}
+                                                                status={status}
+                                                                value={(column?.transform?.(cellState) ?? row?.[column?.name])?.[status] ?? `*`}
+                                                            />
+                                                        }
+                                                    />
+                                                );
+                                            })}
+                                        </Frame>
+                                    ),
+                                    process_more_button: (
+                                        <Dropdown
+                                            toggle={<MoreButton />}
+                                            menu={
+                                                <>
+                                                    {[
+                                                        {
+                                                            label: `Редактировать атрибуты`,
+                                                            src: `processes-more-edit-attributes`,
+                                                            onClick: ({ row }) => {
+                                                                eventDispatch(`OPEN_${MODALS.EDIT_PROCESS_ATTRIBUTES}_MODAL`, row);
+                                                            },
+                                                        },
+                                                        { label: `Удалить процесс`, src: `processes-more-delete`, muted: true },
+                                                        { label: `Просмотреть конфигурацию`, src: `processes-more-config-preview` },
+                                                        { label: `Редактировать конфигурацию`, src: `processes-more-config-edit` },
+                                                        { label: `История запусков процесса`, src: `processes-more-launches-history` },
+                                                        { label: `История запусков задач`, src: `processes-more-tasks-history` },
+                                                        { label: `Ручной запуск`, src: `processes-more-manual-start` },
+                                                    ].map((item, index) => {
+                                                        return (
+                                                            <StatisticsMoreOption
+                                                                key={index}
+                                                                {...item}
+                                                                onClick={() => {
+                                                                    item?.onClick?.(cellState);
+                                                                }}
+                                                            />
+                                                        );
+                                                    })}
+                                                </>
+                                            }
+                                            menuStyles={({ theme }) =>
+                                                css`
+                                                    padding: 0;
+                                                    background: ${theme.background.secondary};
+                                                    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.05));
+                                                    border: 1px solid #d1d1d1;
+                                                    > * {
+                                                        border-bottom: 1px solid #d1d1d1;
+                                                        &:last-child {
+                                                            border-bottom: 0px;
+                                                        }
+                                                    }
+                                                `
+                                            }
+                                        />
+                                    ),
+                                }?.[column?.cell?.type ?? `text`];
                                 return (
                                     <STd
                                         key={column_index}
@@ -195,108 +297,7 @@ const Table = (props) => {
                                             column?.onCellClick?.(cellState);
                                         }}
                                     >
-                                        {
-                                            {
-                                                text: <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name]}</Markdown>,
-                                                button: (
-                                                    <Button
-                                                        {...(column?.cell ?? {})}
-                                                        onClick={(e) => {
-                                                            column?.cell?.onClick?.(row);
-                                                        }}
-                                                    >
-                                                        {column?.cell?.children}
-                                                    </Button>
-                                                ),
-                                                link: (
-                                                    <Link to={column?.cell?.to?.(cellState) ?? `/`}>
-                                                        {column?.transform?.(cellState) ?? row?.[column?.name]}
-                                                    </Link>
-                                                ),
-                                                switch: (
-                                                    <Switch
-                                                        onChange={() => {}}
-                                                        {...column?.cell}
-                                                        checked={(column?.transform?.(cellState) ?? row?.[column?.name]) === true}
-                                                    />
-                                                ),
-                                                process_name: (
-                                                    <Frame extra={`flex-direction: row;`}>
-                                                        <Markdown>{`**${row?.name}**\n\n${row?.description}`}</Markdown>
-                                                        {row?.in_progress && <SpinningArrows />}
-                                                    </Frame>
-                                                ),
-                                                crontab: (
-                                                    <Frame extra={`flex-direction: row;`}>
-                                                        <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name]}</Markdown>
-                                                        <Info />
-                                                    </Frame>
-                                                ),
-                                                statistics: (
-                                                    <Frame
-                                                        extra={`flex-direction: row; > * { margin-left: 8px; &:nth-child { margin-left: 0px; }; };`}
-                                                    >
-                                                        {[`success`, `in_progress`, `error`, `force_completed`].map((status, index) => {
-                                                            return (
-                                                                <StatisticsItem
-                                                                    key={index}
-                                                                    status={status}
-                                                                    value={(column?.transform?.(cellState) ?? row?.[column?.name])?.[status] ?? `*`}
-                                                                />
-                                                            );
-                                                        })}
-                                                    </Frame>
-                                                ),
-                                                process_more_button: (
-                                                    <Dropdown
-                                                        toggle={<MoreButton />}
-                                                        menu={
-                                                            <>
-                                                                {[
-                                                                    {
-                                                                        label: `Редактировать атрибуты`,
-                                                                        src: `processes-more-edit-attributes`,
-                                                                        onClick: ({ row }) => {
-                                                                            eventDispatch(`OPEN_${MODALS.EDIT_PROCESS_ATTRIBUTES}_MODAL`, row);
-                                                                        },
-                                                                    },
-                                                                    { label: `Удалить процесс`, src: `processes-more-delete`, muted: true },
-                                                                    { label: `Просмотреть конфигурацию`, src: `processes-more-config-preview` },
-                                                                    { label: `Редактировать конфигурацию`, src: `processes-more-config-edit` },
-                                                                    { label: `История запусков процесса`, src: `processes-more-launches-history` },
-                                                                    { label: `История запусков задач`, src: `processes-more-tasks-history` },
-                                                                    { label: `Ручной запуск`, src: `processes-more-manual-start` },
-                                                                ].map((item, index) => {
-                                                                    return (
-                                                                        <StatisticsMoreOption
-                                                                            key={index}
-                                                                            {...item}
-                                                                            onClick={() => {
-                                                                                item?.onClick?.(cellState);
-                                                                            }}
-                                                                        />
-                                                                    );
-                                                                })}
-                                                            </>
-                                                        }
-                                                        menuStyles={({ theme }) =>
-                                                            css`
-                                                                padding: 0;
-                                                                background: ${theme.background.secondary};
-                                                                filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.05));
-                                                                border: 1px solid #d1d1d1;
-                                                                > * {
-                                                                    border-bottom: 1px solid #d1d1d1;
-                                                                    &:last-child {
-                                                                        border-bottom: 0px;
-                                                                    }
-                                                                }
-                                                            `
-                                                        }
-                                                    />
-                                                ),
-                                            }?.[column?.cell?.type ?? `text`]
-                                        }
+                                        {column?.tooltip ? <Tooltip label={column?.tooltip} children={cellContent} /> : cellContent}
                                     </STd>
                                 );
                             })}
