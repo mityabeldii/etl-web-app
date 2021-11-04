@@ -5,7 +5,6 @@ const usePagination = (items = [], options = {}) => {
     const [perPage, setPerPage] = useState(options?.perPage ?? 10);
     const [currentPage, setCurrentPage] = useState(0);
     const pagesCount = Math.ceil(items?.length / perPage);
-    console.log({ currentPage, perPage, pagesCount });
     useEffect(() => {
         try {
             document.getElementById(`scrollWrapper`).scrollTo({ top: 0, behavior: "smooth" });

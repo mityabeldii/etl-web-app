@@ -1,4 +1,5 @@
 /*eslint-disable*/
+import { useState } from "react";
 import styled, { css } from "styled-components";
 import { useLocation } from "react-router";
 
@@ -13,15 +14,17 @@ import DatasourceAPI from "../../api/datasource-api";
 import { useStorageListener } from "../../hooks/useStorage";
 
 const DatasourcesListPage = () => {
+    const [search, setSearch] = useState(``);
     const openCreateDataSourceModal = () => {
         eventDispatch(`OPEN_${MODALS.CREATE_DATA_SOURCE_MODAL}_MODAL`);
+    };
+    const handleSearchChange = (e) => {
+        setSearch(e.target.value);
     };
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
-                <Heading>
-                    Источники данных
-                </Heading>
+                <Heading>Источники данных</Heading>
                 <Button leftIcon={`plus-in-circle-white`} background={`orange`} onClick={openCreateDataSourceModal}>
                     Добавить источник
                 </Button>
@@ -30,8 +33,8 @@ const DatasourcesListPage = () => {
                 name={TABLES.DATASOURCE_LIST}
                 fetchFunction={DatasourceAPI.getDatasources}
                 {...tablesColumns[TABLES.DATASOURCE_LIST]}
-                extraHeader={<Search />}
-                useBackendProcessing={false}
+                extraHeader={<Search value={search} onChange={handleSearchChange} />}
+                filters={{ host: search, port: search }}
             />
         </>
     );

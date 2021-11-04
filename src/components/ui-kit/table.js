@@ -41,6 +41,8 @@ const Table = (props) => {
         extraHeader,
         useBackendProcessing = true,
         rows: propRows = [],
+        filters: propsFilters = {},
+        booleanOperation = `conjunction`,
     } = props;
     if (!name) {
         throw new Error(`[table.js] - name is not  defined`);
@@ -54,7 +56,7 @@ const Table = (props) => {
     const setSelectedRows = (newValue = []) => {
         putStorage(`tables.${name}.selectedRows`, newValue.slice(0, selectionLimit));
     };
-    const { filters = {} } = tableState;
+    const filters = useBackendProcessing ? tableState?.filters ?? {} : propsFilters ?? {};
     const setFilter = (filter, newValue) => {
         putStorage(`tables.${name}.filters.${filter}`, newValue);
     };
@@ -63,7 +65,7 @@ const Table = (props) => {
         putStorage(`tables.${name}.sort`, [{ field, order }]);
     };
     const frontendPagination = usePagination(rows);
-    const pagination = useBackendProcessing ? tableState?.pagination ?? {} : frontendPagination;
+    const pagination = useBackendProcessing ? tableState?.pagination ?? {} : frontendPagination ?? {};
     const { currentPage = 0, perPage = paginationOptions?.[0] ?? 1, pagesCount = 1, totalCount = 1 } = pagination;
     const maxPageNumber = Math.ceil(totalCount / perPage);
     const debouncedParams = useDebounce(JSON.stringify({ filters }), 300);
@@ -173,7 +175,19 @@ const Table = (props) => {
                     })}
                 </STr> */}
                 {(!useBackendProcessing ? frontendPagination.visibleItems ?? [] : rows.length === 0 && propRows ? propRows : rows)
-                    ?.filter?.((i) => useBackendProcessing || true)
+                    ?.filter?.((i) => {
+                        return (
+                            useBackendProcessing ||
+                            Object.entries(filters)
+                                .map(([key, value], index) => i?.[key]?.includes?.(value))
+                                ?.reduce?.(
+                                    ...{
+                                        conjunction: [(a, b) => a && b, true],
+                                        disjunction: [(a, b) => a || b, false],
+                                    }?.[booleanOperation ?? `conjunction`]
+                                )
+                        );
+                    })
                     ?.map?.((row, row_index) => (
                         <STr key={row_index}>
                             {selectable && (
