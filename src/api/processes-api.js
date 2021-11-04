@@ -38,7 +38,7 @@ const ProcessesAPI = {
     async updateProcess(data) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.put(`${base_url}/process/${data?.id}`, _.omit(data, [`id`]))).data;
+                const response = (await axios.put(`${base_url}/process/${data?.id}`, data)).data;
                 await ProcessesAPI.getProcesses();
                 return response;
             } catch (error) {

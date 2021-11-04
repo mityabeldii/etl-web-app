@@ -4,6 +4,7 @@ import { putStorage, mergeStorage } from "../hooks/useStorage";
 import { createId, linkTo } from "../utils/common-helper";
 import { eventDispatch } from "../hooks/useEventListener";
 import _ from "lodash";
+import ProcessesAPI from "../api/processes-api";
 
 const DatasourceList = {
     useBackendProcessing: false,
@@ -78,7 +79,7 @@ const ProcessesList = {
             cell: {
                 type: `switch`,
                 onChange: ({ row }) => {
-                    console.log(row);
+                    ProcessesAPI.updateProcess({ ...row, active: !(row?.active === true) });
                 },
             },
         },

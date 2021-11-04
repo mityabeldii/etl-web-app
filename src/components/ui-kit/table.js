@@ -287,7 +287,7 @@ const TableCell = ({ cellState }) => {
                     <Switch
                         {...column?.cell}
                         onChange={() => {
-                            column?.cell?.onChange?.(cellStates);
+                            column?.cell?.onChange?.(cellState);
                         }}
                         checked={transformedValue === true}
                     />

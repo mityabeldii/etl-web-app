@@ -18,7 +18,7 @@ const ETLProcessesListPage = () => {
     const openCreateProcessModal = () => {
         eventDispatch(`OPEN_${MODALS.CREATE_PROCESS_MODAL}_MODAL`);
     };
-    const [search, setSearch] = useState({});
+    const [filters, setFilters] = useState({});
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
@@ -31,12 +31,12 @@ const ETLProcessesListPage = () => {
                 name={TABLES.PROCESSES_LIST}
                 fetchFunction={ProcessesAPI.getProcesses}
                 {...tablesColumns[TABLES.PROCESSES_LIST]}
+                // filters={filters}
+                // booleanOperation={`disjunction`}
                 extraHeader={
                     <SearchBar
-                        value={search}
-                        onChange={(e) => {
-                            setSearch(e.target.value);
-                        }}
+                        value={filters}
+                        onChange={setFilters}
                     />
                 }
             />
@@ -56,14 +56,14 @@ const Heading = styled(H1)`
 const SearchBar = ({ value = {}, onChange = () => {} }) => {
     const checked = value?.active === true;
     const toggleCheck = () => {
-        onChange({ target: { value: { ...value, active: !(checked === true) } } });
+        onChange({ ...value, active: !(checked === true) });
     };
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada;`}>
             <Search
                 value={value?.host ?? ``}
                 onChange={(e) => {
-                    onChange({ target: { value: { ...value, host: e.target.value, port: e.target.value } } });
+                    onChange({ ...value, host: e.target.value, port: e.target.value });
                 }}
             />
             <RowWrapper
