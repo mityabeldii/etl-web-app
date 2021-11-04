@@ -7,18 +7,24 @@ import { Control } from "../ui-kit/control";
 import PopUpWrapper from "./pop-up-wrapper";
 
 import useForm from "../../hooks/useForm";
+
+import ProcessesAPI from "../../api/processes-api";
+
 import { eventDispatch } from "../../hooks/useEventListener";
 
 const schema = (yup) =>
     yup.object().shape({
-        name: yup.string().required(`Это поле обязательно`),
-        activity_sign: yup.string().required(`Это поле обязательно`),
+        processName: yup.string().required(`Это поле обязательно`),
+        active: yup.bool().required(`Это поле обязательно`),
     });
 
 const CreateProcessModal = () => {
     const { Form, onSubmit, setValue, clearForm } = useForm({ name: FORMS.CREATE_PROCESS_MODAL, schema });
-    const handleSubmit = (data) => {
-        console.log(data);
+    const handleSubmit = async (data) => {
+        try {
+            await ProcessesAPI.createProcess(data);
+            closeModal();
+        } catch (error) {}
     };
     const closeModal = () => {
         clearForm();
@@ -29,17 +35,25 @@ const CreateProcessModal = () => {
             <Form onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
                 <H1 extra={`width: 100%; margin-bottom: 24px;`}>Добавить ETL-процесс</H1>
                 <Control.Row>
-                    <Control.Input name={`name`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />
+                    <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />
                 </Control.Row>
                 <Control.Row>
-                    <Control.Textarea name={`description`} label={`Описание`} placeholder={`Краткое описание источника`} controlStyles={`flex: 1;`} />
+                    <Control.Textarea
+                        name={`processDescription`}
+                        label={`Описание`}
+                        placeholder={`Краткое описание источника`}
+                        controlStyles={`flex: 1;`}
+                    />
                 </Control.Row>
                 <Control.Row>
                     <Control.Input name={`cron`} label={`Расписание запуска`} placeholder={`Время и дата по Cron`} />
                     <Control.Select
-                        name={`activity_sign`}
+                        name={`active`}
                         label={`Признак активности`}
-                        options={[`Неактивен`].map((item, index) => ({ label: item, value: item }))}
+                        options={[
+                            { label: `Активен`, value: true },
+                            { label: `Неактивен`, value: false },
+                        ]}
                         isRequired
                     />
                 </Control.Row>

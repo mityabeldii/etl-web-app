@@ -1,6 +1,7 @@
 /*eslint-disable*/
 import React, { useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
+import _ from "lodash";
 
 import { Checkbox, Frame, RowWrapper } from "./styled-templates";
 import Input from "./input";
@@ -10,7 +11,7 @@ import Select from "./select";
 import { getElementParrentsPath } from "../../utils/common-helper";
 import caseHelper from "../../utils/case-helper";
 
-import { useStorageListener } from "../../hooks/useStorage";
+import { putStorage, useStorageListener } from "../../hooks/useStorage";
 
 const useFormName = () => {
     const ref = useRef();
@@ -29,7 +30,13 @@ export const ControlWrapper = (props) => {
 
     const childrenWithProps = React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-            return React.cloneElement(child, { value, formName, onChange: () => {} });
+            return React.cloneElement(child, {
+                value,
+                formName,
+                onChange: (e) => {
+                    putStorage(`forms.${formName}.${name}`, e.target.value);
+                },
+            });
         }
         return child;
     });
@@ -74,6 +81,35 @@ export const ErrorLabel = styled(Frame)`
     width: auto !important;
 `;
 
+const Cron = (props) => {
+    const { value = {}, onChange = () => {} } = props;
+    const { dayOfMonth = `*`, dayOfTheWeek = `*`, hours = `*`, minutes = `*`, month = `*` } = value;
+    return (
+        <Input
+            {...props}
+            value={`${minutes} ${hours} ${dayOfMonth} ${month} ${dayOfTheWeek}`}
+            onChange={(e) => {
+                let newValue = e.target.value;
+                while (newValue.indexOf(`  `) > 0) {
+                    newValue = newValue.replace(/  /g, ` `);
+                }
+                if (newValue?.split(` `).length <= 5) {
+                    const newEvent = {
+                        target: {
+                            value: Object.fromEntries(
+                                newValue
+                                    .split(` `)
+                                    .map((value, index) => [[`minutes`, `hours`, `dayOfMonth`, `month`, `dayOfTheWeek`]?.[index], value])
+                            ),
+                        },
+                    };
+                    onChange(newEvent);
+                }
+            }}
+        />
+    );
+};
+
 export const Control = {
     Input: (props) => {
         const { extra = `` } = props;
@@ -104,6 +140,14 @@ export const Control = {
         return (
             <ControlWrapper {...props}>
                 <Select {...props} extra={`width: 100%;` + extra} />
+            </ControlWrapper>
+        );
+    },
+    Cron: (props) => {
+        const { extra = `` } = props;
+        return (
+            <ControlWrapper {...props}>
+                <Input {...props} extra={`width: 100%;` + extra} />
             </ControlWrapper>
         );
     },

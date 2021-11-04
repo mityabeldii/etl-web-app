@@ -1,4 +1,5 @@
 /*eslint-disable*/
+import { useState } from "react";
 import styled, { css } from "styled-components";
 import { useLocation } from "react-router";
 
@@ -17,6 +18,7 @@ const ETLProcessesListPage = () => {
     const openCreateProcessModal = () => {
         eventDispatch(`OPEN_${MODALS.CREATE_PROCESS_MODAL}_MODAL`);
     };
+    const [search, setSearch] = useState({});
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
@@ -29,7 +31,14 @@ const ETLProcessesListPage = () => {
                 name={TABLES.PROCESSES_LIST}
                 fetchFunction={ProcessesAPI.getProcesses}
                 {...tablesColumns[TABLES.PROCESSES_LIST]}
-                extraHeader={<SearchBar />}
+                extraHeader={
+                    <SearchBar
+                        value={search}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                        }}
+                    />
+                }
             />
         </>
     );
@@ -44,14 +53,19 @@ const Heading = styled(H1)`
     }
 `;
 
-const SearchBar = () => {
-    const checked = useStorageListener((state) => state?.temp?.startedProcessesChecked ?? false);
+const SearchBar = ({ value = {}, onChange = () => {} }) => {
+    const checked = value?.active === true;
     const toggleCheck = () => {
-        putStorage(`temp.startedProcessesChecked`, !(checked === true));
+        onChange({ target: { value: { ...value, active: !(checked === true) } } });
     };
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada;`}>
-            <Search />
+            <Search
+                value={value?.host ?? ``}
+                onChange={(e) => {
+                    onChange({ target: { value: { ...value, host: e.target.value, port: e.target.value } } });
+                }}
+            />
             <RowWrapper
                 onClick={toggleCheck}
                 extra={css`

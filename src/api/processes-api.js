@@ -1,5 +1,6 @@
 /*eslint-disable*/
 import axios from "axios";
+import _ from "lodash";
 
 import { handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
 import CaseHalper from "../utils/case-helper";
@@ -17,6 +18,39 @@ const ProcessesAPI = {
                     rows: response,
                     pagination: response?._meta ?? {},
                 });
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+    async createProcess(data) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.post(`${base_url}/process`, _.omit(data, [`id`]))).data;
+                await ProcessesAPI.getProcesses();
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+    async updateProcess(data) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.put(`${base_url}/process/${data?.id}`, _.omit(data, [`id`]))).data;
+                await ProcessesAPI.getProcesses();
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+    async deleteProcess(id) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.delete(`${base_url}/process/${id}`)).data;
+                await ProcessesAPI.getProcesses();
                 return response;
             } catch (error) {
                 throw handleError(error);

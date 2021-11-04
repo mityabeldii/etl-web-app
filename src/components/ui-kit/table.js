@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import styled, { css, keyframes } from "styled-components";
 import { Link } from "react-router-dom";
 import _ from "lodash";
@@ -15,9 +15,10 @@ import { createId, togglePush } from "../../utils/common-helper";
 import { getStorage, mergeStorage, putStorage, useStorageListener } from "../../hooks/useStorage";
 import useDebounce from "../../hooks/useDebounde";
 
-import { EVENTS, MODALS, PROCESS_STATUS, SORT_ORDERS } from "../../constants/config";
+import { EVENTS, MODALS, PROCESS_STATUS, SORT_ORDERS, TABLES } from "../../constants/config";
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import usePagination from "../../hooks/usePagination";
+import ProcessDropdown from "../tools/process-dropdown";
 
 const Table = (props) => {
     const {
@@ -174,7 +175,7 @@ const Table = (props) => {
                         );
                     })}
                 </STr> */}
-                {(!useBackendProcessing ? frontendPagination.visibleItems ?? [] : rows.length === 0 && propRows ? propRows : rows)
+                {(!useBackendProcessing && withPagination ? frontendPagination.visibleItems ?? [] : rows.length === 0 && propRows ? propRows : rows)
                     ?.filter?.((i) => {
                         return (
                             useBackendProcessing ||
@@ -189,7 +190,7 @@ const Table = (props) => {
                         );
                     })
                     ?.map?.((row, row_index) => (
-                        <STr key={row_index}>
+                        <STr key={row_index} extra={name === TABLES.PROCESSES_LIST && `align-items: flex-start;`}>
                             {selectable && (
                                 <STd extra={`flex: unset; width: 40px;`}>
                                     <Checkbox
@@ -202,133 +203,8 @@ const Table = (props) => {
                                 </STd>
                             )}
                             {columns.map((column, column_index) => {
-                                const cellState = { row, column: column?.name, value: row?.[column?.name] };
-                                const cellContent = {
-                                    text: <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name] ?? ``}</Markdown>,
-                                    button: (
-                                        <Button
-                                            {...(column?.cell ?? {})}
-                                            onClick={(e) => {
-                                                column?.cell?.onClick?.(row);
-                                            }}
-                                        >
-                                            {column?.cell?.children}
-                                        </Button>
-                                    ),
-                                    link: (
-                                        <Link to={column?.cell?.to?.(cellState) ?? `/`}>{column?.transform?.(cellState) ?? row?.[column?.name]}</Link>
-                                    ),
-                                    switch: (
-                                        <Switch
-                                            onChange={() => {}}
-                                            {...column?.cell}
-                                            checked={(column?.transform?.(cellState) ?? row?.[column?.name]) === true}
-                                        />
-                                    ),
-                                    process_name: (
-                                        <Frame extra={`flex-direction: row;`}>
-                                            <Markdown>{`**${row?.name}**\n\n${row?.description}`}</Markdown>
-                                            {row?.in_progress && <Tooltip label={`Процесс запущен`} children={<SpinningArrows />} />}
-                                        </Frame>
-                                    ),
-                                    crontab: (
-                                        <Frame extra={`flex-direction: row;`}>
-                                            <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name] ?? ``}</Markdown>
-                                            <Tooltip
-                                                label={`В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n2021-01-11 14:15`}
-                                                children={<Info />}
-                                            />
-                                        </Frame>
-                                    ),
-                                    statistics: (
-                                        <Frame extra={`flex-direction: row; > * { margin-left: 8px; &:nth-child { margin-left: 0px; }; };`}>
-                                            {Object.keys(PROCESS_STATUS).map((status, index) => {
-                                                return (
-                                                    <Tooltip
-                                                        key={index}
-                                                        label={PROCESS_STATUS?.[status]}
-                                                        children={
-                                                            <StatisticsItem
-                                                                key={index}
-                                                                status={status}
-                                                                value={(column?.transform?.(cellState) ?? row?.[column?.name])?.[status] ?? `*`}
-                                                            />
-                                                        }
-                                                    />
-                                                );
-                                            })}
-                                        </Frame>
-                                    ),
-                                    process_more_button: (
-                                        <Dropdown
-                                            toggle={<MoreButton />}
-                                            menu={
-                                                <>
-                                                    {[
-                                                        {
-                                                            label: `Редактировать атрибуты`,
-                                                            src: `processes-more-edit-attributes`,
-                                                            onClick: ({ row }) => {
-                                                                eventDispatch(`OPEN_${MODALS.EDIT_PROCESS_ATTRIBUTES}_MODAL`, row);
-                                                            },
-                                                        },
-                                                        { label: `Удалить процесс`, src: `processes-more-delete`, muted: true },
-                                                        { label: `Просмотреть конфигурацию`, src: `processes-more-config-preview` },
-                                                        { label: `Редактировать конфигурацию`, src: `processes-more-config-edit` },
-                                                        { label: `История запусков процесса`, src: `processes-more-launches-history` },
-                                                        { label: `История запусков задач`, src: `processes-more-tasks-history` },
-                                                        {
-                                                            label: `Ручной запуск`,
-                                                            src: `processes-more-manual-start`,
-                                                            tooltip: { label: `Невозможно запустить активный процесс`, side: `left` },
-                                                        },
-                                                    ].map((item, index) => {
-                                                        const children = (
-                                                            <StatisticsMoreOption
-                                                                key={index}
-                                                                {...item}
-                                                                onClick={() => {
-                                                                    item?.onClick?.(cellState);
-                                                                }}
-                                                            />
-                                                        );
-                                                        return item?.tooltip ? (
-                                                            <Tooltip key={index} {...item?.tooltip} children={children} />
-                                                        ) : (
-                                                            children
-                                                        );
-                                                    })}
-                                                </>
-                                            }
-                                            menuStyles={({ theme }) =>
-                                                css`
-                                                    padding: 0;
-                                                    background: ${theme.background.secondary};
-                                                    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.05));
-                                                    border: 1px solid #d1d1d1;
-                                                    > * {
-                                                        border-bottom: 1px solid #d1d1d1;
-                                                        &:last-child {
-                                                            border-bottom: 0px;
-                                                        }
-                                                    }
-                                                `
-                                            }
-                                        />
-                                    ),
-                                }?.[column?.cell?.type ?? `text`];
-                                return (
-                                    <STd
-                                        key={column_index}
-                                        extra={(column?.extra ?? ``) + (column?.cell?.extra ?? ``)}
-                                        clickable={column?.onCellClick}
-                                        onClick={() => {
-                                            column?.onCellClick?.(cellState);
-                                        }}
-                                    >
-                                        {column?.tooltip ? <Tooltip {...column?.tooltip} children={cellContent} /> : cellContent}
-                                    </STd>
-                                );
+                                const cellState = { row, column, value: row?.[column?.name] };
+                                return <TableCell key={column_index} cellState={cellState} />;
                             })}
                         </STr>
                     ))}
@@ -389,51 +265,76 @@ const Table = (props) => {
     );
 };
 
-const StatisticsMoreOption = styled(Frame)`
-    width: 275px;
-    padding: 15px 18px;
-    flex-direction: row;
-    justify-content: flex-start;
-    cursor: default;
-    opacity: 0.5;
-
-    ${({ muted = false }) =>
-        !muted &&
-        css`
-            cursor: pointer;
-            opacity: 1;
-        `}
-
-    ${({ muted = false }) =>
-        !muted &&
-        css`
-            &:hover {
-                &:after {
-                    transform: translate(2px, 0);
-                }
-            }
-        `}
-
-    &:before {
-        content: "";
-        width: 16px;
-        height: 16px;
-        background: url("${({ src }) => require(`../../assets/icons/${src}.svg`).default}") no-repeat center center / contain;
-        margin-right: 8px;
-    }
-
-    &:after {
-        content: "${({ label = `` }) => label}";
-        transition: 0.2s;
-    }
-`;
-
-const MoreButton = styled(Frame)`
-    width: 20px;
-    height: 20px;
-    background: url("${require(`../../assets/icons/more-vert.svg`).default}") no-repeat center center / contain;
-    cursor: pointer;
-`;
+const TableCell = ({ cellState }) => {
+    const { row, column, value } = cellState;
+    const transformedValue = column?.transform?.(cellState) ?? row?.[column?.name];
+    const cellContent = useMemo(
+        () =>
+            ({
+                text: <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name] ?? ``}</Markdown>,
+                button: (
+                    <Button
+                        {...(column?.cell ?? {})}
+                        onClick={(e) => {
+                            column?.cell?.onClick?.(row);
+                        }}
+                    >
+                        {column?.cell?.children}
+                    </Button>
+                ),
+                link: <Link to={column?.cell?.to?.(cellState) ?? `/`}>{transformedValue}</Link>,
+                switch: (
+                    <Switch
+                        {...column?.cell}
+                        onChange={() => {
+                            column?.cell?.onChange?.(cellStates);
+                        }}
+                        checked={transformedValue === true}
+                    />
+                ),
+                process_name: (
+                    <Frame
+                        extra={`flex-direction: row; * { line-height: 19px !important; margin: 0; }; > * { > * { &:first-child { margin-bottom: 8px; }; }; };`}
+                    >
+                        <Markdown>{`**${row?.processName}**\n\n${row?.processDescription}`}</Markdown>
+                        {row?.in_progress && <Tooltip label={`Процесс запущен`} children={<SpinningArrows />} />}
+                    </Frame>
+                ),
+                crontab: (
+                    <Frame extra={`flex-direction: row;`}>
+                        <Markdown>{transformedValue ?? `-`}</Markdown>
+                        <Tooltip label={`В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n2021-01-11 14:15`} children={<Info />} />
+                    </Frame>
+                ),
+                statistics: (
+                    <Frame extra={`flex-direction: row; > * { margin-left: 8px; &:nth-child { margin-left: 0px; }; };`}>
+                        {Object.keys(PROCESS_STATUS).map((status, index) => {
+                            return (
+                                <Tooltip
+                                    key={index}
+                                    label={PROCESS_STATUS?.[status]}
+                                    children={<StatisticsItem key={index} status={status} value={transformedValue?.[status] ?? `*`} />}
+                                />
+                            );
+                        })}
+                    </Frame>
+                ),
+                process_more_button: <ProcessDropdown cellState={cellState} />,
+            }?.[column?.cell?.type ?? `text`]),
+        [JSON.stringify(cellState)]
+    );
+    return (
+        <STd
+            extra={(column?.extra ?? ``) + (column?.cell?.extra ?? ``)}
+            clickable={column?.onCellClick}
+            onClick={() => {
+                column?.onCellClick?.(cellState);
+            }}
+        >
+            {column?.tooltip ? <Tooltip {...column?.tooltip} children={cellContent} /> : cellContent}
+        </STd>
+    );
+};
 
 const StatisticsItem = styled(Frame)`
     width: 24px;

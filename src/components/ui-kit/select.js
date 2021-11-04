@@ -28,7 +28,7 @@ const Select = (props) => {
             `}
             toggle={
                 <Input
-                    value={value ?? ``}
+                    value={options?.find?.((i) => i?.value === value)?.label ?? ``}
                     readOnly
                     extra={css`
                         width: 100%;

@@ -89,7 +89,6 @@ const Cross = styled.img.attrs(() => {
 `;
 
 const OpenProjectTab = styled(Frame)`
-    min-width: 700px;
     height: auto;
     padding: 30px 30px;
     padding: 35px 30px;
@@ -102,6 +101,8 @@ const OpenProjectTab = styled(Frame)`
     z-index: 3;
     box-sizing: border-box;
     overflow: visible;
+    width: 100%;
+    max-width: 760px;
 
     @media only screen and (max-width: 600px) {
         min-width: auto;

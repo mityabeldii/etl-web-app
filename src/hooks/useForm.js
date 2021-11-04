@@ -4,7 +4,7 @@ import * as yup from "yup";
 
 import { isna, createId } from "../utils/common-helper";
 import { Form } from "../components/ui-kit/styled-templates";
-import { putStorage, useStorageListener } from "./useStorage";
+import { getStorage, putStorage, useStorageListener } from "./useStorage";
 
 // TODO: Move validation to joi
 
@@ -21,13 +21,9 @@ const useForm = (options) => {
     };
 
     const onSubmit = (handleSubmit) => async (e) => {
-        e.preventDefault();
         try {
-            const data = Object.fromEntries(
-                Object.values(e.target)
-                    .filter((i) => !isna(i?.name))
-                    .map((i) => [i?.name, i?.value])
-            );
+            e?.preventDefault?.();
+            const data = getStorage((state) => state?.forms?.[name] ?? {});
             await schema(yup).validate(data, { abortEarly: false });
             setErrors({});
             handleSubmit(data);
