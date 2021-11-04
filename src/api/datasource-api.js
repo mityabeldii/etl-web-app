@@ -8,7 +8,7 @@ import { API_URL, base_url, TABLES } from "../constants/config";
 import { getStorage, mergeStorage, putStorage } from "../hooks/useStorage";
 import { objectPut, downloadURI, sleep } from "../utils/common-helper";
 
-const HomeAPI = {
+const DatasourceAPI = {
     async getDatasources() {
         return loadingCounterWrapper(async () => {
             try {
@@ -76,6 +76,6 @@ const HomeAPI = {
     },
 };
 
-export default HomeAPI;
+export default DatasourceAPI;
 
 /*eslint-enable*/

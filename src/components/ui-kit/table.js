@@ -7,6 +7,7 @@ import Markdown from "markdown-to-jsx";
 
 import { Frame, Checkbox, Input, Button, RowWrapper, Switch, Dropdown } from "./styled-templates";
 import Select from "./select";
+import Tooltip from "./tooltip";
 
 import { convertHex } from "../../utils/colors-helper";
 import { createId, togglePush } from "../../utils/common-helper";
@@ -16,7 +17,7 @@ import useDebounce from "../../hooks/useDebounde";
 
 import { EVENTS, MODALS, PROCESS_STATUS, SORT_ORDERS } from "../../constants/config";
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
-import Tooltip from "./tooltip";
+import usePagination from "../../hooks/usePagination";
 
 const Table = (props) => {
     const {
@@ -61,8 +62,9 @@ const Table = (props) => {
     const setSort = (field, order) => {
         putStorage(`tables.${name}.sort`, [{ field, order }]);
     };
-    const { pagination = {} } = tableState;
-    const { currentPage = 0, perPage = paginationOptions?.[0] ?? 1, pageCount = 1, totalCount = 1 } = pagination;
+    const frontendPagination = usePagination(rows);
+    const pagination = useBackendProcessing ? tableState?.pagination ?? {} : frontendPagination;
+    const { currentPage = 0, perPage = paginationOptions?.[0] ?? 1, pagesCount = 1, totalCount = 1 } = pagination;
     const maxPageNumber = Math.ceil(totalCount / perPage);
     const debouncedParams = useDebounce(JSON.stringify({ filters }), 300);
     useEffect(async () => {
@@ -170,7 +172,7 @@ const Table = (props) => {
                         );
                     })}
                 </STr> */}
-                {(rows.length === 0 && propRows ? propRows : rows)
+                {(!useBackendProcessing ? frontendPagination.visibleItems ?? [] : rows.length === 0 && propRows ? propRows : rows)
                     ?.filter?.((i) => useBackendProcessing || true)
                     ?.map?.((row, row_index) => (
                         <STr key={row_index}>
@@ -188,7 +190,7 @@ const Table = (props) => {
                             {columns.map((column, column_index) => {
                                 const cellState = { row, column: column?.name, value: row?.[column?.name] };
                                 const cellContent = {
-                                    text: <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name]}</Markdown>,
+                                    text: <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name] ?? ``}</Markdown>,
                                     button: (
                                         <Button
                                             {...(column?.cell ?? {})}
@@ -217,7 +219,7 @@ const Table = (props) => {
                                     ),
                                     crontab: (
                                         <Frame extra={`flex-direction: row;`}>
-                                            <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name]}</Markdown>
+                                            <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name] ?? ``}</Markdown>
                                             <Tooltip
                                                 label={`В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n2021-01-11 14:15`}
                                                 children={<Info />}
@@ -276,7 +278,11 @@ const Table = (props) => {
                                                                 }}
                                                             />
                                                         );
-                                                        return item?.tooltip ? <Tooltip {...item?.tooltip} children={children} /> : children;
+                                                        return item?.tooltip ? (
+                                                            <Tooltip key={index} {...item?.tooltip} children={children} />
+                                                        ) : (
+                                                            children
+                                                        );
                                                     })}
                                                 </>
                                             }
@@ -327,7 +333,11 @@ const Table = (props) => {
                                     key={index}
                                     selected={currentPage === item}
                                     onClick={() => {
-                                        putStorage(`tables.${name}.pagination.currentPage`, item);
+                                        if (useBackendProcessing) {
+                                            putStorage(`tables.${name}.pagination.currentPage`, item);
+                                        } else {
+                                            frontendPagination.handlePageNavigation(item);
+                                        }
                                     }}
                                 >
                                     {item + 1}
@@ -351,7 +361,11 @@ const Table = (props) => {
                             extra={`width: 76px;`}
                             value={perPage ?? paginationOptions?.[0] ?? 0}
                             onChange={(e) => {
-                                putStorage(`tables.${name}.pagination.perPage`, e.target.value);
+                                if (useBackendProcessing) {
+                                    putStorage(`tables.${name}.pagination.perPage`, e.target.value);
+                                } else {
+                                    frontendPagination.handlePerPageChange(e.target.value);
+                                }
                             }}
                         />
                     </Frame>
@@ -535,7 +549,7 @@ const STd = styled(Frame)`
     flex-direction: row;
 
     /* overflow: hidden; */
-    white-space: nowrap;
+    white-space: break-spaces;
 
     ${({ clickable }) =>
         clickable &&

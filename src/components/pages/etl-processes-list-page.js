@@ -9,7 +9,8 @@ import { MODALS, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
 import { eventDispatch } from "../../hooks/useEventListener";
 
-import DatasourceAPI from "../../api/datasource-api";
+import ProcessesAPI from "../../api/processes-api";
+
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
 
 const ETLProcessesListPage = () => {
@@ -26,7 +27,7 @@ const ETLProcessesListPage = () => {
             </RowWrapper>
             <Table
                 name={TABLES.PROCESSES_LIST}
-                // fetchFunction={DatasourceAPI.getDatasources}
+                fetchFunction={ProcessesAPI.getProcesses}
                 {...tablesColumns[TABLES.PROCESSES_LIST]}
                 extraHeader={<SearchBar />}
             />

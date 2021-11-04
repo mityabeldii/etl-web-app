@@ -397,6 +397,14 @@ export const Dropdown = (props) => {
             setOpened(false);
         }
     });
+    useEffect(() => {
+        setDirection(
+            window?.outerHeight - (menuRef.current.getBoundingClientRect().y + window.scrollY) - toggleRef?.current?.clientHeight >
+                menuRef?.current?.clientHeight
+                ? `down`
+                : `up`
+        );
+    }, [menuRef, toggleRef]);
     const toggleSize = useComponentSize(toggleRef);
     const handleMenuItemClick = (e) => {
         if (
@@ -410,7 +418,7 @@ export const Dropdown = (props) => {
     };
     const handleToggleClick = (event) => {
         setOpened(!opened);
-        setDirection(window?.innerHeight - event?.screenY > menuRef?.current?.clientHeight ? `down` : `up`);
+        setDirection(window?.outerHeight - event?.screenY - toggleRef?.current?.clientHeight > menuRef?.current?.clientHeight ? `down` : `up`);
     };
     return (
         <DropdownStyles.Wrapper extra={wrapperStyles} className={uniqueId.current}>

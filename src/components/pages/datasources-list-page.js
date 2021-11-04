@@ -31,6 +31,7 @@ const DatasourcesListPage = () => {
                 fetchFunction={DatasourceAPI.getDatasources}
                 {...tablesColumns[TABLES.DATASOURCE_LIST]}
                 extraHeader={<Search />}
+                useBackendProcessing={false}
             />
         </>
     );

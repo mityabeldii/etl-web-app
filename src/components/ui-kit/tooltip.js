@@ -11,7 +11,7 @@ const Tooltip = (props = {}) => {
         <TooltipCard side={side}>
             <TooltipText>{children}</TooltipText>
             <TooltipBox side={side}>
-                <Markdown>{label}</Markdown>
+                <Markdown>{label ?? ``}</Markdown>
             </TooltipBox>
         </TooltipCard>
     );
@@ -32,6 +32,7 @@ const TooltipBox = styled(Frame)`
     font-weight: normal;
     font-size: 12px;
     line-height: 16px;
+    white-space: nowrap;
 
     ${({ side = `top` }) =>
         ({

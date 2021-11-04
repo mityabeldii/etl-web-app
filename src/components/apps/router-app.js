@@ -23,7 +23,7 @@ const RouterApp = () => {
             <EditDataSourceModal />
             <DatasourceAdHocQueryModal />
             <CreateProcessModal />
-            <EditProcessAttributesModal/>
+            <EditProcessAttributesModal />
 
             <RowWrapper>
                 <Menu />
@@ -44,7 +44,9 @@ const RouterApp = () => {
     );
 };
 
-const Wrapper = styled(Frame)`
+const Wrapper = styled(Frame).attrs((props) => {
+    return { ...props, id: "scrollWrapper" };
+})`
     width: 100%;
     flex: 1;
     min-height: 100vh;
