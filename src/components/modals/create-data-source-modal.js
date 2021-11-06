@@ -31,7 +31,7 @@ const CreateDataSouceModal = () => {
     return (
         <PopUpWrapper name={MODALS.CREATE_DATA_SOURCE_MODAL} onClickOutside={closeModal}>
             <Form onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
-                <H1 extra={`width: 100%; margin-bottom: 24px;`}>Добавить источник данных</H1>
+                <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Добавить источник данных</H1>
                 <Control.Row>
                     <Control.Input name={`name`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />
                     <Control.Input name={`host`} label={`Хост`} placeholder={`IP-адрес хоста`} isRequired />

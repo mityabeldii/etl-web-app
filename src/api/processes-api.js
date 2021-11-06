@@ -57,6 +57,50 @@ const ProcessesAPI = {
             }
         });
     },
+    async getProcessById(id) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.get(`${base_url}/process/${id}`)).data;
+                mergeStorage(`processes.${id}`, response);
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+    async getProcessTasks(processId) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.get(`${base_url}/process/${processId}/tasks`)).data;
+                putStorage(`processes.${processId}.tasks`, response);
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+    async createTask(processId, data) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.post(`${base_url}/process/${processId}/task`, _.omit(data, [`id`]))).data;
+                await ProcessesAPI.getTask(processId);
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+    async deleteTask(processId, taskId) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.delete(`${base_url}/process/${processId}/tasks/${taskId}`)).data;
+                await ProcessesAPI.getProcessTasks(processId);
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
 };
 
 export default ProcessesAPI;

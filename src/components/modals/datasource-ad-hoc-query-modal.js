@@ -33,7 +33,7 @@ const DatasourceAdHocQueryModal = () => {
         <PopUpWrapper name={MODALS.DATASOURCE_AD_HOC_QUERY_MODAL} onClickOutside={closeModal}>
             <Form onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
                 <Control.Row>
-                    <H1 extra={`width: 100%; margin-bottom: 24px; align-items: flex-start;`}>Выполнить Ad-Hoc запрос</H1>
+                    <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px; align-items: flex-start;`}>Выполнить Ad-Hoc запрос</H1>
                 </Control.Row>
                 <Control.Textarea
                     name={`query_text`}

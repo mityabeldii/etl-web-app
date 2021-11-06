@@ -20,7 +20,7 @@ const DatasourcePage = () => {
     const selectedSource = useStorageListener(
         (state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows?.find?.((i) => i?.id == selectedSourceId) ?? {}
     );
-    const tables = useStorageListener((state) => state?.datasources?.tables?.find?.((i) => i?.id === selectedSourceId)?.tables ?? []);
+    const tables = useStorageListener(`state.datasources.tables.${selectedSourceId}`) ?? [];
     const [selectedTable, setSelectedTable] = useState();
     const structure =
         useStorageListener((state) => state?.datasources?.structures ?? [])

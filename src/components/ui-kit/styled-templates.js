@@ -39,11 +39,19 @@ export const RowWrapper = styled(Frame)`
 `;
 
 export const H1 = styled(Frame)`
-    width: auto !important;
     font-weight: bold;
     font-size: 24px;
     line-height: 24px;
     color: ${({ theme }) => theme.text.primary};
+
+    ${({ extra }) => extra}
+`;
+
+export const H2 = styled(Frame)`
+    color: ${({ theme }) => theme.text.primary};
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
 
     ${({ extra }) => extra}
 `;
@@ -354,10 +362,10 @@ const DropdownStyles = {
             className: `dropdown-menu`,
         };
     })`
-        padding: 10px;
-        border-radius: 8px;
-        background: ${({ theme }) => theme.background.primary};
-        border: 1px solid ${({ theme }) => theme.background.secondary};
+
+        flex: 1;
+        overflow: auto;
+        width: 100%;
 
         position: absolute;
         ${({ direction, toggleSize }) =>
@@ -377,10 +385,24 @@ const DropdownStyles = {
 
         ${({ extra }) => extra}
     `,
+    ScrollWrapper: styled.div`
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: min-content;
+        max-height: 400px;
+        padding: 10px;
+        border-radius: 8px;
+        background: ${({ theme }) => theme.background.primary};
+        border: 1px solid ${({ theme }) => theme.background.secondary};
+        box-sizing: border-box;
+
+        ${({ extra }) => extra}
+    `,
 };
 
 export const Dropdown = (props) => {
-    const { toggle, menu, toggleStyles = ``, menuStyles = ``, wrapperStyles = ``, id, closeOnChildrenClick = true } = props;
+    const { toggle, menu, toggleStyles = ``, menuStyles = ``, wrapperStyles = ``, id, closeOnChildrenClick = true, callable = true } = props;
     const [opened, setOpened] = useState(false);
     const menuRef = useRef();
     const toggleRef = useRef();
@@ -417,6 +439,7 @@ export const Dropdown = (props) => {
         }
     };
     const handleToggleClick = (event) => {
+        if (!callable) return;
         setOpened(!opened);
         setDirection(window?.outerHeight - event?.screenY - toggleRef?.current?.clientHeight > menuRef?.current?.clientHeight ? `down` : `up`);
     };
@@ -428,16 +451,19 @@ export const Dropdown = (props) => {
             <DropdownStyles.Menu
                 ref={menuRef}
                 visible={opened}
-                extra={menuStyles}
                 toggleSize={toggleSize}
                 onClick={handleMenuItemClick}
                 direction={direction}
             >
-                {menu}
+                <DropdownStyles.ScrollWrapper extra={menuStyles} >{menu}</DropdownStyles.ScrollWrapper>
             </DropdownStyles.Menu>
         </DropdownStyles.Wrapper>
     );
 };
+
+const Div = styled.div`
+    ${({ extra }) => extra}
+`;
 
 /* BREADCRUMB */
 
@@ -468,12 +494,21 @@ export const Breadcrumb = {
             </BreadcrumbWrapper>
         );
     },
-    Item: styled(Link).attrs((props) => ({
-        to: (location) => location.pathname,
-        ...props,
-    }))`
+    Item: styled(Link).attrs((props) => {
+        return {
+            to: (location) => location.pathname,
+            ...props,
+        };
+    })`
         ${({ theme, selected }) => selected && `color: ${theme.blue}; font-weight: 600;`}
     `,
 };
+
+export const Br = styled(Frame)`
+    width: 100%;
+    height: 1px;
+    background: #ededed;
+    margin: 20px 0;
+`;
 
 /*eslint-enable*/

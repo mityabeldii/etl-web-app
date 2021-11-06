@@ -14,7 +14,7 @@ import ProcessesAPI from "../../api/processes-api";
 
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
 
-const ETLProcessesListPage = () => {
+const ProcessesListPage = () => {
     const openCreateProcessModal = () => {
         eventDispatch(`OPEN_${MODALS.CREATE_PROCESS_MODAL}_MODAL`);
     };
@@ -101,5 +101,5 @@ const Search = styled(Input).attrs((props) => {
     };
 })``;
 
-export default ETLProcessesListPage;
+export default ProcessesListPage;
 /*eslint-enable*/

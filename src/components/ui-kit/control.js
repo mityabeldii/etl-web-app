@@ -25,8 +25,8 @@ const useFormName = () => {
 export const ControlWrapper = (props) => {
     const { name = ``, label = ``, isRequired = false, controlStyles = ``, children } = props;
     const { controllerRef, formName } = useFormName();
-    const message = useStorageListener((state) => state?.formsErrors ?? {})?.[formName]?.[name]?.message;
-    const value = useStorageListener((state) => state?.forms ?? {})?.[formName]?.[name] ?? ``;
+    const message = useStorageListener((state) => _.get(state, `formsErrors.${formName}.${name}.message`));
+    const value = useStorageListener((state) => _.get(state, `forms.${formName}.${name}`) ?? ``);
 
     const childrenWithProps = React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
@@ -43,43 +43,14 @@ export const ControlWrapper = (props) => {
 
     return (
         <Frame {...props} ref={controllerRef} extra={`align-items: flex-start;` + controlStyles}>
-            <ControlLabel required={isRequired}>
+            <Control.Label required={isRequired}>
                 {label} {label ? `:` : ``}
-            </ControlLabel>
+            </Control.Label>
             {childrenWithProps}
-            <ErrorLabel>{caseHelper.toSentance(message)}</ErrorLabel>
+            <Control.Error>{caseHelper.toSentance(message)}</Control.Error>
         </Frame>
     );
 };
-
-export const ControlLabel = styled(Frame)`
-    color: ${({ theme }) => theme.text.primary};
-    margin-bottom: 8px;
-    width: auto !important;
-    flex-direction: row;
-    font-size: 14px;
-    line-height: 20px;
-
-    ${({ theme, required = false }) =>
-        required &&
-        css`
-            &:after {
-                content: "*";
-                margin-left: 5px;
-                color: ${theme.red};
-            }
-        `}
-`;
-
-export const ErrorLabel = styled(Frame)`
-    color: ${(props) => props.theme.red};
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 20px;
-    height: 20px;
-    margin-top: 5px;
-    width: auto !important;
-`;
 
 const Cron = (props) => {
     const { value = {}, onChange = () => {} } = props;
@@ -111,6 +82,33 @@ const Cron = (props) => {
 };
 
 export const Control = {
+    Error: styled(Frame)`
+        color: ${(props) => props.theme.red};
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 20px;
+        height: 20px;
+        margin-top: 5px;
+        width: auto !important;
+    `,
+    Label: styled(Frame)`
+        color: ${({ theme }) => theme.text.primary};
+        margin-bottom: 8px;
+        width: auto !important;
+        flex-direction: row;
+        font-size: 14px;
+        line-height: 20px;
+
+        ${({ theme, required = false }) =>
+            required &&
+            css`
+                &:after {
+                    content: "*";
+                    margin-left: 5px;
+                    color: ${theme.red};
+                }
+            `}
+    `,
     Input: (props) => {
         const { extra = `` } = props;
         return (
@@ -152,11 +150,13 @@ export const Control = {
         );
     },
     Checkbox: (props) => {
-        const { errors, name, onClick = () => {}, checked, label = `Check me`, extra = ``, controlStyles = `` } = props;
+        const { errors, name, onClick = () => {}, checked, label = `Check me`, extra = `` } = props;
         return (
-            <ControlWrapper {...props} extra={`flex-direction: row; align-items: center; > * { width: auto; };` + controlStyles}>
-                <Checkbox checked={checked} onChange={() => {}} {...props} />
-                <Frame extra={`margin-left: 5px;`}>{label}</Frame>
+            <ControlWrapper {...props}>
+                <Frame extra={`flex-direction: row; > * { width: auto; };`}>
+                    <Checkbox checked={checked} onChange={() => {}} {...props} />
+                    <Frame extra={`margin-left: 5px;`}>{label}</Frame>
+                </Frame>
             </ControlWrapper>
         );
     },

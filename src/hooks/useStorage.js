@@ -1,5 +1,6 @@
 /*eslint-disable*/
 import { useState, useEffect } from "react";
+import _ from "lodash";
 
 import useEventListener, { eventDispatch } from "./useEventListener";
 
@@ -44,6 +45,14 @@ export const getStorage = (path = (state) => state) => {
 
 export const clearStorage = () => {
     window.storage = {};
+    eventDispatch(EVENTS.UPDATE_STORAGE);
+    return;
+};
+
+export const omitStorage = (path) => {
+    (Array.isArray(path) ? path : [path]).forEach((path) => {
+        window.storage = _.omit(window?.storage ?? {}, path);
+    });
     eventDispatch(EVENTS.UPDATE_STORAGE);
     return;
 };

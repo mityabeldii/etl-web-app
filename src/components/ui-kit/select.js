@@ -11,7 +11,7 @@ import { createId, togglePush } from "../../utils/common-helper";
 import { eventDispatch } from "../../hooks/useEventListener";
 
 const Select = (props) => {
-    const { options = [], extra = ``, value, onChange = () => {}, multiselect = false, placeholder = `Select` } = props;
+    const { options = [], extra = ``, value, onChange = () => {}, multiselect = false, placeholder = `Выберите из списка`, readOnly = false } = props;
     const [dropdownId, setDropdownId] = useState(createId());
     return (
         <Dropdown
@@ -20,20 +20,39 @@ const Select = (props) => {
             toggleStyles={css`
                 width: 100%;
                 * {
-                    cursor: pointer;
+                    ${!readOnly &&
+                    css`
+                        cursor: pointer;
+                    `}
                 }
             `}
             menuStyles={css`
                 width: calc(100% - 20px);
             `}
+            callable={!readOnly}
             toggle={
                 <Input
-                    value={options?.find?.((i) => i?.value === value)?.label ?? ``}
+                    value={
+                        multiselect
+                            ? options
+                                  .filter((i) => value?.includes(i?.value))
+                                  .map((i) => i?.label)
+                                  ?.join?.(`, `)
+                            : options?.find?.((i) => i?.value === value)?.label ?? ``
+                    }
                     readOnly
                     extra={css`
                         width: 100%;
-                        background: ${({ theme }) => theme.background.secondary};
-                        border: 1px solid ${({ theme }) => theme.grey};
+                        /* background: ${({ theme }) => theme.background.secondary}; */
+                        /* border: 1px solid ${({ theme }) => theme.grey}; */
+                        cursor: default;
+                        ${!readOnly &&
+                        css`
+                            border: 1px solid #dadada;
+                            background: ${({ theme }) => theme.background.secondary};
+                            color: ${({ theme }) => theme.text.primary};
+                            cursor: pointer;
+                        `}
                     `}
                     rightIcon={`select-arrow`}
                     placeholder={placeholder}

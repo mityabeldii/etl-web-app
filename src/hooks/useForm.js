@@ -4,7 +4,7 @@ import * as yup from "yup";
 
 import { isna, createId } from "../utils/common-helper";
 import { Form } from "../components/ui-kit/styled-templates";
-import { getStorage, putStorage, useStorageListener } from "./useStorage";
+import { getStorage, putStorage, omitStorage, useStorageListener } from "./useStorage";
 
 // TODO: Move validation to joi
 
@@ -43,6 +43,10 @@ const useForm = (options) => {
         putStorage(`forms.${name}.${path}`, value);
     };
 
+    const omitValue = (path) => {
+        omitStorage((Array.isArray(path) ? path : [path]).map(i => `forms.${name}.${path}`));
+    };
+
     const clearForm = () => {
         putStorage(`forms.${name}`, {});
         putStorage(`formsErrors.${name}`, {});
@@ -52,6 +56,7 @@ const useForm = (options) => {
         errors,
         onSubmit,
         setValue,
+        omitValue,
         clearForm,
         Form: (props) => {
             const { onSubmit: handleSubmit = () => {}, onChange: handleChange = () => {} } = props;

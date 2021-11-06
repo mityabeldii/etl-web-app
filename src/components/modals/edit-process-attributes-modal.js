@@ -38,7 +38,7 @@ const EditProcessAttributesModal = () => {
     return (
         <PopUpWrapper name={MODALS.EDIT_PROCESS_ATTRIBUTES} onClickOutside={closeModal}>
             <Form onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
-                <H1 extra={`width: 100%; margin-bottom: 24px;`}>Атрибуты процесса</H1>
+                <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Атрибуты процесса</H1>
                 <Control.Row>
                     <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />
                 </Control.Row>

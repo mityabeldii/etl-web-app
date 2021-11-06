@@ -33,15 +33,15 @@ const CreateProcessModal = () => {
     return (
         <PopUpWrapper name={MODALS.CREATE_PROCESS_MODAL} onClickOutside={closeModal}>
             <Form onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
-                <H1 extra={`width: 100%; margin-bottom: 24px;`}>Добавить ETL-процесс</H1>
+                <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Добавить ETL-процесс</H1>
                 <Control.Row>
-                    <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />
+                    <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя процесса`} isRequired />
                 </Control.Row>
                 <Control.Row>
                     <Control.Textarea
                         name={`processDescription`}
                         label={`Описание`}
-                        placeholder={`Краткое описание источника`}
+                        placeholder={`Краткое описание процесса`}
                         controlStyles={`flex: 1;`}
                     />
                 </Control.Row>

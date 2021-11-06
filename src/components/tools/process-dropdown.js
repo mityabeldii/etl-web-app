@@ -9,6 +9,7 @@ import ProcessesAPI from "../../api/processes-api";
 
 import { eventDispatch } from "../../hooks/useEventListener";
 import { MODALS } from "../../constants/config";
+import { linkTo } from "../../utils/common-helper";
 
 const ProcessDropdown = ({ cellState = {} }) => {
     const { row = {} } = cellState;
@@ -28,19 +29,27 @@ const ProcessDropdown = ({ cellState = {} }) => {
                         {
                             label: `Удалить процесс`,
                             src: `processes-more-delete`,
-                            muted: false,
+                            muted: (() => row?.active)(),
+                            tooltip: (() => row?.active && { label: `Невозможно удалить активный процесс`, side: `left` })(),
                             onClick: ({ row }) => {
                                 ProcessesAPI.deleteProcess(row?.id);
                             },
                         },
-                        { label: `Просмотреть конфигурацию`, src: `processes-more-config-preview` },
+                        {
+                            label: `Просмотреть конфигурацию`,
+                            src: `processes-more-config-preview`,
+                            onClick: ({ row }) => {
+                                linkTo(`/processes/configuration/${row?.id}`);
+                            },
+                        },
                         { label: `Редактировать конфигурацию`, src: `processes-more-config-edit` },
                         { label: `История запусков процесса`, src: `processes-more-launches-history` },
                         { label: `История запусков задач`, src: `processes-more-tasks-history` },
                         {
                             label: `Ручной запуск`,
                             src: `processes-more-manual-start`,
-                            tooltip: { label: `Невозможно запустить активный процесс`, side: `left` },
+                            muted: (() => row?.active)(),
+                            tooltip: (() => row?.active && { label: `Невозможно запустить активный процесс`, side: `left` })(),
                         },
                     ].map((item, index) => {
                         const children = (

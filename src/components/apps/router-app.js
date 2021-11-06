@@ -8,7 +8,8 @@ import { RowWrapper, Container, Frame } from "../ui-kit/styled-templates";
 
 import DatasourcesListPage from "../pages/datasources-list-page";
 import DatasourcePage from "../pages/datasource-page";
-import ETLProcessesListPage from "../pages/etl-processes-list-page";
+import ETLProcessesListPage from "../pages/processes-list-page";
+import ProcessesConfigurationPage from "../pages/processes-configuration-page";
 
 import CreateDataSourceModal from "../modals/create-data-source-modal";
 import EditDataSourceModal from "../modals/edit-data-source-modal";
@@ -32,7 +33,8 @@ const RouterApp = () => {
                         <Switch>
                             <Route exact path={`/datasources`} component={DatasourcesListPage} />
                             <Route exact path={`/datasources/:selectedSourceId`} component={DatasourcePage} />
-                            <Route exact path={`/etl-processes`} component={ETLProcessesListPage} />
+                            <Route exact path={`/processes`} component={ETLProcessesListPage} />
+                            <Route exact path={`/processes/configuration/:process_id`} component={ProcessesConfigurationPage} />
                             <Route path={`/`}>
                                 <Redirect to={`/datasources`} />
                             </Route>

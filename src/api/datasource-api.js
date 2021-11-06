@@ -28,12 +28,7 @@ const DatasourceAPI = {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`${base_url}/api/v1/datasource/meta/${id}/tables`)).data;
-                putStorage(
-                    `datasources.tables`,
-                    [{ id, tables: response }, ...getStorage((state) => state?.datasources?.tables ?? [])].filter(
-                        (i, j, self) => self?.map?.((i) => i?.id)?.indexOf(i?.id) === j
-                    )
-                );
+                putStorage(`datasources.tables.${id}`, response);
                 return response;
             } catch (error) {
                 throw handleError(error);
@@ -65,9 +60,35 @@ const DatasourceAPI = {
                 putStorage(
                     `datasources.preview`,
                     Object.values(
-                        Object.fromEntries([{ id, [tableName]: response }, ...getStorage((state) => state?.datasources?.data ?? [])].map((i) => [i?.id, i]))
+                        Object.fromEntries(
+                            [{ id, [tableName]: response }, ...getStorage((state) => state?.datasources?.data ?? [])].map((i) => [i?.id, i])
+                        )
                     )
                 );
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+
+    async getSchemas(datasourceId) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.get(`${base_url}/api/v1/schemes/${datasourceId}`)).data;
+                putStorage(`datasources.schemas.${datasourceId}`, response?.schemas);
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+
+    async getTableColumns(datasourceId, tableName) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.get(`${base_url}/api/v1/datasource/meta/${datasourceId}/${tableName}/columns`)).data;
+                putStorage(`datasources.columns.${datasourceId}.${tableName}`, response);
                 return response;
             } catch (error) {
                 throw handleError(error);

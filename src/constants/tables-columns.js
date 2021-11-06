@@ -98,22 +98,34 @@ const ProcessesList = {
         { name: `statistics`, label: `Статистика`, cell: { type: `statistics` } },
         { name: `morebutton`, label: ``, cell: { type: `process_more_button`, extra: `justify-content: flex-end;` } },
     ],
-    // rows: new Array(5).fill(0).map((i) => ({
-    //     active: Math.random() > 0.5,
-    //     in_progress: Math.random() > 0.5,
-    //     processName: `mi_eget_mauris`,
-    //     description: `Quam`,
-    //     crontab: `15  14  1  *  *`,
-    //     lastDate: `2021-10-10 13:00`,
-    //     startDate: `2021-10-11 13:00`,
-    //     lastStatus: [`В процессе`, `Успешно`]?.[_.random(0, 1)],
-    //     statistics: {
-    //         success: _.random(0, 10),
-    //         in_progress: _.random(0, 10),
-    //         error: _.random(0, 10),
-    //         force_completed: _.random(0, 10),
-    //     },
-    // })),
+};
+
+const ETLProcessesConfigurationTable = {
+    useBackendProcessing: false,
+    withPagination: false,
+    columns: [
+        { name: `taskName`, label: `Имя задачи` },
+        { name: `operator`, label: `Имя оператора` },
+        { name: `taskQueue`, label: `Порядок` },
+        { name: `downstreamTaskIds`, label: `Следующие задачи` },
+        { name: `???`, label: `Источники данных` },
+        // { name: `active`, label: `Статистика` },
+        {
+            name: `deletebutton`,
+            label: ``,
+            extra: `flex: unset; width: 20px;`,
+            cell: { type: `icon`, src: `delete-outline-greyed`, extra: `justify-content: flex-end;` },
+            onCellClick: ({ row }) => {
+                ProcessesAPI.deleteTask(row?.processId, row?.id);
+            },
+        },
+        {
+            name: `rightarrowbutton`,
+            label: ``,
+            extra: `flex: unset; width: 20px;`,
+            cell: { type: `icon`, src: `arrow-right-grey`, extra: `justify-content: flex-end;` },
+        },
+    ],
 };
 
 const tablesColumns = {
@@ -121,6 +133,7 @@ const tablesColumns = {
     [TABLES.DATASOURCE_TABLE_STRUCTURE]: DatasourceTableStructure,
     [TABLES.DATASOURCE_TABLE_PREVIEW]: DatasourceTablePreview,
     [TABLES.PROCESSES_LIST]: ProcessesList,
+    [TABLES.TASKS_TABLE]: ETLProcessesConfigurationTable,
 };
 
 export default tablesColumns;

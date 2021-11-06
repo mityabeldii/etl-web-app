@@ -16,12 +16,12 @@ const menuSections = [
             { label: `Хранилище`, link: `/storage` },
         ],
     },
-    { label: `ETL-процессы`, icon: `menu-etl-processes`, items: [{ label: `Список ETL-процессов`, link: `/etl-processes` }] },
+    { label: `ETL-процессы`, icon: `menu-etl-processes`, items: [{ label: `Список ETL-процессов`, link: `/processes` }] },
     {
         label: `Мониторинг ETL-процессов`,
         icon: `menu-monitoring`,
         items: [
-            { label: `История запуска ETL-процессов`, link: `/etl-processes-startup-history` },
+            { label: `История запуска ETL-процессов`, link: `/processes-startup-history` },
             { label: `История запуска задач`, link: `/study-tasks-history` },
             { label: `Журнал событий`, link: `/events-log` },
         ],

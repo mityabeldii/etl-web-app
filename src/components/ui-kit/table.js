@@ -271,7 +271,7 @@ const TableCell = ({ cellState }) => {
     const cellContent = useMemo(
         () =>
             ({
-                text: <Markdown>{column?.transform?.(cellState) ?? row?.[column?.name] ?? ``}</Markdown>,
+                text: <Markdown>{`${column?.transform?.(cellState) ?? row?.[column?.name] ?? ``}`}</Markdown>,
                 button: (
                     <Button
                         {...(column?.cell ?? {})}
@@ -296,7 +296,7 @@ const TableCell = ({ cellState }) => {
                     <Frame
                         extra={`flex-direction: row; * { line-height: 19px !important; margin: 0; }; > * { > * { &:first-child { margin-bottom: 8px; }; }; };`}
                     >
-                        <Markdown>{`**${row?.processName}**\n\n${row?.processDescription}`}</Markdown>
+                        <Markdown>{`**${row?.processName ?? ``}**\n\n${row?.processDescription ?? ``}`}</Markdown>
                         {row?.in_progress && <Tooltip label={`Процесс запущен`} children={<SpinningArrows />} />}
                     </Frame>
                 ),
@@ -320,7 +320,8 @@ const TableCell = ({ cellState }) => {
                     </Frame>
                 ),
                 process_more_button: <ProcessDropdown cellState={cellState} />,
-            }?.[column?.cell?.type ?? `text`]),
+                icon: <Icon {...column?.cell} />,
+            }?.[column?.cell?.type ?? `text`] ?? ``),
         [JSON.stringify(cellState)]
     );
     return (
@@ -335,6 +336,13 @@ const TableCell = ({ cellState }) => {
         </STd>
     );
 };
+
+const Icon = styled(Frame)`
+    width: 20px;
+    height: 20px;
+    background: url("${({ src }) => require(`../../assets/icons/${src}.svg`).default}") no-repeat center center / contain;
+    cursor: pointer;
+`;
 
 const StatisticsItem = styled(Frame)`
     width: 24px;
