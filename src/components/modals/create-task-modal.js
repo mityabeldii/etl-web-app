@@ -26,13 +26,14 @@ const schema = (yup) =>
     });
 
 const useSubmit = (name) => {
+    const data = useStorageListener((state) => _.get(state, `forms.${name}.values`)) ?? ``;
     const setErrors = (errors) => {
-        putStorage(`forms.${FORMS.CREATE_TASK}.errors`, errors);
+        putStorage(`forms.${name}.errors`, errors);
     };
     const onSubmit = (handleSubmit) => async (e) => {
         try {
             e?.preventDefault?.();
-            const data = getStorage((state) => _.get(state, `forms.${FORMS.CREATE_TASK}.values`) ?? {});
+            const data = getStorage((state) => _.get(state, `forms.${name}.values`) ?? {});
             await schema(yup).validate(data, { abortEarly: false });
             setErrors({});
             handleSubmit(data);
@@ -41,9 +42,20 @@ const useSubmit = (name) => {
         }
     };
     const clearForm = () => {
-        omitStorage(`forms.${FORMS.CREATE_TASK}`);
+        omitStorage(`forms.${name}`);
+    };
+    const setValue = (path, value) => {
+        putStorage(`forms.${name}.values.${path}`, value);
+    };
+    const omitValue = (value) => {
+        (Array.isArray(value) ? value : [value]).forEach((i) => {
+            omitStorage(`forms.${name}.values.${i}`);
+        });
     };
     return {
+        data,
+        setValue,
+        omitValue,
         onSubmit,
         setErrors,
         clearForm,
@@ -51,15 +63,8 @@ const useSubmit = (name) => {
 };
 
 const CrateTaskModal = () => {
-    const data = useStorageListener((state) => _.get(state, `forms.${FORMS.CREATE_TASK}.values`)) ?? ``;
-    const setValue = (path, value) => {
-        putStorage(`forms.${FORMS.CREATE_TASK}.values.${path}`, value);
-    };
-    const omitValue = (value) => {
-        (Array.isArray(value) ? value : [value]).forEach((i) => {
-            omitStorage(`forms.${FORMS.CREATE_TASK}.values.${i}`);
-        });
-    };
+    const { data, setValue, omitValue, onSubmit, clearForm } = useSubmit(FORMS.CREATE_TASK);
+    
     const { process_id } = useParams();
     const process = useStorageListener((state) => state?.processes ?? [])?.[process_id] ?? {};
     const { tasks = [] } = process;
@@ -111,8 +116,6 @@ const CrateTaskModal = () => {
         }
     }, [data?.operatorConfigData?.target?.targetId, data?.operatorConfigData?.target?.targetTableName]);
     useEffect(DatasourceAPI.getDatasources, []);
-
-    const { onSubmit, clearForm } = useSubmit(FORMS.CREATE_TASK);
     
     const closeModal = () => {
         clearForm();
@@ -120,11 +123,8 @@ const CrateTaskModal = () => {
     };
     const handleSubmit = async (data) => {
         try {
-            console.log(`> > > 1`);
             await ProcessesAPI.createTask(process_id, { ...data, processId: process_id });
-            console.log(`> > > 2`);
             closeModal();
-            console.log(`> > > 3`);
         } catch (error) {}
     };
     return (
