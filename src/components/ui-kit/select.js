@@ -61,10 +61,16 @@ const Select = (props) => {
             menu={
                 <>
                     {options.map((option, index) => {
+                        const selected = value === option.value;
+                        const muted = option?.muted && option.value !== value;
                         return (
                             <Option
                                 key={index}
+                                muted={muted}
                                 onClick={() => {
+                                    if (muted) {
+                                        return;
+                                    }
                                     let newValue = value;
                                     if (multiselect) {
                                         if (!Array.isArray(newValue)) {
@@ -72,7 +78,7 @@ const Select = (props) => {
                                         }
                                         onChange({ target: { value: togglePush(newValue, option.value) } });
                                     } else {
-                                        onChange({ target: { value: option.value } });
+                                        onChange({ target: { value: selected ? undefined : option.value } });
                                         eventDispatch(`CLOSE_DROPDOWN`, dropdownId);
                                     }
                                 }}
@@ -112,9 +118,20 @@ const Option = styled(Frame)`
         }
     }
 
-    &:hover {
-        background: ${({ theme }) => convertHex(theme.grey, 0.2)};
-    }
+    ${({ muted }) =>
+        !muted &&
+        css`
+            &:hover {
+                background: ${({ theme }) => convertHex(theme.grey, 0.2)};
+            }
+        `}
+
+    ${({ muted }) =>
+        muted &&
+        css`
+            opacity: 0.5;
+            cursor: default;
+        `}
 `;
 
 export default Select;

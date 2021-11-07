@@ -53,3 +53,8 @@ export const OPERATORS = {
     TEST: `TEST`,
     TEST_ERROR: `TEST_ERROR`,
 };
+
+export const UPDATE_TYPES = {
+    full: `Полное`,
+    increment: `Итерационное`
+}

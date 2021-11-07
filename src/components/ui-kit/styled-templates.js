@@ -50,7 +50,7 @@ export const H1 = styled(Frame)`
 export const H2 = styled(Frame)`
     color: ${({ theme }) => theme.text.primary};
     font-weight: 600;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 22px;
 
     ${({ extra }) => extra}
@@ -185,20 +185,8 @@ export const Switch = (props) => {
 /* FORM */
 
 export const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    width: 30%;
-    min-width: 300px;
+    width: 100%;
     align-items: flex-start;
-
-    > * {
-        /* width: 100%; */
-        /* margin-bottom: 15px; */
-
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
 
     ${({ extra }) => extra}
 `;
@@ -365,7 +353,7 @@ const DropdownStyles = {
 
         flex: 1;
         overflow: auto;
-        width: 100%;
+        width: inherit;
 
         position: absolute;
         ${({ direction, toggleSize }) =>

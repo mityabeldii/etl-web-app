@@ -1,6 +1,6 @@
 /*eslint-disable*/
 import React, { useState, useEffect, useRef, Children } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { Frame, ExportButton, RowWrapper } from "../ui-kit/styled-templates";
 
@@ -8,6 +8,7 @@ import { convertHex } from "../../utils/colors-helper";
 
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
+import useComponentSize from "../../hooks/useComponentSize";
 
 const PopUpWrapper = (props) => {
     const { name = ``, disableDarkOverlay = false, extra = ``, preventClosing = false, withCross = true, onClickOutside = () => {} } = props;
@@ -28,6 +29,7 @@ const PopUpWrapper = (props) => {
             }, 200);
         }
     });
+    const { height } = useComponentSize(ref, props.children);
 
     useEffect(() => {
         document.getElementsByTagName(`body`)[0].style.overflowY = visible ? `hidden` : `auto`;
@@ -46,15 +48,63 @@ const PopUpWrapper = (props) => {
     return (
         <>
             {!disableDarkOverlay ? <DarkOverlay visible={visible} /> : null}
+            <Frame
+                visible={visible}
+                extra={css`
+                    visibility: ${({ visible }) => (visible ? `visible` : `hidden`)};
+                    opacity: ${({ visible }) => (visible ? 1 : 0)};
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 3;
+                    flex: 1;
+                    display: flex;
+                    width: 100%;
+                    overflow: auto;
+                    justify-content: ${height > window.innerHeight ? `flex-start` : `center`};
+                `}
+            >
+                <Frame
+                    visible={visible}
+                    extra={css`
+                        visibility: ${({ visible }) => (visible ? `visible` : `hidden`)};
+                        opacity: ${({ visible }) => (visible ? 1 : 0)};
+                        display: flex;
+                        width: 100%;
+                        min-height: min-content;
+                    `}
+                >
+                    <OpenProjectTab visible={visible} extra={extra} ref={ref}>
+                        {withCross ? <Cross onClick={onClose} /> : null}
+                        {props.children}
+                    </OpenProjectTab>
+                </Frame>
+            </Frame>
+        </>
+    );
+
+    return (
+        <>
+            {!disableDarkOverlay ? <DarkOverlay visible={visible} /> : null}
+            {/* <Frame extra={`flex: 1; display: flex; overflow: auto;`}> */}
+            {/* <Frame extra={`display: flex; min-height: min-content;`}> */}
             <OpenProjectTab visible={visible} extra={extra} ref={ref}>
                 {withCross ? <Cross onClick={onClose} /> : null}
-                {/* <ChildrenWrapper> */}
                 {props.children}
-                {/* </ChildrenWrapper> */}
             </OpenProjectTab>
+            {/* </Frame> */}
+            {/* </Frame> */}
         </>
     );
 };
+
+const FullSizeFlex = styled(Frame)`
+    width: 100%;
+    height: auto;
+    background: red;
+`;
 
 const ChildrenWrapper = styled(Frame)`
     display: block !important;
@@ -89,20 +139,20 @@ const Cross = styled.img.attrs(() => {
 `;
 
 const OpenProjectTab = styled(Frame)`
-    height: auto;
     padding: 30px 30px;
     padding: 35px 30px;
+    /* margin: 50px 0; */
     border-radius: 4px;
-    background: ${(props) => (props.theme.name === `light` ? props.theme.background.primary : props.theme.background.primary)};
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, ${(props) => (props.visible ? `-50%` : `100vh`)});
-    z-index: 3;
+    background: ${({ theme }) => theme.background.primary};
     box-sizing: border-box;
-    overflow: visible;
     width: 100%;
     max-width: 760px;
+    position: relative;
+
+    transform: translate(0, ${({ visible }) => (visible ? `0` : `50px`)});
+
+    visibility: ${(props) => (props.visible ? `visible` : `hidden`)};
+    opacity: ${(props) => (props.visible ? 1 : 0)};
 
     @media only screen and (max-width: 600px) {
         min-width: auto;

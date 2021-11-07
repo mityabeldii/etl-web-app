@@ -82,8 +82,8 @@ const ProcessesAPI = {
     async createTask(processId, data) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.post(`${base_url}/process/${processId}/task`, _.omit(data, [`id`]))).data;
-                await ProcessesAPI.getTask(processId);
+                const response = (await axios.post(`${base_url}/process/${processId}/tasks`, _.omit(data, [`id`]))).data;
+                await ProcessesAPI.getProcessTasks(processId);
                 return response;
             } catch (error) {
                 throw handleError(error);

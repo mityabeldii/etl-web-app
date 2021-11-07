@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, { useEffect, useRef, useState } from "react";
+import { useState, useEffect, useRef, useMemo, Children, isValidElement, cloneElement, useImperativeHandle } from "react";
 import styled, { css } from "styled-components";
 import _ from "lodash";
 
@@ -19,78 +19,94 @@ const useFormName = () => {
     useEffect(() => {
         setFormName(getElementParrentsPath(ref.current)?.find?.((i) => i?.nodeName === `FORM`)?.attributes?.name?.value);
     }, [ref]);
-    return { controllerRef: ref, formName };
-};
-
-export const ControlWrapper = (props) => {
-    const { name = ``, label = ``, isRequired = false, controlStyles = ``, children } = props;
-    const { controllerRef, formName } = useFormName();
-    const message = useStorageListener((state) => _.get(state, `formsErrors.${formName}.${name}.message`));
-    const value = useStorageListener((state) => _.get(state, `forms.${formName}.${name}`) ?? ``);
-
-    const childrenWithProps = React.Children.map(children, (child) => {
-        if (React.isValidElement(child)) {
-            return React.cloneElement(child, {
-                value,
-                formName,
-                onChange: (e) => {
-                    putStorage(`forms.${formName}.${name}`, e.target.value);
-                },
-            });
-        }
-        return child;
-    });
-
-    return (
-        <Frame {...props} ref={controllerRef} extra={`align-items: flex-start;` + controlStyles}>
-            <Control.Label required={isRequired}>
-                {label} {label ? `:` : ``}
-            </Control.Label>
-            {childrenWithProps}
-            <Control.Error>{caseHelper.toSentance(message)}</Control.Error>
-        </Frame>
-    );
-};
-
-const Cron = (props) => {
-    const { value = {}, onChange = () => {} } = props;
-    const { dayOfMonth = `*`, dayOfTheWeek = `*`, hours = `*`, minutes = `*`, month = `*` } = value;
-    return (
-        <Input
-            {...props}
-            value={`${minutes} ${hours} ${dayOfMonth} ${month} ${dayOfTheWeek}`}
-            onChange={(e) => {
-                let newValue = e.target.value;
-                while (newValue.indexOf(`  `) > 0) {
-                    newValue = newValue.replace(/  /g, ` `);
-                }
-                if (newValue?.split(` `).length <= 5) {
-                    const newEvent = {
-                        target: {
-                            value: Object.fromEntries(
-                                newValue
-                                    .split(` `)
-                                    .map((value, index) => [[`minutes`, `hours`, `dayOfMonth`, `month`, `dayOfTheWeek`]?.[index], value])
-                            ),
-                        },
-                    };
-                    onChange(newEvent);
-                }
-            }}
-        />
-    );
+    return { controlRef: ref, formName };
 };
 
 export const Control = {
-    Error: styled(Frame)`
-        color: ${(props) => props.theme.red};
-        font-size: 14px;
-        font-weight: 600;
-        line-height: 20px;
-        height: 20px;
-        margin-top: 5px;
-        width: auto !important;
+    Row: styled(Frame)`
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+
+        > * {
+            margin-right: 16px;
+            &:last-child {
+                margin-right: unset;
+            }
+        }
     `,
+    Wrapper: ({ children, name, label, isRequired: required = false, extra = `` }) => {
+        const { controlRef, formName } = useFormName();
+        const value = useStorageListener((state) => _.get(state, `forms.${formName}.values.${name}`));
+        const error = useStorageListener((state) => _.get(state, `forms.${formName}.errors.${name}`));
+        const onChange = (e) => {
+            putStorage(`forms.${formName}.values.${name}`, e.target.value);
+        };
+        return (
+            <Frame ref={controlRef} extra={`width: 100%; align-items: flex-start;` + extra}>
+                <Control.Label required={required}>{label}</Control.Label>
+                {Children.map(children, (child) => {
+                    return isValidElement(child)
+                        ? cloneElement(child, {
+                              value: child?.props?.value ?? value ?? ``,
+                              onChange: (e) => {
+                                  child?.props?.onChange?.(e);
+                                  onChange(e);
+                              },
+                              extra: `width: 100%; flex: 1;` + (child?.props.extra ?? ``),
+                          })
+                        : child;
+                })}
+                <Control.Error>{error?.message}</Control.Error>
+            </Frame>
+        );
+    },
+    Input: (props) => {
+        return (
+            <Control.Wrapper {...props}>
+                <Input {...props} />
+            </Control.Wrapper>
+        );
+    },
+    Textarea: (props) => {
+        return (
+            <Control.Wrapper {...props}>
+                <Textarea {...props} />
+            </Control.Wrapper>
+        );
+    },
+    Password: (props) => {
+        return (
+            <Control.Wrapper {...props}>
+                <Input type={`password`} {...props} />
+            </Control.Wrapper>
+        );
+    },
+    Cron: (props) => {
+        return (
+            <Control.Wrapper {...props}>
+                <Input {...props} />
+            </Control.Wrapper>
+        );
+    },
+    Select: (props) => {
+        return (
+            <Control.Wrapper {...props}>
+                <Select {...props} />
+            </Control.Wrapper>
+        );
+    },
+    Checkbox: (props) => {
+        const { checked, label = `Check me` } = props;
+        return (
+            <Control.Wrapper {...props}>
+                <Frame extra={`flex-direction: row; justify-content: flex-start; > * { width: auto; };`}>
+                    <Checkbox checked={checked} onChange={() => {}} {...props} />
+                    <Frame extra={`margin-left: 5px;`}>{label}</Frame>
+                </Frame>
+            </Control.Wrapper>
+        );
+    },
     Label: styled(Frame)`
         color: ${({ theme }) => theme.text.primary};
         margin-bottom: 8px;
@@ -109,77 +125,14 @@ export const Control = {
                 }
             `}
     `,
-    Input: (props) => {
-        const { extra = `` } = props;
-        return (
-            <ControlWrapper {...props}>
-                <Input {...props} extra={`width: 100%;` + extra} />
-            </ControlWrapper>
-        );
-    },
-    Textarea: (props) => {
-        const { extra = `` } = props;
-        return (
-            <ControlWrapper {...props}>
-                <Textarea {...props} extra={`width: 100%;` + extra} />
-            </ControlWrapper>
-        );
-    },
-    Password: (props) => {
-        const { extra = `` } = props;
-        return (
-            <ControlWrapper {...props}>
-                <Input type={`password`} {...props} extra={`width: 100%;` + extra} />
-            </ControlWrapper>
-        );
-    },
-    Select: (props) => {
-        const { extra = `` } = props;
-        return (
-            <ControlWrapper {...props}>
-                <Select {...props} extra={`width: 100%;` + extra} />
-            </ControlWrapper>
-        );
-    },
-    Cron: (props) => {
-        const { extra = `` } = props;
-        return (
-            <ControlWrapper {...props}>
-                <Input {...props} extra={`width: 100%;` + extra} />
-            </ControlWrapper>
-        );
-    },
-    Checkbox: (props) => {
-        const { errors, name, onClick = () => {}, checked, label = `Check me`, extra = `` } = props;
-        return (
-            <ControlWrapper {...props}>
-                <Frame extra={`flex-direction: row; > * { width: auto; };`}>
-                    <Checkbox checked={checked} onChange={() => {}} {...props} />
-                    <Frame extra={`margin-left: 5px;`}>{label}</Frame>
-                </Frame>
-            </ControlWrapper>
-        );
-    },
-    Row: (props) => {
-        const { children, extra } = props;
-        return (
-            <RowWrapper
-                extra={
-                    css`
-                        > * {
-                            width: 100%;
-                            flex: 1;
-                            margin-right: 16px;
-                            &:last-child {
-                                margin-right: unset;
-                            }
-                        }
-                    ` + extra
-                }
-            >
-                {children}
-            </RowWrapper>
-        );
-    },
+    Error: styled(Frame)`
+        color: ${(props) => props.theme.red};
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 20px;
+        height: 20px;
+        margin-top: 5px;
+        width: auto !important;
+    `,
 };
 /*eslint-enable*/
