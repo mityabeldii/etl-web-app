@@ -46,6 +46,17 @@ const operatorStorageScemas = {
                 ) ?? [],
         },
     }),
+    [OPERATORS.SQL_EXTRACT]: (data) => (state) => ({
+        source: {
+            schemas: _.get(state, `datasources.schemas.${data?.operatorConfigData?.source?.sourceId}`) ?? [],
+            tables: _.get(state, `datasources.tables.${data?.operatorConfigData?.source?.sourceId}`) ?? [],
+            columns:
+                _.get(
+                    state,
+                    `datasources.columns.${data?.operatorConfigData?.source?.sourceId}.${data?.operatorConfigData?.source?.targetTableName}`
+                ) ?? [],
+        },
+    }),
 };
 
 const CrateTaskModal = () => {
@@ -213,6 +224,136 @@ const CrateTaskModal = () => {
                                                         ?.includes(item),
                                                 }))}
                                                 readOnly={!params?.target?.columns?.length}
+                                            />
+                                        </Control.Row>
+                                    );
+                                })}
+                                <Br />
+                                <Control.Row>
+                                    <H2 extra={`margin-bottom: 20px;`}>Настройки обновления</H2>
+                                </Control.Row>
+                                <Control.Row>
+                                    <Control.Select
+                                        name={`operatorConfigData.updateSettings.updateType`}
+                                        label={`Тип обновления`}
+                                        options={Object.entries(UPDATE_TYPES).map(([value, label], index) => ({ label, value }))}
+                                        extra={`flex: 0.5; margin-right: 16px !important;`}
+                                    />
+                                </Control.Row>
+                                <Control.Row>
+                                    <Control.Select
+                                        name={`operatorConfigData.updateSettings.lastUpdatedField`}
+                                        label={`Поле последнего обновления`}
+                                        options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                                        readOnly={!params?.source?.columns?.length}
+                                    />
+                                    <Control.Select
+                                        name={`operatorConfigData.updateSettings.primaryKey`}
+                                        label={`Первичный ключ`}
+                                        options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                                        readOnly={!params?.source?.columns?.length}
+                                    />
+                                </Control.Row>
+                            </>
+                        ),
+                        [OPERATORS.SQL_EXTRACT]: (
+                            <>
+                                <Br />
+                                <Control.Row>
+                                    <H1 extra={`align-items: flex-start; margin-bottom: 24px;`}>Конфигурация оператора</H1>
+                                </Control.Row>
+                                <Control.Row>
+                                    <H2 extra={`align-items: flex-start; margin-bottom: 20px;`}>Источник данных</H2>
+                                </Control.Row>
+                                <Control.Row>
+                                    <Control.Select
+                                        name={`operatorConfigData.source.sourceId`}
+                                        label={`Источник данных`}
+                                        options={datasources?.map?.(({ id, name }) => ({ label: name, value: id }))}
+                                        isRequired
+                                        onChange={(e) => {
+                                            omitValue([
+                                                `operatorConfigData.source.targetSchemaName`,
+                                                `operatorConfigData.source.targetTableName`,
+                                                `operatorConfigData.source.sourceTableFields`,
+                                            ]);
+                                            DatasourceAPI.getSchemas(e.target.value);
+                                            DatasourceAPI.getDatasourceTables(e.target.value);
+                                        }}
+                                    />
+                                    <Control.Checkbox label={`Указать SQL-запрос`} name={`operatorConfigData.source.sqlQuery`} isRequired />
+                                </Control.Row>
+                                <Control.Row>
+                                    <Control.Select
+                                        name={`operatorConfigData.source.targetSchemaName`}
+                                        label={`Имя схемы в источнике`}
+                                        options={params?.source?.schemas?.map?.((item) => ({ label: item, value: item }))}
+                                        readOnly={!params.source?.schemas?.length}
+                                    />
+                                    <Control.Select
+                                        name={`operatorConfigData.source.targetTableName`}
+                                        label={`Имя таблицы в источнике`}
+                                        options={params?.source?.tables?.map?.((item) => ({ label: item, value: item }))}
+                                        readOnly={!params?.source?.tables?.length}
+                                        onChange={(e) => {
+                                            DatasourceAPI.getTableColumns(data?.operatorConfigData?.source?.sourceId, e.target.value);
+                                        }}
+                                    />
+                                </Control.Row>
+                                <Control.Row>
+                                    <Control.Select
+                                        name={`operatorConfigData.source.sourceTableFields`}
+                                        label={`Поля для извлечения`}
+                                        multiselect
+                                        options={params.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                                        readOnly={!params.source?.columns?.length}
+                                    />
+                                </Control.Row>
+                                <Br />
+                                <Control.Row>
+                                    <H2 extra={`margin-bottom: 20px;`}>Структура выходных данных</H2>
+                                </Control.Row>
+                                <Control.Row>
+                                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start;`}>Поле в источнике</Control.Label>
+                                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; margin-left: 32px;`}>
+                                        Поле на в промежуточном хранилище
+                                    </Control.Label>
+                                </Control.Row>
+                                {_.get(data, `operatorConfigData.source.sourceTableFields`)?.map?.((item, index) => {
+                                    return (
+                                        <Control.Row key={index}>
+                                            {/* <Control.Select
+                                                name={`operatorConfigData.storageStructure.${index}.sourceFieldName`}
+                                                extra={`flex: 1;`}
+                                                options={params?.source?.columns?.map?.((item) => ({
+                                                    label: item,
+                                                    value: item,
+                                                    muted: _.get(data, `operatorConfigData.storageStructure`)
+                                                        ?.map?.((i) => i?.sourceFieldName)
+                                                        ?.includes(item),
+                                                }))}
+                                                readOnly={!params?.source?.columns?.length}
+                                            /> */}
+                                            <Control.Input
+                                                extra={`flex: 1;`}
+                                                value={item}
+                                                readOnly
+                                            />
+                                            <MappingArrow />
+                                            <Control.Select
+                                                name={`operatorConfigData.storageStructure.${index}.storageFieldName`}
+                                                extra={`flex: 1;`}
+                                                options={params?.source?.columns?.map?.((item) => ({
+                                                    label: item,
+                                                    value: item,
+                                                    muted: _.get(data, `operatorConfigData.storageStructure`)
+                                                        ?.map?.((i) => i?.storageFieldName)
+                                                        ?.includes(item),
+                                                }))}
+                                                readOnly={!params?.source?.columns?.length}
+                                                onChange={(e) => {
+                                                    setValue(`operatorConfigData.storageStructure.${index}.sourceFieldName`, e.target.value);
+                                                }}
                                             />
                                         </Control.Row>
                                     );
