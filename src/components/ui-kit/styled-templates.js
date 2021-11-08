@@ -350,7 +350,6 @@ const DropdownStyles = {
             className: `dropdown-menu`,
         };
     })`
-
         flex: 1;
         overflow: auto;
         width: inherit;
@@ -371,6 +370,13 @@ const DropdownStyles = {
         opacity: ${({ visible }) => (visible ? 1 : 0)};
         transform: translate(0, ${({ visible, direction = `down` }) => (visible ? { down: 5, up: -5 }?.[direction] : -15)}px);
 
+        padding: 10px;
+        border-radius: 8px;
+        background: ${({ theme }) => theme.background.primary};
+        border: 1px solid ${({ theme }) => theme.background.secondary};
+        box-sizing: border-box;
+        filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.05));
+
         ${({ extra }) => extra}
     `,
     ScrollWrapper: styled.div`
@@ -379,18 +385,23 @@ const DropdownStyles = {
         flex-direction: column;
         min-height: min-content;
         max-height: 400px;
-        padding: 10px;
-        border-radius: 8px;
-        background: ${({ theme }) => theme.background.primary};
-        border: 1px solid ${({ theme }) => theme.background.secondary};
-        box-sizing: border-box;
 
         ${({ extra }) => extra}
     `,
 };
 
 export const Dropdown = (props) => {
-    const { toggle, menu, toggleStyles = ``, menuStyles = ``, wrapperStyles = ``, id, closeOnChildrenClick = true, callable = true } = props;
+    const {
+        toggle,
+        menu,
+        toggleStyles = ``,
+        menuStyles = ``,
+        wrapperStyles = ``,
+        scrollWrapperStyles = ``,
+        id,
+        closeOnChildrenClick = true,
+        callable = true,
+    } = props;
     const [opened, setOpened] = useState(false);
     const menuRef = useRef();
     const toggleRef = useRef();
@@ -442,8 +453,9 @@ export const Dropdown = (props) => {
                 toggleSize={toggleSize}
                 onClick={handleMenuItemClick}
                 direction={direction}
+                extra={menuStyles}
             >
-                <DropdownStyles.ScrollWrapper extra={menuStyles} >{menu}</DropdownStyles.ScrollWrapper>
+                <DropdownStyles.ScrollWrapper extra={scrollWrapperStyles}>{menu}</DropdownStyles.ScrollWrapper>
             </DropdownStyles.Menu>
         </DropdownStyles.Wrapper>
     );
@@ -496,7 +508,7 @@ export const Br = styled(Frame)`
     width: 100%;
     height: 1px;
     background: #ededed;
-    margin: 20px 0;
+    margin: 10px 0 25px 0;
 `;
 
 /*eslint-enable*/

@@ -25,7 +25,7 @@ export const putStorage = (path, value, options = {}) => {
     if (!window?.storage) {
         window.storage = {};
     }
-    objectPut(window.storage, path, objectCopy(value));
+    objectPut(window.storage, path, value);
     if (!silent) {
         eventDispatch(EVENTS.UPDATE_STORAGE);
     }
@@ -77,10 +77,10 @@ export const useStorageValue = (initValue, path) => {
     return [value, setMethod, path];
 };
 
-export const StorageProvider = ({ children, defalutStorage = {} }) => {
+export const StorageProvider = ({ children, defaultStorage = {} }) => {
     useEffect(() => {
-        window.storage = defalutStorage;
-    }, [defalutStorage]);
+        window.storage = defaultStorage;
+    }, [defaultStorage]);
     return children;
 };
 

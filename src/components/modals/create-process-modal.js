@@ -2,11 +2,11 @@
 import styled, { css } from "styled-components";
 import { MODALS, FORMS } from "../../constants/config";
 
-import { Frame, Button, Input, Dropdown, H1, P, Link } from "../ui-kit/styled-templates";
+import { Frame, Button, Input, Dropdown, H1, P, Link, Form } from "../ui-kit/styled-templates";
 import { Control } from "../ui-kit/control";
 import PopUpWrapper from "./pop-up-wrapper";
 
-import useForm from "../../hooks/useForm";
+import useFormControl from "../../hooks/useFormControl";
 
 import ProcessesAPI from "../../api/processes-api";
 
@@ -19,7 +19,7 @@ const schema = (yup) =>
     });
 
 const CreateProcessModal = () => {
-    const { Form, onSubmit, setValue, clearForm } = useForm({ name: FORMS.CREATE_PROCESS_MODAL, schema });
+    const { onSubmit, setValue, clearForm } = useFormControl({ name: FORMS.CREATE_PROCESS_MODAL, schema });
     const handleSubmit = async (data) => {
         try {
             await ProcessesAPI.createProcess(data);
@@ -32,7 +32,7 @@ const CreateProcessModal = () => {
     };
     return (
         <PopUpWrapper name={MODALS.CREATE_PROCESS_MODAL} onClickOutside={closeModal}>
-            <Form onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
+            <Form name={FORMS.CREATE_PROCESS_MODAL} onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
                 <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Добавить ETL-процесс</H1>
                 <Control.Row>
                     <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя процесса`} isRequired />

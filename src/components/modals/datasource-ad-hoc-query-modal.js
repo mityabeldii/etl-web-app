@@ -2,12 +2,12 @@
 import styled, { css } from "styled-components";
 import { MODALS, FORMS } from "../../constants/config";
 
-import { Frame, Button, Input, Dropdown, H1, P, Link, RowWrapper } from "../ui-kit/styled-templates";
+import { Frame, Button, Input, Dropdown, H1, P, Link, RowWrapper, Form } from "../ui-kit/styled-templates";
 import { Control } from "../ui-kit/control";
 import PopUpWrapper from "./pop-up-wrapper";
 import Select from "../ui-kit/select";
 
-import useForm from "../../hooks/useForm";
+import useFormControl from "../../hooks/useFormControl";
 import { eventDispatch } from "../../hooks/useEventListener";
 
 const schema = (yup) =>
@@ -21,7 +21,7 @@ const schema = (yup) =>
     });
 
 const DatasourceAdHocQueryModal = () => {
-    const { Form, onSubmit, setValue, clearForm } = useForm({ name: FORMS.DATASOURCE_AD_HOC_FORM, schema });
+    const { onSubmit, setValue, clearForm } = useFormControl({ name: FORMS.DATASOURCE_AD_HOC_FORM, schema });
     const handleSubmit = (data) => {
         console.log(data);
     };
@@ -31,7 +31,7 @@ const DatasourceAdHocQueryModal = () => {
     };
     return (
         <PopUpWrapper name={MODALS.DATASOURCE_AD_HOC_QUERY_MODAL} onClickOutside={closeModal}>
-            <Form onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
+            <Form name={FORMS.DATASOURCE_AD_HOC_FORM} onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
                 <Control.Row>
                     <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px; align-items: flex-start;`}>Выполнить Ad-Hoc запрос</H1>
                 </Control.Row>

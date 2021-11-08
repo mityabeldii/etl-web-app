@@ -24,6 +24,18 @@ const DatasourceAPI = {
         });
     },
 
+    async createDatasource(data) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.post(`${base_url}/api/v1/datasource`, data)).data;
+                await DataSource.getDatasources();
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+
     async getDatasourceTables(id) {
         return loadingCounterWrapper(async () => {
             try {

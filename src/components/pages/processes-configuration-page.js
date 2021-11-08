@@ -59,7 +59,14 @@ const ProcessesConfigurationPage = () => {
                     )}
                 </RowWrapper>
                 <H1 extra={`font-size: 18px; margin-bottom: 16px; width: 100% !important; align-items: flex-start;`}>Список задач</H1>
-                <Table name={TABLES.TASKS_TABLE} {...tablesColumns.TASKS_TABLE} rows={tasks} />
+                <Table
+                    name={TABLES.TASKS_TABLE}
+                    {...tablesColumns.TASKS_TABLE}
+                    rows={tasks}
+                    columns={tablesColumns.TASKS_TABLE?.columns?.filter?.(
+                        (i) => !((edit && [`deletebutton`, `rightarrowbutton`]?.includes?.(i.name)) || (!edit && i.name === `editbutton`))
+                    )}
+                />
                 {edit && (
                     <RowWrapper extra={`margin-top: 16px; justify-content: flex-end;`}>
                         <Button background={`orange`} onClick={handleOpenCreateTaskModal}>

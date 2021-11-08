@@ -27,7 +27,8 @@ const Select = (props) => {
                 }
             `}
             menuStyles={css`
-                width: calc(100% - 20px);
+                /* width: calc(100% - 20px); */
+                width: 100%;
             `}
             callable={!readOnly}
             toggle={

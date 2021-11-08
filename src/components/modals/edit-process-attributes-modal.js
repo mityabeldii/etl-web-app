@@ -2,13 +2,13 @@
 import styled, { css } from "styled-components";
 import { MODALS, FORMS } from "../../constants/config";
 
-import { Frame, Button, Input, Dropdown, H1, P, Link, RowWrapper } from "../ui-kit/styled-templates";
+import { Frame, Button, Input, Dropdown, H1, P, Link, RowWrapper, Form } from "../ui-kit/styled-templates";
 import { Control } from "../ui-kit/control";
 import PopUpWrapper from "./pop-up-wrapper";
 
 import ProcessesAPI from "../../api/processes-api";
 
-import useForm from "../../hooks/useForm";
+import useFormControl from "../../hooks/useFormControl";
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 
 const schema = (yup) =>
@@ -19,7 +19,7 @@ const schema = (yup) =>
     });
 
 const EditProcessAttributesModal = () => {
-    const { Form, onSubmit, setValue, clearForm } = useForm({ name: FORMS.EDIT_PROCESS_ATTRIBUTES, schema });
+    const { onSubmit, setValue, clearForm } = useFormControl({ name: FORMS.EDIT_PROCESS_ATTRIBUTES, schema });
     const handleSubmit = async (data) => {
         try {
             await ProcessesAPI.updateProcess(data);
@@ -37,7 +37,11 @@ const EditProcessAttributesModal = () => {
     });
     return (
         <PopUpWrapper name={MODALS.EDIT_PROCESS_ATTRIBUTES} onClickOutside={closeModal}>
-            <Form onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
+            <Form
+                name={FORMS.EDIT_PROCESS_ATTRIBUTES}
+                onSubmit={onSubmit(handleSubmit)}
+                extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}
+            >
                 <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Атрибуты процесса</H1>
                 <Control.Row>
                     <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />

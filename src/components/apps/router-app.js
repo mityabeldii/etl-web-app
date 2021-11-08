@@ -11,8 +11,8 @@ import DatasourcePage from "../pages/datasource-page";
 import ETLProcessesListPage from "../pages/processes-list-page";
 import ProcessesConfigurationPage from "../pages/processes-configuration-page";
 
-import CreateDataSourceModal from "../modals/create-data-source-modal";
-import EditDataSourceModal from "../modals/edit-data-source-modal";
+import CreateDataSourceModal from "../modals/create-datasource-modal";
+import EditDataSourceModal from "../modals/edit-datasource-modal";
 import DatasourceAdHocQueryModal from "../modals/datasource-ad-hoc-query-modal";
 import CreateProcessModal from "../modals/create-process-modal";
 import EditProcessAttributesModal from "../modals/edit-process-attributes-modal";

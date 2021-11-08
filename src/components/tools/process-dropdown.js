@@ -69,8 +69,12 @@ const ProcessDropdown = ({ cellState = {} }) => {
                 css`
                     padding: 0;
                     background: ${theme.background.secondary};
-                    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.05));
                     border: 1px solid #d1d1d1;
+                    overflow: visible;
+                `
+            }
+            scrollWrapperStyles={({ theme }) =>
+                css`
                     > * {
                         border-bottom: 1px solid #d1d1d1;
                         &:last-child {

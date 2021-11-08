@@ -36,7 +36,7 @@ const DatasourceList = {
                 extra: `box-shadow: unset; padding: 8px; min-width: unset;`,
                 leftIconStyles: `margin-right: 0;`,
                 onClick: (row) => {
-                    putStorage(`forms.${FORMS.EDIT_DATA_SOURCE_MODAL}`, row);
+                    putStorage(`forms.${FORMS.EDIT_DATA_SOURCE_MODAL}.values`, row);
                     eventDispatch(`OPEN_${MODALS.EDIT_DATA_SOURCE_MODAL}_MODAL`);
                 },
             },
@@ -110,6 +110,20 @@ const ETLProcessesConfigurationTable = {
         { name: `downstreamTaskIds`, label: `Следующие задачи` },
         { name: `???`, label: `Источники данных` },
         // { name: `active`, label: `Статистика` },
+        {
+            name: `editbutton`,
+            label: ``,
+            extra: `flex: unset; width: 20px;`,
+            cell: {
+                type: `icon`,
+                src: `edit`,
+                extra: `justify-content: flex-end;`,
+                onClick: (row) => {
+                    putStorage(`forms.${FORMS.EDIT_PROCESS}.values`, row);
+                    eventDispatch(`OPEN_${MODALS.EDIT_PROCESS}_MODAL`);
+                },
+            },
+        },
         {
             name: `deletebutton`,
             label: ``,
