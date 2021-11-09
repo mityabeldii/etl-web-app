@@ -58,5 +58,18 @@ export const OPERATORS = {
 
 export const UPDATE_TYPES = {
     full: `Полное`,
-    increment: `Итерационное`
-}
+    increment: `Итерационное`,
+};
+
+export const LOGIC_OPERATOR = {
+    AND: { value: `AND`, label: `AND` },
+    OR: { value: `OR`, label: `OR` },
+    null: { value: null, label: `Нет` },
+};
+
+export const JOIN_TYPE = {
+    INNER: `INNER`,
+    LEFT: `LEFT`,
+    RIGHT: `RIGHT`,
+    FULL: `FULL`,
+};
