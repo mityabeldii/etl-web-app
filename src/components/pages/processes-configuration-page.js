@@ -109,6 +109,7 @@ const ProcessSchema = {
         border: 1px solid #c5c9dc;
         box-sizing: border-box;
         border-radius: 4px;
+        white-space: nowrap;
     `,
     Scrollable: styled(Frame)`
         display: flex;
