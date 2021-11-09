@@ -820,10 +820,6 @@ const CrateTaskModal = () => {
                         ),
                     }?.[data?.operator]
                 }
-                {/* <Br/>
-                <Control.Row>
-                    <H2 extra={`margin-bottom: 20px;`}>Структура выходных данных</H2>
-                </Control.Row> */}
                 <Control.Row>
                     <Control.Input name={`taskQueue`} label={`Порядок запуска`} placeholder={``} isRequired />
                     <Control.Select
