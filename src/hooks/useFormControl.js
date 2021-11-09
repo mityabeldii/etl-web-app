@@ -32,7 +32,7 @@ const useFormControl = ({ name, schema }) => {
     const setValue = (path, value) => {
         putStorage(`forms.${name}.values.${path}`, value);
     };
-    const omitValue = (value) => {
+    const removeValue = (value) => {
         (Array.isArray(value) ? value : [value]).forEach((i) => {
             omitStorage(`forms.${name}.values.${i}`);
         });
@@ -40,7 +40,7 @@ const useFormControl = ({ name, schema }) => {
     return {
         data,
         setValue,
-        omitValue,
+        removeValue,
         onSubmit,
         setErrors,
         clearErrors,

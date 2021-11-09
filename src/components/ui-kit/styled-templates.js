@@ -211,7 +211,7 @@ const ASYNC_STATUSES = {
 };
 
 export const Button = (props) => {
-    const { extendedIndicators = false, onClick, disabled = false, successLabel, errorLabel, extra = `` } = props;
+    const { extendedIndicators = false, onClick, disabled = false, successLabel, errorLabel, extra = ``, leftIcon } = props;
     const [status, setStatus] = useState(ASYNC_STATUSES.REGULAR);
 
     const newExtra =
@@ -242,7 +242,7 @@ export const Button = (props) => {
     const newDisabled = disabled === true || [ASYNC_STATUSES.PENDING, ASYNC_STATUSES.SUCCESS, ASYNC_STATUSES.ERROR].includes(status);
 
     return (
-        <ButtonWrapper {...props} extra={newExtra} onClick={newOnClick} disabled={newDisabled}>
+        <ButtonWrapper {...props} extra={newExtra} onClick={newOnClick} disabled={newDisabled} leftIcon={leftIcon}>
             {{
                 pending: <Spinner />,
                 success: successLabel ?? `Success`,
@@ -275,6 +275,15 @@ export const ButtonWrapper = styled.button`
     &:hover {
         opacity: 0.8;
     }
+
+    ${({ leftIcon }) => leftIcon && css`
+        &:before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            background: url('${require(`../../assets/icons/${leftIcon}.svg`).default}') no-repeat center center / contain;
+        };
+    `}
 
     ${({ leftIcon, leftIconStyles = `` }) =>
         leftIcon &&
