@@ -322,38 +322,12 @@ const CrateTaskModal = () => {
                                 {_.get(data, `operatorConfigData.source.sourceTableFields`)?.map?.((item, index) => {
                                     return (
                                         <Control.Row key={index}>
-                                            {/* <Control.Select
-                                                name={`operatorConfigData.storageStructure.${index}.sourceFieldName`}
-                                                extra={`flex: 1;`}
-                                                options={params?.source?.columns?.map?.((item) => ({
-                                                    label: item,
-                                                    value: item,
-                                                    muted: _.get(data, `operatorConfigData.storageStructure`)
-                                                        ?.map?.((i) => i?.sourceFieldName)
-                                                        ?.includes(item),
-                                                }))}
-                                                readOnly={!params?.source?.columns?.length}
-                                            /> */}
-                                            <Control.Input
-                                                extra={`flex: 1;`}
-                                                value={item}
-                                                readOnly
-                                            />
+                                            <Control.Input extra={`flex: 1;`} value={item} readOnly />
                                             <MappingArrow />
-                                            <Control.Select
+                                            <Control.Input
                                                 name={`operatorConfigData.storageStructure.${index}.storageFieldName`}
                                                 extra={`flex: 1;`}
-                                                options={params?.source?.columns?.map?.((item) => ({
-                                                    label: item,
-                                                    value: item,
-                                                    muted: _.get(data, `operatorConfigData.storageStructure`)
-                                                        ?.map?.((i) => i?.storageFieldName)
-                                                        ?.includes(item),
-                                                }))}
                                                 readOnly={!params?.source?.columns?.length}
-                                                onChange={(e) => {
-                                                    setValue(`operatorConfigData.storageStructure.${index}.sourceFieldName`, e.target.value);
-                                                }}
                                             />
                                         </Control.Row>
                                     );
