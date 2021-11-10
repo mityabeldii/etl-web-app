@@ -76,8 +76,8 @@ const operatorStorageScemas = {
 };
 
 const CrateTaskModal = () => {
-    const { data, setValue, removeValue, onSubmit, clearForm } = useFormControl({ name: FORMS.CREATE_TASK, schema });
     const [mode, setMode] = useState(`view`);
+    const { data, setValue, removeValue, onSubmit, clearForm, readOnly } = useFormControl({ name: FORMS.CREATE_TASK, schema, readOnly: mode === `view` });
 
     const { process_id } = useParams();
     const process = useStorageListener((state) => state?.processes ?? [])?.[process_id] ?? {};
@@ -110,7 +110,7 @@ const CrateTaskModal = () => {
     };
     return (
         <PopUpWrapper name={MODALS.CREATE_TASK} onClickOutside={clearForm}>
-            <Form name={FORMS.CREATE_TASK} onSubmit={onSubmit(handleSubmit)} readOnly={mode === `view`}>
+            <Form name={FORMS.CREATE_TASK} onSubmit={onSubmit(handleSubmit)}>
                 <Control.Row>
                     <H1 extra={`margin-bottom: 20px;`}>
                         {

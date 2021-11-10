@@ -12,6 +12,7 @@ import { getElementParrentsPath } from "../../utils/common-helper";
 import caseHelper from "../../utils/case-helper";
 
 import { getStorage, putStorage, useStorageListener } from "../../hooks/useStorage";
+import useFormControl from "../../hooks/useFormControl";
 
 const useFormName = () => {
     const ref = useRef();
@@ -19,7 +20,7 @@ const useFormName = () => {
     useEffect(() => {
         setAttributes(getElementParrentsPath(ref.current)?.find?.((i) => i?.nodeName === `FORM`)?.attributes ?? {});
     }, [ref]);
-    return { controlRef: ref, formName: attributes?.name?.value, readOnly: attributes?.readonly?.value === `` };
+    return { controlRef: ref, formName: attributes?.name?.value, readOnly: attributes?.readonly?.value === ``, attributes };
 };
 
 export const Control = {
@@ -36,7 +37,8 @@ export const Control = {
         }
     `,
     Wrapper: ({ children, name, label, isRequired: required = false, extra = `` }) => {
-        const { controlRef, formName, readOnly } = useFormName();
+        const { controlRef, formName } = useFormName();
+        const { readOnly } = useFormControl({ name: formName });
         const value = useStorageListener((state) => _.get(state, `forms.${formName}.values.${name}`));
         const error = useStorageListener((state) => _.get(state, `forms.${formName}.errors.${name}`));
         const onChange = (e) => {
