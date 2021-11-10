@@ -532,16 +532,18 @@ const CrateTaskModal = () => {
                                         </Control.Row>
                                     );
                                 })}
-                                <Button
-                                    onClick={() => {
-                                        setValue(`operatorConfigData.target.mappingStructure`, [
-                                            ...(_.get(data, `operatorConfigData.target.mappingStructure`) ?? []),
-                                            { sourceFieldName: ``, targetFieldName: `` },
-                                        ]);
-                                    }}
-                                >
-                                    Добавить строку
-                                </Button>
+                                {mode !== `view` && (
+                                    <Button
+                                        onClick={() => {
+                                            setValue(`operatorConfigData.target.mappingStructure`, [
+                                                ...(_.get(data, `operatorConfigData.target.mappingStructure`) ?? []),
+                                                { sourceFieldName: ``, targetFieldName: `` },
+                                            ]);
+                                        }}
+                                    >
+                                        Добавить строку
+                                    </Button>
+                                )}
                                 <Br />
                                 <Control.Row>
                                     <H2 extra={`margin-bottom: 20px;`}>Настройки обновления</H2>
@@ -694,18 +696,20 @@ const CrateTaskModal = () => {
                                         />
                                     </Control.Row>
                                 ))}
-                                <Button
-                                    background={`orange`}
-                                    extra={`margin-bottom: 10px;`}
-                                    onClick={() => {
-                                        setValue(`operatorConfigData.joinSettings.conditions`, [
-                                            ...(_.get(data, `operatorConfigData.joinSettings.conditions`) ?? []),
-                                            { fieldName: "", joinFieldName: "" },
-                                        ]);
-                                    }}
-                                >
-                                    Добавить строку
-                                </Button>
+                                {mode !== `view` && (
+                                    <Button
+                                        background={`orange`}
+                                        extra={`margin-bottom: 10px;`}
+                                        onClick={() => {
+                                            setValue(`operatorConfigData.joinSettings.conditions`, [
+                                                ...(_.get(data, `operatorConfigData.joinSettings.conditions`) ?? []),
+                                                { fieldName: "", joinFieldName: "" },
+                                            ]);
+                                        }}
+                                    >
+                                        Добавить строку
+                                    </Button>
+                                )}
                                 <Br />
                                 <Control.Row>
                                     <H2 extra={`margin-bottom: 20px;`}>Структура выходных данных</H2>
@@ -759,18 +763,20 @@ const CrateTaskModal = () => {
                                         />
                                     </Control.Row>
                                 ))}
-                                <Button
-                                    background={`orange`}
-                                    extra={`margin-bottom: 10px;`}
-                                    onClick={() => {
-                                        setValue(`operatorConfigData.storageStructure.leftSourceFields`, [
-                                            ...(_.get(data, `operatorConfigData.storageStructure.leftSourceFields`) ?? []),
-                                            { fieldName: "", joinFieldName: "" },
-                                        ]);
-                                    }}
-                                >
-                                    Добавить строку
-                                </Button>
+                                {mode !== `view` && (
+                                    <Button
+                                        background={`orange`}
+                                        extra={`margin-bottom: 10px;`}
+                                        onClick={() => {
+                                            setValue(`operatorConfigData.storageStructure.leftSourceFields`, [
+                                                ...(_.get(data, `operatorConfigData.storageStructure.leftSourceFields`) ?? []),
+                                                { fieldName: "", joinFieldName: "" },
+                                            ]);
+                                        }}
+                                    >
+                                        Добавить строку
+                                    </Button>
+                                )}
                                 <Br />
                                 <Control.Row>
                                     <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
@@ -823,18 +829,20 @@ const CrateTaskModal = () => {
                                         />
                                     </Control.Row>
                                 ))}
-                                <Button
-                                    background={`orange`}
-                                    extra={`margin-bottom: 10px;`}
-                                    onClick={() => {
-                                        setValue(`operatorConfigData.storageStructure.rightSourceFields`, [
-                                            ...(_.get(data, `operatorConfigData.storageStructure.rightSourceFields`) ?? []),
-                                            { fieldName: "", joinFieldName: "" },
-                                        ]);
-                                    }}
-                                >
-                                    Добавить строку
-                                </Button>
+                                {mode !== `view` && (
+                                    <Button
+                                        background={`orange`}
+                                        extra={`margin-bottom: 10px;`}
+                                        onClick={() => {
+                                            setValue(`operatorConfigData.storageStructure.rightSourceFields`, [
+                                                ...(_.get(data, `operatorConfigData.storageStructure.rightSourceFields`) ?? []),
+                                                { fieldName: "", joinFieldName: "" },
+                                            ]);
+                                        }}
+                                    >
+                                        Добавить строку
+                                    </Button>
+                                )}
                             </>
                         ),
                     }?.[data?.operator]
