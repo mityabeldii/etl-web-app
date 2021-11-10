@@ -50,7 +50,6 @@ export const Control = {
                         ? cloneElement(child, {
                               value: child?.props?.value ?? getStorage((state) => _.get(state, `forms.${formName}.values.${name}`)) ?? ``,
                               onChange: (e) => {
-                                  console.log(`> > >`)
                                   child?.props?.onChange?.(e);
                                   onChange(e);
                               },

@@ -23,6 +23,7 @@ const useFormControl = ({ name, schema }) => {
             }
             handleSubmit(data);
         } catch (error) {
+            console.error(`Form validation error`, Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? []));
             setErrors(Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? []));
         }
     };

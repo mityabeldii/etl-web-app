@@ -1,5 +1,6 @@
 /*eslint-disable*/
 import axios from "axios";
+import _ from "lodash";
 
 import { handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
 import CaseHalper from "../utils/case-helper";
@@ -27,7 +28,19 @@ const DatasourceAPI = {
     async createDatasource(data) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.post(`${base_url}/api/v1/datasource`, { ...data, type: null })).data;
+                const response = (
+                    await axios.post(
+                        `${base_url}/api/v1/datasource`,
+                        _.omit(
+                            {
+                                ...data,
+                                url: `jdbc:postgresql://${data?.host}:${data?.port}/${data?.base}`,
+                                type: "SOURCE",
+                            },
+                            [`base`]
+                        )
+                    )
+                ).data;
                 await DataSource.getDatasources();
                 return response;
             } catch (error) {
