@@ -12,9 +12,9 @@ const useFormControl = ({ name, schema, readOnly: defaultReadOnly = false }) => 
     const setReadOnly = (newValue) => {
         putStorage(`forms.${name}.readOnly`, newValue);
     };
-    useEffect(() => {
-        setReadOnly(defaultReadOnly);
-    }, [defaultReadOnly]);
+    // useEffect(() => {
+    //     setReadOnly(defaultReadOnly);
+    // }, [defaultReadOnly]);
 
     // DATA
     const data = useStorageListener((state) => _.get(state, `forms.${name}.values`)) ?? ``;
