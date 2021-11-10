@@ -41,7 +41,7 @@ const DatasourceAPI = {
                         )
                     )
                 ).data;
-                await DataSource.getDatasources();
+                await DatasourceAPI.getDatasources();
                 return response;
             } catch (error) {
                 throw handleError(error);
