@@ -320,6 +320,9 @@ const TableCell = ({ cellState }) => {
                     </Frame>
                 ),
                 process_more_button: <ProcessDropdown cellState={cellState} />,
+                operator: <Frame extra={`flex-direction: row;`}>
+                    {transformedValue} <Icon src={`settings`} />
+                </Frame>,
                 icon: <Icon {...column?.cell} />,
             }?.[column?.cell?.type ?? `text`] ?? ``),
         [JSON.stringify(cellState)]

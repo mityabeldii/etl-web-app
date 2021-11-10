@@ -90,6 +90,17 @@ const ProcessesAPI = {
             }
         });
     },
+    async updateTask(processId, data) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.put(`${base_url}/process/${processId}/tasks/${data?.id}`, _.omit(data, [`id`]))).data;
+                await ProcessesAPI.getProcessTasks(processId);
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
     async deleteTask(processId, taskId) {
         return loadingCounterWrapper(async () => {
             try {

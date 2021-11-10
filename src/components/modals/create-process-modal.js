@@ -27,12 +27,15 @@ const CreateProcessModal = () => {
         } catch (error) {}
     };
     const closeModal = () => {
-        clearForm();
         eventDispatch(`CLOSE_${MODALS.CREATE_PROCESS_MODAL}_MODAL`);
     };
     return (
-        <PopUpWrapper name={MODALS.CREATE_PROCESS_MODAL} onClickOutside={closeModal}>
-            <Form name={FORMS.CREATE_PROCESS_MODAL} onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
+        <PopUpWrapper name={MODALS.CREATE_PROCESS_MODAL} onClickOutside={clearForm}>
+            <Form
+                name={FORMS.CREATE_PROCESS_MODAL}
+                onSubmit={onSubmit(handleSubmit)}
+                extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}
+            >
                 <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Добавить ETL-процесс</H1>
                 <Control.Row>
                     <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя процесса`} isRequired />

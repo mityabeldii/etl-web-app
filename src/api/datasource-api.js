@@ -27,7 +27,7 @@ const DatasourceAPI = {
     async createDatasource(data) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.post(`${base_url}/api/v1/datasource`, data)).data;
+                const response = (await axios.post(`${base_url}/api/v1/datasource`, { ...data, type: null })).data;
                 await DataSource.getDatasources();
                 return response;
             } catch (error) {

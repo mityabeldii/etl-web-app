@@ -105,7 +105,15 @@ const ETLProcessesConfigurationTable = {
     withPagination: false,
     columns: [
         { name: `taskName`, label: `Имя задачи` },
-        { name: `operator`, label: `Имя оператора` },
+        {
+            name: `operator`,
+            label: `Имя оператора`,
+            onCellClick: ({ row }) => {
+                eventDispatch(`OPEN_${MODALS.CREATE_TASK}_MODAL`, { mode: `view` });
+                putStorage(`forms.${FORMS.CREATE_TASK}.values`, row);
+            },
+            cell: { type: `operator` },
+        },
         { name: `taskQueue`, label: `Порядок` },
         { name: `downstreamTaskIds`, label: `Следующие задачи` },
         { name: `???`, label: `Источники данных` },
@@ -118,10 +126,10 @@ const ETLProcessesConfigurationTable = {
                 type: `icon`,
                 src: `edit`,
                 extra: `justify-content: flex-end;`,
-                onClick: (row) => {
-                    putStorage(`forms.${FORMS.EDIT_PROCESS}.values`, row);
-                    eventDispatch(`OPEN_${MODALS.EDIT_PROCESS}_MODAL`);
-                },
+            },
+            onCellClick: ({ row }) => {
+                eventDispatch(`OPEN_${MODALS.CREATE_TASK}_MODAL`, { mode: `edit` });
+                putStorage(`forms.${FORMS.CREATE_TASK}.values`, row);
             },
         },
         {

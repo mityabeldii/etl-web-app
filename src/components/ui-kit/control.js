@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import { useState, useEffect, useRef, useMemo, Children, isValidElement, cloneElement, useImperativeHandle } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback, Children, isValidElement, cloneElement, useImperativeHandle } from "react";
 import styled, { css } from "styled-components";
 import _ from "lodash";
 
@@ -11,15 +11,15 @@ import Select from "./select";
 import { getElementParrentsPath } from "../../utils/common-helper";
 import caseHelper from "../../utils/case-helper";
 
-import { putStorage, useStorageListener } from "../../hooks/useStorage";
+import { getStorage, putStorage, useStorageListener } from "../../hooks/useStorage";
 
 const useFormName = () => {
     const ref = useRef();
-    const [formName, setFormName] = useState();
+    const [attributes, setAttributes] = useState();
     useEffect(() => {
-        setFormName(getElementParrentsPath(ref.current)?.find?.((i) => i?.nodeName === `FORM`)?.attributes?.name?.value);
+        setAttributes(getElementParrentsPath(ref.current)?.find?.((i) => i?.nodeName === `FORM`)?.attributes ?? {});
     }, [ref]);
-    return { controlRef: ref, formName };
+    return { controlRef: ref, formName: attributes?.name?.value, readOnly: attributes?.readonly?.value === `` };
 };
 
 export const Control = {
@@ -36,11 +36,11 @@ export const Control = {
         }
     `,
     Wrapper: ({ children, name, label, isRequired: required = false, extra = `` }) => {
-        const { controlRef, formName } = useFormName();
+        const { controlRef, formName, readOnly } = useFormName();
         const value = useStorageListener((state) => _.get(state, `forms.${formName}.values.${name}`));
         const error = useStorageListener((state) => _.get(state, `forms.${formName}.errors.${name}`));
         const onChange = (e) => {
-            putStorage(`forms.${formName}.values.${name}`, e.target.value);
+            putStorage(e.target.value);
         };
         return (
             <Frame ref={controlRef} extra={`width: 100%; align-items: flex-start;` + extra}>
@@ -48,11 +48,12 @@ export const Control = {
                 {Children.map(children, (child) => {
                     return isValidElement(child)
                         ? cloneElement(child, {
-                              value: child?.props?.value ?? value ?? ``,
+                              value: child?.props?.value ?? getStorage((state) => _.get(state, `forms.${formName}.values.${name}`)) ?? ``,
                               onChange: (e) => {
                                   child?.props?.onChange?.(e);
                                   onChange(e);
                               },
+                              readOnly: readOnly || child?.props?.readOnly,
                               extra: `width: 100%; flex: 1;` + (child?.props.extra ?? ``),
                           })
                         : child;

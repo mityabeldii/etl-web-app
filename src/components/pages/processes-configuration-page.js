@@ -33,7 +33,7 @@ const ProcessesConfigurationPage = () => {
     }, [process_id]);
 
     const handleOpenCreateTaskModal = () => {
-        eventDispatch(`OPEN_${MODALS.CREATE_TASK}_MODAL`);
+        eventDispatch(`OPEN_${MODALS.CREATE_TASK}_MODAL`, { mode: `create` });
     };
 
     return useMemo(

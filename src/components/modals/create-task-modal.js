@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useLocation, useParams } from "react-router-dom";
 import _ from "lodash";
@@ -15,7 +15,7 @@ import DatasourceAPI from "../../api/datasource-api";
 
 import { MODALS, FORMS, OPERATORS, TABLES, UPDATE_TYPES, JOIN_TYPE, LOGIC_OPERATOR } from "../../constants/config";
 
-import { eventDispatch } from "../../hooks/useEventListener";
+import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import { useStorageListener } from "../../hooks/useStorage";
 import useFormControl from "../../hooks/useFormControl";
 
@@ -77,6 +77,7 @@ const operatorStorageScemas = {
 
 const CrateTaskModal = () => {
     const { data, setValue, removeValue, onSubmit, clearForm } = useFormControl({ name: FORMS.CREATE_TASK, schema });
+    const [mode, setMode] = useState(`view`);
 
     const { process_id } = useParams();
     const process = useStorageListener((state) => state?.processes ?? [])?.[process_id] ?? {};
@@ -85,23 +86,49 @@ const CrateTaskModal = () => {
     const params = useStorageListener((operatorStorageScemas?.[data?.operator] ?? (() => () => ({})))?.(data));
     useEffect(DatasourceAPI.getDatasources, []);
 
+    // console.log(data);
     // console.log(params);
 
+    useEventListener(`OPEN_${MODALS.CREATE_TASK}_MODAL`, (e) => {
+        const { mode } = e.detail;
+        setMode(mode);
+    });
+
     const closeModal = () => {
-        clearForm();
         eventDispatch(`CLOSE_${MODALS.CREATE_TASK}_MODAL`);
     };
     const handleSubmit = async (data) => {
         try {
-            await ProcessesAPI.createTask(process_id, { ...data, processId: process_id });
+            if (mode === `edit`) {
+                await ProcessesAPI.updateTask(process_id, data);
+            }
+            if (mode === `create`) {
+                await ProcessesAPI.createTask(process_id, { ...data, processId: process_id });
+            }
             closeModal();
         } catch (error) {}
     };
     return (
-        <PopUpWrapper name={MODALS.CREATE_TASK}>
-            <Form name={FORMS.CREATE_TASK} onSubmit={onSubmit(handleSubmit)}>
+        <PopUpWrapper name={MODALS.CREATE_TASK} onClickOutside={clearForm}>
+            <Form name={FORMS.CREATE_TASK} onSubmit={onSubmit(handleSubmit)} readOnly={mode === `view`}>
                 <Control.Row>
-                    <H1 extra={`margin-bottom: 20px;`}>Добавить задачу</H1>
+                    <H1 extra={`margin-bottom: 20px;`}>
+                        {
+                            {
+                                edit: (
+                                    <Frame extra={({ theme }) => `flex-direction: row; span { margin: 0 5px; color: ${theme.blue}; };`}>
+                                        Редактировать задачу <span>{data?.taskName}</span>
+                                    </Frame>
+                                ),
+                                create: `Добавить задачу`,
+                                view: (
+                                    <Frame extra={({ theme }) => `flex-direction: row; span { margin: 0 5px; color: ${theme.blue}; };`}>
+                                        Конфигурация оператора <span>{data?.operator}</span> задачи <span>{data?.taskName}</span>
+                                    </Frame>
+                                ),
+                            }?.[mode]
+                        }
+                    </H1>
                 </Control.Row>
                 <Control.Row>
                     <Control.Input name={`taskName`} label={`Имя`} placeholder={`Имя задачи`} isRequired />
@@ -492,6 +519,7 @@ const CrateTaskModal = () => {
                                                 readOnly={!params?.target?.columns?.length}
                                             />
                                             <RemoveRowButton
+                                                mode={mode}
                                                 extra={`margin-top: 8px;`}
                                                 onClick={() => {
                                                     setValue(
@@ -604,14 +632,10 @@ const CrateTaskModal = () => {
                                     />
                                 </Control.Row>
                                 <Control.Row>
-                                    <Control.Label
-                                        extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}
-                                    >
+                                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
                                         Имя поля в основном источнике
                                     </Control.Label>
-                                    <Control.Label
-                                        extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}
-                                    >
+                                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
                                         Имя поля в источнике для соединения
                                     </Control.Label>
                                 </Control.Row>
@@ -659,6 +683,7 @@ const CrateTaskModal = () => {
                                             }
                                         />
                                         <RemoveRowButton
+                                            mode={mode}
                                             extra={`margin-top: 9px;`}
                                             onClick={() => {
                                                 setValue(
@@ -686,14 +711,10 @@ const CrateTaskModal = () => {
                                     <H2 extra={`margin-bottom: 20px;`}>Структура выходных данных</H2>
                                 </Control.Row>
                                 <Control.Row>
-                                    <Control.Label
-                                        extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}
-                                    >
+                                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
                                         Имя поля в основном источнике
                                     </Control.Label>
-                                    <Control.Label
-                                        extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}
-                                    >
+                                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
                                         Имя поля в источнике для соединения
                                     </Control.Label>
                                 </Control.Row>
@@ -727,6 +748,7 @@ const CrateTaskModal = () => {
                                             name={`operatorConfigData.joinSettings.storageStructure.leftSourceFields.[${index}].storageFieldName`}
                                         />
                                         <RemoveRowButton
+                                            mode={mode}
                                             extra={`margin-top: 9px;`}
                                             onClick={() => {
                                                 setValue(
@@ -751,14 +773,10 @@ const CrateTaskModal = () => {
                                 </Button>
                                 <Br />
                                 <Control.Row>
-                                    <Control.Label
-                                        extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}
-                                    >
+                                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
                                         Имя поля в источнике для соединения
                                     </Control.Label>
-                                    <Control.Label
-                                        extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}
-                                    >
+                                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
                                         Имя поля во вспомогательном хранилище
                                     </Control.Label>
                                 </Control.Row>
@@ -792,6 +810,7 @@ const CrateTaskModal = () => {
                                             name={`operatorConfigData.joinSettings.storageStructure.rightSourceFields.[${index}].storageFieldName`}
                                         />
                                         <RemoveRowButton
+                                            mode={mode}
                                             extra={`margin-top: 9px;`}
                                             onClick={() => {
                                                 setValue(
@@ -829,27 +848,30 @@ const CrateTaskModal = () => {
                         options={tasks.map(({ taskName, id }) => ({ label: taskName, value: id }))}
                     />
                 </Control.Row>
-                <Control.Row>
-                    <Button background={`grey`} variant={`outlined`} extra={`margin-left: calc(50% + 8px);`} type={`cancel`} onClick={closeModal}>
-                        Отменить
-                    </Button>
-                    <Button background={`orange`} type={`submit`}>
-                        Добавить
-                    </Button>
-                </Control.Row>
+                {mode !== `view` && (
+                    <Control.Row>
+                        <Button background={`grey`} variant={`outlined`} extra={`margin-left: calc(50% + 8px);`} type={`cancel`} onClick={closeModal}>
+                            Отменить
+                        </Button>
+                        <Button background={mode === `edit` ? `green` : `orange`} type={`submit`}>
+                            {mode === `edit` ? `Сохранить` : `Добавить`}
+                        </Button>
+                    </Control.Row>
+                )}
             </Form>
         </PopUpWrapper>
     );
 };
 
-const RemoveRowButton = (props) => (
-    <Button
-        background={`orange`}
-        leftIcon={`cross-white`}
-        {...props}
-        extra={`padding: 9px; &:before { margin: 0; }; min-width: unset; width: auto; flex: unset; ${props?.extra ?? ``}`}
-    />
-);
+const RemoveRowButton = (props) =>
+    props.mode !== `view` && (
+        <Button
+            background={`orange`}
+            leftIcon={`cross-white`}
+            {...props}
+            extra={`padding: 9px; &:before { margin: 0; }; min-width: unset; width: auto; flex: unset; ${props?.extra ?? ``}`}
+        />
+    );
 
 const MappingArrow = styled(Frame)`
     width: 16px;
