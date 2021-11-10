@@ -40,7 +40,7 @@ export const Control = {
         const value = useStorageListener((state) => _.get(state, `forms.${formName}.values.${name}`));
         const error = useStorageListener((state) => _.get(state, `forms.${formName}.errors.${name}`));
         const onChange = (e) => {
-            putStorage(e.target.value);
+            putStorage(`forms.${formName}.values.${name}`, e.target.value);
         };
         return (
             <Frame ref={controlRef} extra={`width: 100%; align-items: flex-start;` + extra}>
@@ -50,6 +50,7 @@ export const Control = {
                         ? cloneElement(child, {
                               value: child?.props?.value ?? getStorage((state) => _.get(state, `forms.${formName}.values.${name}`)) ?? ``,
                               onChange: (e) => {
+                                  console.log(`> > >`)
                                   child?.props?.onChange?.(e);
                                   onChange(e);
                               },

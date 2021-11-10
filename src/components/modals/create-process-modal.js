@@ -19,7 +19,7 @@ const schema = (yup) =>
     });
 
 const CreateProcessModal = () => {
-    const { onSubmit, setValue, clearForm } = useFormControl({ name: FORMS.CREATE_PROCESS_MODAL, schema });
+    const { onSubmit, clearForm } = useFormControl({ name: FORMS.CREATE_PROCESS_MODAL, schema });
     const handleSubmit = async (data) => {
         try {
             await ProcessesAPI.createProcess(data);
@@ -31,11 +31,7 @@ const CreateProcessModal = () => {
     };
     return (
         <PopUpWrapper name={MODALS.CREATE_PROCESS_MODAL} onClickOutside={clearForm}>
-            <Form
-                name={FORMS.CREATE_PROCESS_MODAL}
-                onSubmit={onSubmit(handleSubmit)}
-                extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}
-            >
+            <Form name={FORMS.CREATE_PROCESS_MODAL} onSubmit={onSubmit(handleSubmit)}>
                 <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Добавить ETL-процесс</H1>
                 <Control.Row>
                     <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя процесса`} isRequired />
