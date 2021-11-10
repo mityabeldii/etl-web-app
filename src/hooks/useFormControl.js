@@ -1,10 +1,9 @@
 /*eslint-disable*/
-import {} from "react";
+import { useEffect } from "react";
 import _ from "lodash";
 import * as yup from "yup";
 
 import { getStorage, putStorage, omitStorage, useStorageListener } from "./useStorage";
-import { useEffect } from "react/cjs/react.development";
 
 const useFormControl = ({ name, schema, readOnly: defaultReadOnly = false }) => {
     // READ ONLY
@@ -12,9 +11,9 @@ const useFormControl = ({ name, schema, readOnly: defaultReadOnly = false }) => 
     const setReadOnly = (newValue) => {
         putStorage(`forms.${name}.readOnly`, newValue);
     };
-    // useEffect(() => {
-    //     setReadOnly(defaultReadOnly);
-    // }, [defaultReadOnly]);
+    useEffect(() => {
+        setReadOnly(defaultReadOnly);
+    }, [defaultReadOnly]);
 
     // DATA
     const data = useStorageListener((state) => _.get(state, `forms.${name}.values`)) ?? ``;
