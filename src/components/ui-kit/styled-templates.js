@@ -56,6 +56,15 @@ export const H2 = styled(Frame)`
     ${({ extra }) => extra}
 `;
 
+export const H3 = styled(Frame)`
+    color: ${({ theme }) => theme.text.primary};
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
+
+    ${({ extra }) => extra}
+`;
+
 export const Container = styled(Frame)`
     width: 100%;
     max-width: 1170px;
@@ -276,14 +285,16 @@ export const ButtonWrapper = styled.button`
         opacity: 0.8;
     }
 
-    ${({ leftIcon }) => leftIcon && css`
-        &:before {
-            content: "";
-            width: 10px;
-            height: 10px;
-            background: url('${require(`../../assets/icons/${leftIcon}.svg`).default}') no-repeat center center / contain;
-        };
-    `}
+    ${({ leftIcon }) =>
+        leftIcon &&
+        css`
+            &:before {
+                content: "";
+                width: 10px;
+                height: 10px;
+                background: url("${require(`../../assets/icons/${leftIcon}.svg`).default}") no-repeat center center / contain;
+            }
+        `}
 
     ${({ leftIcon, leftIconStyles = `` }) =>
         leftIcon &&

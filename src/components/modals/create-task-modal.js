@@ -106,6 +106,7 @@ const CrateTaskModal = () => {
                         [OPERATORS.SQL_EXTRACT]: <Forms.SQLExtract />,
                         [OPERATORS.SQL_LOAD]: <Forms.SQLLoad tasks={tasks} mode={mode} />,
                         [OPERATORS.JOIN]: <Forms.SQLJoin tasks={tasks} mode={mode} />,
+                        [OPERATORS.CALCULATED]: <Forms.SQLCalculated tasks={tasks} mode={mode} />,
                     }?.[data?.operator]
                 }
                 <Control.Row>

@@ -21,8 +21,8 @@ const menuSections = [
         label: `Мониторинг ETL-процессов`,
         icon: `menu-monitoring`,
         items: [
-            { label: `История запуска ETL-процессов`, link: `/processes-startup-history` },
-            { label: `История запуска задач`, link: `/study-tasks-history` },
+            { label: `История запуска ETL-процессов`, link: `/history/processes` },
+            { label: `История запуска задач`, link: `/history/tasks` },
             { label: `Журнал событий`, link: `/events-log` },
         ],
     },

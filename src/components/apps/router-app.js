@@ -10,6 +10,7 @@ import DatasourcesListPage from "../pages/datasources-list-page";
 import DatasourcePage from "../pages/datasource-page";
 import ETLProcessesListPage from "../pages/processes-list-page";
 import ProcessesConfigurationPage from "../pages/processes-configuration-page";
+import ProcessesHistory from "../pages/processes-history";
 
 import CreateDataSourceModal from "../modals/create-datasource-modal";
 import EditDataSourceModal from "../modals/edit-datasource-modal";
@@ -35,6 +36,7 @@ const RouterApp = () => {
                             <Route exact path={`/datasources/:selectedSourceId`} component={DatasourcePage} />
                             <Route exact path={`/processes`} component={ETLProcessesListPage} />
                             <Route exact path={`/processes/configuration/:process_id`} component={ProcessesConfigurationPage} />
+                            <Route exact path={`/history/processes`} component={ProcessesHistory} />
                             <Route path={`/`}>
                                 <Redirect to={`/datasources`} />
                             </Route>

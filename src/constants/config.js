@@ -16,6 +16,7 @@ export const TABLES = {
     DATASOURCE_TABLE_PREVIEW: "DATASOURCE_TABLE_PREVIEW",
     PROCESSES_LIST: "PROCESSES_LIST",
     TASKS_TABLE: "TASKS_TABLE",
+    PROCESSES_HISTORY: "PROCESSES_HISTORY",
 };
 
 export const MODALS = {
@@ -72,4 +73,29 @@ export const JOIN_TYPE = {
     LEFT: `LEFT`,
     RIGHT: `RIGHT`,
     FULL: `FULL`,
+};
+
+export const FIELD_TYPES = {
+    integer: `integer`,
+    numeric: `numeric`,
+    text: `text`,
+    date: `date`,
+    timestamp: `timestamp`,
+    boolean: `boolean`,
+    uuid: `uuid`,
+    jsonb: `jsonb`,
+    bigint: `bigint`,
+};
+
+export const CALCULATION_FUNCTION_TYPES = {
+    sum: { value: `sum`, label: `Сумма` },
+    multiplication: { value: `multiplication`, label: `Произведение` },
+    integerDivision: { value: `integerDivision`, label: `Целочисленное деление` },
+    nonIntegerDivision: { value: `nonIntegerDivision`, label: `Деление` },
+    subtraction: { value: `subtraction`, label: `Вычитание` },
+    arrayElementsCount: { value: `arrayElementsCount`, label: `Количество элементов массива` },
+    extractYear: { value: `extractYear`, label: `Извлечь год` },
+    extractQuarter: { value: `extractQuarter`, label: `Извлечь квартал` },
+    extractMonth: { value: `extractMonth`, label: `Извлечь месяц` },
+    extractDay: { value: `extractDay`, label: `Извлечь день` },
 };

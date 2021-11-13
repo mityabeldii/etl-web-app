@@ -150,12 +150,26 @@ const ETLProcessesConfigurationTable = {
     ],
 };
 
+const ProcessesHistoryTable = {
+    useBackendProcessing: false,
+    withPagination: false,
+    columns: [
+        { name: `???`, label: `Процесс` },
+        { name: `???`, label: `ID запуска процесса` },
+        { name: `???`, label: `Старт и завершение` },
+        { name: `???`, label: `Статус`, cell: { type: `processstatus` } },
+        { name: `???`, label: ``, cell: { type: `eventlogbutton` } },
+        { name: `???`, label: ``, cell: { type: `icon`, src: `right-arrow` } },
+    ],
+};
+
 const tablesColumns = {
     [TABLES.DATASOURCE_LIST]: DatasourceList,
     [TABLES.DATASOURCE_TABLE_STRUCTURE]: DatasourceTableStructure,
     [TABLES.DATASOURCE_TABLE_PREVIEW]: DatasourceTablePreview,
     [TABLES.PROCESSES_LIST]: ProcessesList,
     [TABLES.TASKS_TABLE]: ETLProcessesConfigurationTable,
+    [TABLES.PROCESSES_HISTORY]: ProcessesHistoryTable,
 };
 
 export default tablesColumns;

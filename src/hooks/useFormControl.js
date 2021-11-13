@@ -17,6 +17,7 @@ const useFormControl = ({ name, schema, readOnly: defaultReadOnly = false }) => 
 
     // DATA
     const data = useStorageListener((state) => _.get(state, `forms.${name}.values`)) ?? ``;
+    const getValue = (field) => _.get(data, field);
     const setValue = (path, value) => {
         putStorage(`forms.${name}.values.${path}`, value);
     };
@@ -55,6 +56,7 @@ const useFormControl = ({ name, schema, readOnly: defaultReadOnly = false }) => 
 
     return {
         data,
+        getValue,
         setValue,
         removeValue,
         onSubmit,
