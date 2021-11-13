@@ -52,7 +52,13 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                 <Control.Row key={index}>
                     <Frame>
                         <Control.Row>
-                            <Control.Input name={`operatorConfigData.calculationSettings.[${index}].newFieldName`} label={`Наименование`} />
+                            <Control.Input
+                                name={`operatorConfigData.calculationSettings.[${index}].newFieldName`}
+                                label={`Наименование`}
+                                onChange={(e) => {
+                                    setValue(`operatorConfigData.storageStructure.[${index}].sourceFieldName`, e.target.value);
+                                }}
+                            />
                             <Control.Select
                                 name={`operatorConfigData.calculationSettings.[${index}].newFieldType`}
                                 label={`Тип поля`}
@@ -62,11 +68,51 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                                 name={`operatorConfigData.calculationSettings.[${index}].mathFunction`}
                                 label={`Функция`}
                                 options={Object.values(CALCULATION_FUNCTION_TYPES)}
+                                onChange={(e) => {
+                                    if (
+                                        Object?.values?.(CALCULATION_FUNCTION_TYPES)
+                                            ?.filter?.((i) => i?.twoArguments)
+                                            ?.map?.((i) => i?.value)
+                                            ?.includes?.(e.target.value)
+                                    ) {
+                                        removeValue(`operatorConfigData.calculationSettings.[${index}].attr2`);
+                                    }
+                                }}
                             />
                         </Control.Row>
                         <Control.Row>
-                            <Control.Select name={`operatorConfigData.calculationSettings.[${index}].attr1`} label={`Аргумент 1`} />
-                            <Control.Select name={`operatorConfigData.calculationSettings.[${index}].attr2`} label={`Аргумент 2`} />
+                            <Control.Select
+                                name={`operatorConfigData.calculationSettings.[${index}].attr1`}
+                                label={`Аргумент 1`}
+                                options={
+                                    tasks
+                                        ?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`))
+                                        ?.operatorConfigData?.storageStructure?.map?.(({ storageFieldName }) => ({
+                                            label: storageFieldName,
+                                            value: storageFieldName,
+                                        })) ?? []
+                                }
+                                readOnly={!_.get(data, `operatorConfigData.taskIdSource`)}
+                            />
+                            <Control.Select
+                                name={`operatorConfigData.calculationSettings.[${index}].attr2`}
+                                label={`Аргумент 2`}
+                                options={
+                                    tasks
+                                        ?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`))
+                                        ?.operatorConfigData?.storageStructure?.map?.(({ storageFieldName }) => ({
+                                            label: storageFieldName,
+                                            value: storageFieldName,
+                                        })) ?? []
+                                }
+                                readOnly={
+                                    !_.get(data, `operatorConfigData.taskIdSource`) ||
+                                    Object?.values?.(CALCULATION_FUNCTION_TYPES)
+                                        ?.filter?.((i) => i?.twoArguments)
+                                        ?.map?.(({ value }) => value)
+                                        ?.includes?.(_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`))
+                                }
+                            />
                         </Control.Row>
                     </Frame>
                     {mode !== `view` && (
@@ -76,6 +122,10 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                                 setValue(
                                     `operatorConfigData.calculationSettings`,
                                     _.get(data, `operatorConfigData.calculationSettings`)?.filter((i, j) => j !== index)
+                                );
+                                setValue(
+                                    `operatorConfigData.storageStructure`,
+                                    _.get(data, `operatorConfigData.storageStructure`)?.filter((i, j) => j !== index)
                                 );
                             }}
                         />
@@ -106,21 +156,73 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                 <MappingArrow extra={`visibility: hidden;`} />
                 <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; `}>Имя поля во вспомогательном хранилище</Control.Label>
             </Control.Row>
-            <Control.Row extra={`align-items: flex-start;`}>
-                <Control.Input name={``} label={``} extra={`flex: 1;`} readOnly />
-                <MappingArrow />
-                <Control.Input name={``} label={``} extra={`flex: 1;`} />
-            </Control.Row>
-            <Control.Row extra={`align-items: flex-start;`}>
-                <Control.Input name={``} label={``} extra={`flex: 1;`} readOnly />
-                <MappingArrow />
-                <Control.Input name={``} label={``} extra={`flex: 1;`} />
-            </Control.Row>
-            <Control.Row extra={`align-items: flex-start;`}>
-                <Control.Select name={``} label={``} extra={`flex: 1;`} />
-                <MappingArrow />
-                <Control.Select name={``} label={``} extra={`flex: 1;`} />
-            </Control.Row>
+            {_.get(data, `operatorConfigData.storageStructure`)?.map?.((item, index) => (
+                <Control.Row
+                    extra={`align-items: flex-start; ${
+                        _.get(data, `operatorConfigData.calculationSettings`)
+                            ?.map?.((i) => i?.newFieldName)
+                            ?.filter?.((i) => !!i)
+                            ?.includes?.(item.sourceFieldName) && `padding-right: 54px; box-sizing: border-box;`
+                    }`}
+                >
+                    {_.get(data, `operatorConfigData.calculationSettings`)
+                        ?.map?.((i) => i?.newFieldName)
+                        ?.filter?.((i) => !!i)
+                        ?.includes?.(item.sourceFieldName) ? (
+                        <Control.Input
+                            name={`operatorConfigData.storageStructure.[${index}].sourceFieldName`}
+                            label={``}
+                            extra={`flex: 1;`}
+                            readOnly
+                        />
+                    ) : (
+                        <Control.Select
+                            name={`operatorConfigData.storageStructure.[${index}].sourceFieldName`}
+                            label={``}
+                            extra={`flex: 1;`}
+                            options={
+                                tasks
+                                    ?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`))
+                                    ?.operatorConfigData?.storageStructure?.map?.(({ storageFieldName }) => ({
+                                        label: storageFieldName,
+                                        value: storageFieldName,
+                                    })) ?? []
+                            }
+                            readOnly={!_.get(data, `operatorConfigData.taskIdSource`)}
+                        />
+                    )}
+                    <MappingArrow />
+                    <Control.Input name={`operatorConfigData.storageStructure.[${index}].storageFieldName`} label={``} extra={`flex: 1;`} />
+                    {!_.get(data, `operatorConfigData.calculationSettings`)
+                        ?.map?.((i) => i?.newFieldName)
+                        ?.filter?.((i) => !!i)
+                        ?.includes?.(item.sourceFieldName) && (
+                        <RemoveRowButton
+                            extra={`margin-top: 9px;`}
+                            onClick={() => {
+                                setValue(
+                                    `operatorConfigData.storageStructure`,
+                                    _.get(data, `operatorConfigData.storageStructure`)?.filter((i, j) => j !== index)
+                                );
+                            }}
+                        />
+                    )}
+                </Control.Row>
+            ))}
+            {mode !== `view` && (
+                <Button
+                    background={`orange`}
+                    extra={`margin-bottom: 10px;`}
+                    onClick={() => {
+                        setValue(`operatorConfigData.storageStructure`, [
+                            ...(_.get(data, `operatorConfigData.storageStructure`) ?? []),
+                            { sourceFieldName: "", storageFieldName: "" },
+                        ]);
+                    }}
+                >
+                    Добавить строку
+                </Button>
+            )}
         </>
     );
 };
