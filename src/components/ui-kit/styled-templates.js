@@ -520,4 +520,21 @@ export const Br = styled(Frame)`
     margin: 10px 0 25px 0;
 `;
 
+export const MappingArrow = styled(Frame)`
+    width: 16px;
+    height: 16px;
+    margin-top: 20px;
+    background: url("${require(`../../assets/icons/mapping-arrow.svg`).default}") no-repeat center center / contain;
+`;
+
+export const RemoveRowButton = (props) =>
+    props.mode !== `view` && (
+        <Button
+            background={`orange`}
+            leftIcon={`cross-white`}
+            {...props}
+            extra={`padding: 9px; &:before { margin: 0; }; min-width: unset; width: auto; flex: unset; ${props?.extra ?? ``}`}
+        />
+    );
+
 /*eslint-enable*/

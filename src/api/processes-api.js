@@ -15,7 +15,7 @@ const ProcessesAPI = {
             try {
                 const response = (await axios.get(`${base_url}/process`)).data;
                 putStorage(`tables.${TABLES.PROCESSES_LIST}`, {
-                    rows: response,
+                    rows: [...response]?.sort?.((a, b) => a.id - b.id),
                     pagination: response?._meta ?? {},
                 });
                 return response;
