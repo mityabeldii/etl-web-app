@@ -1,10 +1,14 @@
 /*eslint-disable*/
-import { SORT_ORDERS, TABLES, STATUSES, ROLES, MODALS, FORMS } from "./config";
-import { putStorage, mergeStorage } from "../hooks/useStorage";
-import { createId, linkTo } from "../utils/common-helper";
-import { eventDispatch } from "../hooks/useEventListener";
 import _ from "lodash";
+import moment from "moment-timezone";
+
+import { SORT_ORDERS, TABLES, STATUSES, ROLES, MODALS, FORMS } from "./config";
+import { createId, linkTo } from "../utils/common-helper";
+
 import ProcessesAPI from "../api/processes-api";
+
+import { putStorage, mergeStorage } from "../hooks/useStorage";
+import { eventDispatch } from "../hooks/useEventListener";
 
 const DatasourceList = {
     useBackendProcessing: false,
@@ -145,7 +149,7 @@ const ETLProcessesConfigurationTable = {
             name: `rightarrowbutton`,
             label: ``,
             extra: `flex: unset; width: 20px;`,
-            cell: { type: `icon`, src: `arrow-right-grey`, extra: `justify-content: flex-end;` },
+            cell: { type: `icon`, src: `arrow-right-grey` },
         },
     ],
 };
@@ -156,10 +160,18 @@ const ProcessesHistoryTable = {
     columns: [
         { name: `???`, label: `Процесс` },
         { name: `???`, label: `ID запуска процесса` },
-        { name: `???`, label: `Старт и завершение` },
-        { name: `???`, label: `Статус`, cell: { type: `processstatus` } },
+        {
+            name: `startAndStop`,
+            label: `Старт и завершение`,
+            extra: `flex: 2;`,
+            transform: ({ row }) =>
+                `${row?.processStartDate ? moment(row?.processStartDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
+                    row?.processEndDate ? moment(row?.processEndDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
+                }`,
+        },
+        { name: `state`, label: `Статус`, cell: { type: `processstatus` } },
         { name: `???`, label: ``, cell: { type: `eventlogbutton` } },
-        { name: `???`, label: ``, cell: { type: `icon`, src: `right-arrow` } },
+        { name: `???`, label: ``, extra: `flex: unset; width: 20px;`, cell: { type: `icon`, src: `arrow-right-grey` } },
     ],
 };
 

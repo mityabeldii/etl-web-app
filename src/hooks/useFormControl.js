@@ -9,7 +9,9 @@ const useFormControl = ({ name, schema, readOnly: defaultReadOnly = false }) => 
     // READ ONLY
     const readOnly = useStorageListener((state) => _.get(state, `forms.${name}.readOnly`)) ?? defaultReadOnly ?? false;
     const setReadOnly = (newValue) => {
-        putStorage(`forms.${name}.readOnly`, newValue);
+        if (!!name) {
+            putStorage(`forms.${name}.readOnly`, newValue);
+        }
     };
     useEffect(() => {
         setReadOnly(defaultReadOnly);
@@ -19,7 +21,9 @@ const useFormControl = ({ name, schema, readOnly: defaultReadOnly = false }) => 
     const data = useStorageListener((state) => _.get(state, `forms.${name}.values`)) ?? ``;
     const getValue = (field) => _.get(data, field);
     const setValue = (path, value) => {
-        putStorage(`forms.${name}.values.${path}`, value);
+        if (!!name && !!path) {
+            putStorage(`forms.${name}.values.${path}`, value);
+        }
     };
     const removeValue = (value) => {
         (Array.isArray(value) ? value : [value]).forEach((i) => {

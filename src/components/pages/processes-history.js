@@ -15,9 +15,6 @@ import { useStorageListener } from "../../hooks/useStorage";
 
 const DatasourcesListPage = () => {
     const [search, setSearch] = useState(``);
-    const openCreateDataSourceModal = () => {
-        eventDispatch(`OPEN_${MODALS.CREATE_DATA_SOURCE_MODAL}_MODAL`);
-    };
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
     };
@@ -28,7 +25,7 @@ const DatasourcesListPage = () => {
             </RowWrapper>
             <Table
                 name={TABLES.PROCESSES_HISTORY}
-                // fetchFunction={DatasourceAPI.getDatasources}
+                fetchFunction={DatasourceAPI.getProcessesHistory}
                 {...tablesColumns[TABLES.PROCESSES_HISTORY]}
                 extraHeader={<Search value={search} onChange={handleSearchChange} />}
                 // filters={{ host: search, port: search }}

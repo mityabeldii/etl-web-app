@@ -93,9 +93,32 @@ export const CALCULATION_FUNCTION_TYPES = {
     integerDivision: { value: `integerDivision`, label: `Целочисленное деление` },
     nonIntegerDivision: { value: `nonIntegerDivision`, label: `Деление` },
     subtraction: { value: `subtraction`, label: `Вычитание` },
-    arrayElementsCount: { value: `arrayElementsCount`, label: `Количество элементов массива`, twoArguments: true, },
-    extractYear: { value: `extractYear`, label: `Извлечь год`, twoArguments: true, },
-    extractQuarter: { value: `extractQuarter`, label: `Извлечь квартал`, twoArguments: true, },
-    extractMonth: { value: `extractMonth`, label: `Извлечь месяц`, twoArguments: true, },
-    extractDay: { value: `extractDay`, label: `Извлечь день`, twoArguments: true, },
+    arrayElementsCount: { value: `arrayElementsCount`, label: `Количество элементов массива`, twoArguments: true },
+    extractYear: { value: `extractYear`, label: `Извлечь год`, twoArguments: true },
+    extractQuarter: { value: `extractQuarter`, label: `Извлечь квартал`, twoArguments: true },
+    extractMonth: { value: `extractMonth`, label: `Извлечь месяц`, twoArguments: true },
+    extractDay: { value: `extractDay`, label: `Извлечь день`, twoArguments: true },
+};
+
+export const PROCESS_STATUSES = {
+    SUCCESS: {
+        label: "Успешно",
+        name: "success",
+        color: "green",
+    },
+    RUNNING: {
+        label: "Запущен",
+        name: "running",
+        color: "yellow",
+    },
+    FAILED: {
+        label: "Ошибка",
+        name: "failed",
+        color: "red",
+    },
+    FORCED_COMPLETION: {
+        label: "Завершен принудительно",
+        name: "forced completion",
+        color: "grey",
+    },
 };

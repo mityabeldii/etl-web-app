@@ -124,13 +124,13 @@ const SQLExtract = () => {
                 <Control.Select
                     name={`operatorConfigData.updateSettings.lastUpdatedField`}
                     label={`Поле последнего обновления`}
-                    options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                    options={params?.source?.columns?.map?.(({ sourceFieldName }) => ({ label: sourceFieldName, value: sourceFieldName }))}
                     readOnly={!params?.source?.columns?.length}
                 />
                 <Control.Select
                     name={`operatorConfigData.updateSettings.primaryKey`}
                     label={`Первичный ключ`}
-                    options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                    options={params?.source?.columns?.map?.(({ sourceFieldName }) => ({ label: sourceFieldName, value: sourceFieldName }))}
                     readOnly={!params?.source?.columns?.length}
                 />
             </Control.Row>

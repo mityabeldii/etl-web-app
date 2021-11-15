@@ -120,6 +120,21 @@ const DatasourceAPI = {
             }
         });
     },
+
+    async getProcessesHistory() {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.get(`${base_url}/process-instances`)).data;
+                putStorage(`tables.${TABLES.PROCESSES_HISTORY}`, {
+                    rows: response,
+                    pagination: response?._meta ?? {},
+                });
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
 };
 
 export default DatasourceAPI;

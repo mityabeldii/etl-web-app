@@ -15,7 +15,7 @@ import { createId, togglePush } from "../../utils/common-helper";
 import { getStorage, mergeStorage, putStorage, useStorageListener } from "../../hooks/useStorage";
 import useDebounce from "../../hooks/useDebounde";
 
-import { EVENTS, MODALS, PROCESS_STATUS, SORT_ORDERS, TABLES } from "../../constants/config";
+import { EVENTS, MODALS, PROCESS_STATUS, PROCESS_STATUSES, SORT_ORDERS, TABLES } from "../../constants/config";
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import usePagination from "../../hooks/usePagination";
 import ProcessDropdown from "../tools/process-dropdown";
@@ -48,8 +48,7 @@ const Table = (props) => {
     if (!name) {
         throw new Error(`[table.js] - name is not  defined`);
     }
-    const tables = useStorageListener((state) => state?.tables ?? {});
-    const tableState = tables?.[name] ?? {};
+    const tableState = useStorageListener((state) => _.get(state, `tables.${name}`) ?? {});
 
     const { rows = [] } = tableState;
 
@@ -320,9 +319,17 @@ const TableCell = ({ cellState }) => {
                     </Frame>
                 ),
                 process_more_button: <ProcessDropdown cellState={cellState} />,
-                operator: <Frame extra={`flex-direction: row;`}>
-                    {transformedValue} <Icon src={`settings`} />
-                </Frame>,
+                operator: (
+                    <Frame extra={`flex-direction: row;`}>
+                        {transformedValue} <Icon src={`settings`} />
+                    </Frame>
+                ),
+                eventlogbutton: <EventLogButton>Event log</EventLogButton>,
+                processstatus: (
+                    <ProcessStatus status={PROCESS_STATUSES?.[cellState?.value] ?? PROCESS_STATUSES?.FORCED_COMPLETION}>
+                        {PROCESS_STATUSES?.[cellState?.value]?.label}
+                    </ProcessStatus>
+                ),
                 icon: <Icon {...column?.cell} />,
             }?.[column?.cell?.type ?? `text`] ?? ``),
         [JSON.stringify(cellState)]
@@ -339,6 +346,32 @@ const TableCell = ({ cellState }) => {
         </STd>
     );
 };
+
+const ProcessStatus = styled(Frame)`
+    width: 128px;
+    padding: 4px 0;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background: ${({ theme, status }) => convertHex(theme?.[status?.color] ?? `#fff`, 0.15)};
+    color: ${({ theme, status }) => theme?.[status?.color] ?? `#fff`};
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+`;
+
+const EventLogButton = styled.button`
+    border: 0px;
+    font-size: 14px;
+    line-height: 20px;
+    border-bottom: 2px solid #d4d4d4;
+    padding-bottom: 2px;
+    box-sizing: border-box;
+    cursor: pointer;
+    outline: none;
+    background: unset;
+    display: flex;
+    color: ${({ theme }) => theme.text.primary};
+`;
 
 const Icon = styled(Frame)`
     width: 20px;

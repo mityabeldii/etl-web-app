@@ -42,7 +42,9 @@ export const Control = {
         const value = useStorageListener((state) => _.get(state, `forms.${formName}.values.${name}`));
         const error = useStorageListener((state) => _.get(state, `forms.${formName}.errors.${name}`));
         const onChange = (e) => {
-            putStorage(`forms.${formName}.values.${name}`, e.target.value);
+            if (!!formName && !!name) {
+                putStorage(`forms.${formName}.values.${name}`, e.target.value);
+            }
         };
         return (
             <Frame ref={controlRef} extra={`width: 100%; align-items: flex-start;` + extra}>
