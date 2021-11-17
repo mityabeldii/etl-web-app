@@ -50,6 +50,9 @@ const ProcessDropdown = ({ cellState = {} }) => {
                             src: `processes-more-manual-start`,
                             muted: (() => row?.active)(),
                             tooltip: (() => row?.active && { label: `Невозможно запустить активный процесс`, side: `left` })(),
+                            onClick: async ({ row }) => {
+                                await ProcessesAPI.manualStart(row?.id);
+                            },
                         },
                     ].map((item, index) => {
                         const children = (

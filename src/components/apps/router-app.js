@@ -12,6 +12,7 @@ import ETLProcessesListPage from "../pages/processes-list-page";
 import ProcessesConfigurationPage from "../pages/processes-configuration-page";
 import ProcessesHistory from "../pages/processes-history";
 
+import Alerts from "../modals/alerts";
 import CreateDataSourceModal from "../modals/create-datasource-modal";
 import EditDataSourceModal from "../modals/edit-datasource-modal";
 import DatasourceAdHocQueryModal from "../modals/datasource-ad-hoc-query-modal";
@@ -21,6 +22,7 @@ import EditProcessAttributesModal from "../modals/edit-process-attributes-modal"
 const RouterApp = () => {
     return (
         <>
+            <Alerts />
             <CreateDataSourceModal />
             <EditDataSourceModal />
             <DatasourceAdHocQueryModal />

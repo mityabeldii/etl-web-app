@@ -46,7 +46,7 @@ const Heading = styled(H1)`
 const Search = styled(Input).attrs((props) => {
     return {
         ...props,
-        placeholder: `Название или хост источника`,
+        placeholder: `ID процесса или его запуска`,
         leftIcon: `search`,
         leftIconStyles: `left: 20px;`,
         extra: css`

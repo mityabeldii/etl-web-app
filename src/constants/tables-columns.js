@@ -158,20 +158,25 @@ const ProcessesHistoryTable = {
     useBackendProcessing: false,
     withPagination: false,
     columns: [
-        { name: `???`, label: `Процесс` },
-        { name: `???`, label: `ID запуска процесса` },
+        {
+            name: `processId`,
+            label: `Процесс`,
+            extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
+            transform: ({ row }) => `**${row?.processName}**\n\n${row?.processId}`,
+        },
+        { name: `id`, label: `ID запуска процесса` },
         {
             name: `startAndStop`,
             label: `Старт и завершение`,
-            extra: `flex: 2;`,
+            extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
             transform: ({ row }) =>
                 `${row?.processStartDate ? moment(row?.processStartDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
                     row?.processEndDate ? moment(row?.processEndDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
                 }`,
         },
-        { name: `state`, label: `Статус`, cell: { type: `processstatus` } },
-        { name: `???`, label: ``, cell: { type: `eventlogbutton` } },
-        { name: `???`, label: ``, extra: `flex: unset; width: 20px;`, cell: { type: `icon`, src: `arrow-right-grey` } },
+        { name: `state`, label: `Статус`, extra: `flex: unset; width: 200px;`, cell: { type: `processstatus` } },
+        { name: ``, label: ``, extra: `flex: unset; width: 100px;`, cell: { type: `eventlogbutton` } },
+        { name: ``, label: ``, extra: `flex: unset; width: 20px;`, cell: { type: `icon`, src: `arrow-right-grey` } },
     ],
 };
 

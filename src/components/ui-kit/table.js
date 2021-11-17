@@ -544,6 +544,7 @@ const STr = styled(Frame)`
     padding: 20px;
     box-sizing: border-box;
     border-bottom: 1px solid #dadada;
+    align-items: flex-start;
 
     ${({ extra }) => extra}
 `;

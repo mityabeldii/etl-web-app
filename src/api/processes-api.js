@@ -112,6 +112,18 @@ const ProcessesAPI = {
             }
         });
     },
+    async manualStart(processId) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.post(`${base_url}/process/${processId}/process-runs`)).data;
+                await ProcessesAPI.getProcessTasks(processId);
+                handleSuccess([response]);
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
 };
 
 export default ProcessesAPI;
