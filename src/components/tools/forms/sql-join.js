@@ -90,9 +90,19 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     <Control.Select
                         name={`operatorConfigData.joinSettings.conditions.[${index}].leftJoinField`}
                         options={
-                            _.get(
-                                tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
-                                `operatorConfigData.storageStructure`
+                            (data?.operator === OPERATORS.JOIN
+                                ? Object.values(
+                                      _.get(
+                                          tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
+                                          `operatorConfigData.storageStructure`
+                                      )
+                                  )
+                                      ?.flat?.()
+                                      ?.map?.(({ sourceFieldName: storageFieldName }) => ({ storageFieldName }))
+                                : _.get(
+                                      tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
+                                      `operatorConfigData.storageStructure`
+                                  )
                             )?.map?.(({ storageFieldName: i }) => ({
                                 value: i,
                                 label: i,
@@ -108,18 +118,26 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     <Control.Select
                         name={`operatorConfigData.joinSettings.conditions.[${index}].rightJoinField`}
                         options={
-                            _.get(
-                                tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.joinTaskIdSource`)) ?? {},
-                                `operatorConfigData.storageStructure`
-                            )
-                                ?.map?.((i) => i?.storageFieldName)
-                                ?.map?.((i) => ({
-                                    value: i,
-                                    label: i,
-                                    muted: _.get(data, `operatorConfigData.joinSettings.conditions`)
-                                        ?.map?.((i) => i?.rightJoinField)
-                                        ?.includes?.(i),
-                                })) ?? []
+                            (data?.operator === OPERATORS.JOIN
+                                ? Object.values(
+                                      _.get(
+                                          tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.joinTaskIdSource`)) ?? {},
+                                          `operatorConfigData.storageStructure`
+                                      )
+                                  )
+                                      ?.flat?.()
+                                      ?.map?.(({ sourceFieldName: storageFieldName }) => ({ storageFieldName }))
+                                : _.get(
+                                      tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.joinTaskIdSource`)) ?? {},
+                                      `operatorConfigData.storageStructure`
+                                  )
+                            )?.map?.(({ storageFieldName: i }) => ({
+                                value: i,
+                                label: i,
+                                muted: _.get(data, `operatorConfigData.joinSettings.conditions`)
+                                    ?.map?.((i) => i?.rightJoinField)
+                                    ?.includes?.(i),
+                            })) ?? []
                         }
                     />
                     <RemoveRowButton
@@ -224,14 +242,13 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                             _.get(
                                 tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.joinTaskIdSource`)) ?? {},
                                 `operatorConfigData.storageStructure`
-                            )
-                                ?.map?.(({storageFieldName: i}) => ({
-                                    value: i,
-                                    label: i,
-                                    muted: _.get(data, `operatorConfigData.storageStructure.rightSourceFields`)
-                                        ?.map?.((i) => i?.sourceFieldName)
-                                        ?.includes?.(i),
-                                })) ?? []
+                            )?.map?.(({ storageFieldName: i }) => ({
+                                value: i,
+                                label: i,
+                                muted: _.get(data, `operatorConfigData.storageStructure.rightSourceFields`)
+                                    ?.map?.((i) => i?.sourceFieldName)
+                                    ?.includes?.(i),
+                            })) ?? []
                         }
                     />
                     <Frame extra={({ theme }) => `flex: unset; width: 16px; height: 16px; margin-top: 20px; color: ${theme.text.secondary};`}>

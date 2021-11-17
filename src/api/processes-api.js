@@ -72,7 +72,7 @@ const ProcessesAPI = {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`${base_url}/process/${processId}/tasks`)).data;
-                putStorage(`processes.${processId}.tasks`, response);
+                putStorage(`processes.${processId}.tasks`, response?.sort?.((a, b) => a?.taskQueue - b?.taskQueue) ?? []);
                 return response;
             } catch (error) {
                 throw handleError(error);

@@ -108,32 +108,6 @@ const SQLExtract = () => {
                     </Control.Row>
                 );
             })}
-            <Br />
-            <Control.Row>
-                <H2 extra={`margin-bottom: 20px;`}>Настройки обновления</H2>
-            </Control.Row>
-            <Control.Row>
-                <Control.Select
-                    name={`operatorConfigData.updateSettings.updateType`}
-                    label={`Тип обновления`}
-                    options={Object.entries(UPDATE_TYPES).map(([value, label], index) => ({ label, value }))}
-                    extra={`flex: 0.5; margin-right: 16px !important;`}
-                />
-            </Control.Row>
-            <Control.Row>
-                <Control.Select
-                    name={`operatorConfigData.updateSettings.lastUpdatedField`}
-                    label={`Поле последнего обновления`}
-                    options={params?.source?.columns?.map?.(({ sourceFieldName }) => ({ label: sourceFieldName, value: sourceFieldName }))}
-                    readOnly={!params?.source?.columns?.length}
-                />
-                <Control.Select
-                    name={`operatorConfigData.updateSettings.primaryKey`}
-                    label={`Первичный ключ`}
-                    options={params?.source?.columns?.map?.(({ sourceFieldName }) => ({ label: sourceFieldName, value: sourceFieldName }))}
-                    readOnly={!params?.source?.columns?.length}
-                />
-            </Control.Row>
         </>
     );
 };
