@@ -30,11 +30,7 @@ const schema = (yup) =>
 
 const CrateTaskModal = () => {
     const [mode, setMode] = useState(`view`);
-    const { data, onSubmit, clearForm, readOnly } = useFormControl({
-        name: FORMS.CREATE_TASK,
-        schema,
-        readOnly: mode === `view`,
-    });
+    const { data, onSubmit, clearForm, setReadOnly } = useFormControl({ name: FORMS.CREATE_TASK, schema });
 
     const { process_id } = useParams();
     const process = useStorageListener((state) => state?.processes ?? [])?.[process_id] ?? {};
@@ -46,6 +42,7 @@ const CrateTaskModal = () => {
     useEventListener(`OPEN_${MODALS.CREATE_TASK}_MODAL`, (e) => {
         const { mode } = e.detail;
         setMode(mode);
+        setReadOnly(mode === `view`);
     });
 
     const closeModal = () => {

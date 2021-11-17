@@ -5,17 +5,14 @@ import * as yup from "yup";
 
 import { getStorage, putStorage, omitStorage, useStorageListener } from "./useStorage";
 
-const useFormControl = ({ name, schema, readOnly: defaultReadOnly = false }) => {
+const useFormControl = ({ name, schema }) => {
     // READ ONLY
-    const readOnly = useStorageListener((state) => _.get(state, `forms.${name}.readOnly`)) ?? defaultReadOnly ?? false;
+    const readOnly = useStorageListener((state) => _.get(state, `forms.${name}.readOnly`)) === true;
     const setReadOnly = (newValue) => {
         if (!!name) {
             putStorage(`forms.${name}.readOnly`, newValue);
         }
     };
-    useEffect(() => {
-        setReadOnly(defaultReadOnly);
-    }, [defaultReadOnly]);
 
     // DATA
     const data = useStorageListener((state) => _.get(state, `forms.${name}.values`)) ?? ``;
