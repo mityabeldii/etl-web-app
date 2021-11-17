@@ -178,8 +178,9 @@ const Table = (props) => {
                     ?.filter?.((i) => {
                         return (
                             useBackendProcessing ||
-                            Object.entries(filters)
-                                .map(([key, value], index) => i?.[key]?.includes?.(value))
+                            Object.keys(_.pickBy(filters, _.identity)).length === 0 ||
+                            Object.entries(_.pickBy(filters, _.identity))
+                                .map(([key, value], index) => !value || `${_.get(i, key)}`?.includes?.(value))
                                 ?.reduce?.(
                                     ...{
                                         conjunction: [(a, b) => a && b, true],

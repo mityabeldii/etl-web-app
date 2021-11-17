@@ -22,7 +22,7 @@ import useQueryParams from "../../hooks/useQueryParams";
 const ProcessesConfigurationPage = () => {
     const { process_id } = useParams();
     const { pathname } = useLocation();
-    const { edit = false } = useQueryParams();
+    const { edit = false } = useQueryParams().params;
 
     const process = useStorageListener((state) => state?.processes ?? [])?.[process_id] ?? {};
     const { tasks = [] } = process;
