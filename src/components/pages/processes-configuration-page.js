@@ -64,7 +64,8 @@ const ProcessesConfigurationPage = () => {
                     {...tablesColumns.TASKS_TABLE}
                     rows={tasks}
                     columns={tablesColumns.TASKS_TABLE?.columns?.filter?.(
-                        (i) => !((edit && [`deletebutton`, `rightarrowbutton`]?.includes?.(i.name)) || (!edit && i.name === `editbutton`))
+                        // (i) => !((edit && [`deletebutton`, `rightarrowbutton`]?.includes?.(i.name)) || (!edit && i.name === `editbutton`))
+                        (i) => !(edit ? [`rightarrowbutton`] : [`deletebutton`, `editbutton`])?.includes?.(i?.name)
                     )}
                 />
                 {edit && (

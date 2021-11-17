@@ -29,7 +29,7 @@ const ProcessDropdown = ({ cellState = {} }) => {
                         {
                             label: `Удалить процесс`,
                             src: `processes-more-delete`,
-                            muted: (() => row?.active)(),
+                            // muted: (() => row?.active)(),
                             tooltip: (() => row?.active && { label: `Невозможно удалить активный процесс`, side: `left` })(),
                             onClick: ({ row }) => {
                                 ProcessesAPI.deleteProcess(row?.id);
@@ -48,7 +48,7 @@ const ProcessDropdown = ({ cellState = {} }) => {
                         {
                             label: `Ручной запуск`,
                             src: `processes-more-manual-start`,
-                            muted: (() => row?.active)(),
+                            // muted: (() => row?.active)(),
                             tooltip: (() => row?.active && { label: `Невозможно запустить активный процесс`, side: `left` })(),
                             onClick: async ({ row }) => {
                                 await ProcessesAPI.manualStart(row?.id);

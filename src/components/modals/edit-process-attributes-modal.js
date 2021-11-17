@@ -51,7 +51,7 @@ const EditProcessAttributesModal = () => {
                     <Control.Input name={`last_editing_time`} label={`Время последнего редактирования:`} />
                 </Control.Row>
                 <Control.Row>
-                    <Control.Input name={`id`} label={`ID`} />
+                    <Control.Input name={`id`} label={`ID`} readOnly />
                 </Control.Row>
                 <Control.Row>
                     <Control.Textarea
