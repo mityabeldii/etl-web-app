@@ -98,7 +98,7 @@ const ProcessesList = {
                 extra: `* { line-height: 8px; }; * { line-height: 19px !important; margin: 0; }; > * { > * { &:first-child { margin-bottom: 8px; }; }; };`,
             },
         },
-        { name: `startDate`, label: `След. запуск`, transform: ({ row }) => `${row.lastDate}` },
+        { name: `startDate`, label: `След. запуск`, transform: ({ row }) => `${row.lastDate ?? `-`}` },
         { name: `statistics`, label: `Статистика`, cell: { type: `statistics` } },
         { name: `morebutton`, label: ``, cell: { type: `process_more_button`, extra: `justify-content: flex-end;` } },
     ],

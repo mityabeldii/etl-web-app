@@ -96,10 +96,9 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                                           tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
                                           `operatorConfigData.storageStructure`
                                       ) ?? {}
-                                  )
-                                      ?.flat?.()
-                                    //   ?.map?.(({ sourceFieldName: storageFieldName }) => ({ storageFieldName }))
-                                : _.get(
+                                  )?.flat?.()
+                                : //   ?.map?.(({ sourceFieldName: storageFieldName }) => ({ storageFieldName }))
+                                  _.get(
                                       tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
                                       `operatorConfigData.storageStructure`
                                   )
@@ -124,8 +123,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                                           tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.joinTaskIdSource`)) ?? {},
                                           `operatorConfigData.storageStructure`
                                       ) ?? {}
-                                  )
-                                      ?.flat?.()
+                                  )?.flat?.()
                                 : _.get(
                                       tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.joinTaskIdSource`)) ?? {},
                                       `operatorConfigData.storageStructure`
@@ -182,9 +180,18 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     <Control.Select
                         name={`operatorConfigData.storageStructure.leftSourceFields.[${index}].sourceFieldName`}
                         options={
-                            _.get(
-                                tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
-                                `operatorConfigData.storageStructure`
+                            (data?.operator === OPERATORS.JOIN
+                                ? Object.values(
+                                      _.get(
+                                          tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
+                                          `operatorConfigData.storageStructure`
+                                      ) ?? {}
+                                  )?.flat?.()
+                                : //   ?.map?.(({ sourceFieldName: storageFieldName }) => ({ storageFieldName }))
+                                  _.get(
+                                      tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
+                                      `operatorConfigData.storageStructure`
+                                  )
                             )?.map?.(({ storageFieldName: i }) => ({
                                 value: i,
                                 label: i,

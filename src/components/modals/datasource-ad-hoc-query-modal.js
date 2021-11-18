@@ -45,10 +45,11 @@ const DatasourceAdHocQueryModal = () => {
                         font-weight: normal;
                         font-size: 14px;
                         line-height: 24px;
+                        min-height: 120px;
                     `}
                 />
                 <RowWrapper extra={`justify-content: flex-end;`}>
-                    <Frame
+                    {/* <Frame
                         extra={({ theme }) => css`
                             font-size: 14px;
                             line-height: 20px;
@@ -68,7 +69,7 @@ const DatasourceAdHocQueryModal = () => {
                         onChange={(e) => {
                             // putStorage(`tables.${name}.pagination.perPage`, e.target.value);
                         }}
-                    />
+                    /> */}
                     <Button background={`orange`} type={`submit`}>
                         Выполнить
                     </Button>
