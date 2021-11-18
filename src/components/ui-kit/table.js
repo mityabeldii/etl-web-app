@@ -267,7 +267,7 @@ const Table = (props) => {
 
 const TableCell = ({ cellState }) => {
     const { row, column, value } = cellState;
-    const transformedValue = column?.transform?.(cellState) ?? row?.[column?.name];
+    const transformedValue = column?.transform?.(cellState) ?? row?.[column?.name] ?? `-`;
     const cellContent = useMemo(
         () =>
             ({
@@ -313,7 +313,7 @@ const TableCell = ({ cellState }) => {
                                 <Tooltip
                                     key={index}
                                     label={PROCESS_STATUS?.[status]}
-                                    children={<StatisticsItem key={index} status={status} value={transformedValue?.[status] ?? `*`} />}
+                                    children={<StatisticsItem key={index} status={status} value={transformedValue?.[status] ?? `0`} />}
                                 />
                             );
                         })}

@@ -93,7 +93,7 @@ const ProcessesList = {
             name: `lastDate`,
             label: `Посл. запуск`,
             tooltip: { label: `В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n 2021-01-11 14:15` },
-            transform: ({ row }) => `${row.lastDate}\n\n${row.lastStatus}`,
+            transform: ({ row }) => `${row.lastDate ?? `-`}\n\n${row.lastStatus ?? `-`}`,
             cell: {
                 extra: `* { line-height: 8px; }; * { line-height: 19px !important; margin: 0; }; > * { > * { &:first-child { margin-bottom: 8px; }; }; };`,
             },

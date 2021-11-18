@@ -66,7 +66,7 @@ const SearchBar = ({ value = {}, onChange = () => {} }) => {
                     onChange({ ...value, host: e.target.value, port: e.target.value });
                 }}
             />
-            <RowWrapper
+            {/* <RowWrapper
                 onClick={toggleCheck}
                 extra={css`
                     width: 214px;
@@ -80,7 +80,7 @@ const SearchBar = ({ value = {}, onChange = () => {} }) => {
             >
                 <Checkbox checked={checked} onChange={() => {}} />
                 <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Запущены сейчас</Frame>
-            </RowWrapper>
+            </RowWrapper> */}
         </RowWrapper>
     );
 };
