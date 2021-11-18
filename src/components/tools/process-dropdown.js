@@ -42,14 +42,20 @@ const ProcessDropdown = ({ cellState = {} }) => {
                                 linkTo(`/processes/configuration/${row?.id}`);
                             },
                         },
-                        { label: `Редактировать конфигурацию`, src: `processes-more-config-edit` },
+                        {
+                            label: `Редактировать конфигурацию`,
+                            src: `processes-more-config-edit`,
+                            onClick: ({ row }) => {
+                                linkTo(`/processes/configuration/${row?.id}?edit=true`);
+                            },
+                        },
                         { label: `История запусков процесса`, src: `processes-more-launches-history` },
                         { label: `История запусков задач`, src: `processes-more-tasks-history` },
                         {
                             label: `Ручной запуск`,
                             src: `processes-more-manual-start`,
                             // muted: (() => row?.active)(),
-                            tooltip: (() => row?.active && { label: `Невозможно запустить активный процесс`, side: `left` })(),
+                            // tooltip: (() => row?.active && { label: `Невозможно запустить активный процесс`, side: `left` })(),
                             onClick: async ({ row }) => {
                                 await ProcessesAPI.manualStart(row?.id);
                             },

@@ -4,10 +4,10 @@ import styled, { css } from "styled-components";
 import { useLocation } from "react-router";
 import _ from "lodash";
 
-import { Button, H1, RowWrapper, Input, Checkbox, Frame } from "../ui-kit/styled-templates";
+import { Button, H1, RowWrapper, Input, Checkbox, Frame, Dropdown } from "../ui-kit/styled-templates";
 import Table from "../ui-kit/table";
 
-import { MODALS, TABLES } from "../../constants/config";
+import { MODALS, PROCESS_STATUSES, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
 import { eventDispatch } from "../../hooks/useEventListener";
 import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
@@ -15,6 +15,8 @@ import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
 import DatasourceAPI from "../../api/datasource-api";
 import { useStorageListener } from "../../hooks/useStorage";
 import useQueryParams from "../../hooks/useQueryParams";
+import Select from "../ui-kit/select";
+import { convertHex } from "../../utils/colors-helper";
 
 const DatasourcesListPage = () => {
     const { search } = useLocation();
@@ -45,7 +47,8 @@ const Heading = styled(H1)`
 `;
 
 const SearchBar = () => {
-    const { params, setParams } = useQueryParams();
+    const { params, setParams, setByKey } = useQueryParams();
+    const processes = useStorageListener((state) => _.get(state, `tables.${TABLES.PROCESSES_HISTORY}.rows`) ?? []);
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada;`}>
             <Search
@@ -54,20 +57,70 @@ const SearchBar = () => {
                     setParams({ ...params, id: e.target.value ?? ``, processId: e.target.value ?? `` });
                 }}
             />
-            <RowWrapper
-                extra={css`
-                    width: 214px;
-                    border: 0px;
-                    padding: 20px 30px;
-                    border-left: 1px solid #dadada;
-                    border-radius: 0px;
-                    background: transparent;
-                    cursor: pointer;
-                `}
-            >
-                <Checkbox />
-                <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Запущены сейчас</Frame>
-            </RowWrapper>
+            <Select
+                toggleComponent={() => (
+                    <RowWrapper
+                        extra={css`
+                            width: 150px;
+                            border: 0px;
+                            padding: 20px 30px;
+                            border-left: 1px solid #dadada;
+                            border-radius: 0px;
+                            background: transparent;
+                            cursor: pointer;
+                            box-sizing: border-box;
+
+                            &:after {
+                                content: "";
+                                width: 24px;
+                                height: 24px;
+                                transform: rotate(90deg);
+                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}") no-repeat center center / contain;
+                            }
+                        `}
+                    >
+                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Процесс</Frame>
+                    </RowWrapper>
+                )}
+                menuStyles={`width: max-content;`}
+                value={params?.id}
+                onChange={(e) => {
+                    setByKey(`id`, params?.id == e.target.value ? undefined : e.target.value);
+                }}
+                options={processes?.map?.(({ processId: value, processName: label }) => ({ label, value }))}
+            />
+            <Select
+                toggleComponent={() => (
+                    <RowWrapper
+                        extra={css`
+                            width: 136px;
+                            border: 0px;
+                            padding: 20px 30px;
+                            border-left: 1px solid #dadada;
+                            border-radius: 0px;
+                            background: transparent;
+                            cursor: pointer;
+                            box-sizing: border-box;
+
+                            &:after {
+                                content: "";
+                                width: 24px;
+                                height: 24px;
+                                transform: rotate(90deg);
+                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}") no-repeat center center / contain;
+                            }
+                        `}
+                    >
+                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Статус</Frame>
+                    </RowWrapper>
+                )}
+                menuStyles={`width: max-content;`}
+                value={params?.state}
+                onChange={(e) => {
+                    setByKey(`state`, params?.state === e.target.value ? undefined : e.target.value);
+                }}
+                options={Object.keys(PROCESS_STATUSES)?.map?.((key) => ({ label: PROCESS_STATUSES[key]?.label, value: key }))}
+            />
         </RowWrapper>
     );
 };

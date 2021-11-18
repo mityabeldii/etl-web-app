@@ -267,11 +267,11 @@ const Table = (props) => {
 
 const TableCell = ({ cellState }) => {
     const { row, column, value } = cellState;
-    const transformedValue = column?.transform?.(cellState) ?? row?.[column?.name] ?? `-`;
+    const transformedValue = JSON.stringify(column?.transform?.(cellState) ?? value ?? row?.[column?.name] ?? `-`);
     const cellContent = useMemo(
         () =>
             ({
-                text: <Markdown>{`${column?.transform?.(cellState) ?? row?.[column?.name] ?? ``}`}</Markdown>,
+                text: <Markdown>{`${transformedValue}`}</Markdown>,
                 button: (
                     <Button
                         {...(column?.cell ?? {})}

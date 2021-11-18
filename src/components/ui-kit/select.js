@@ -11,7 +11,16 @@ import { createId, togglePush } from "../../utils/common-helper";
 import { eventDispatch } from "../../hooks/useEventListener";
 
 const Select = (props) => {
-    const { options = [], extra = ``, value, onChange = () => {}, multiselect = false, placeholder = `Выберите из списка`, readOnly = false } = props;
+    const {
+        options = [],
+        extra = ``,
+        value,
+        onChange = () => {},
+        multiselect = false,
+        placeholder = `Выберите из списка`,
+        readOnly = false,
+        toggleComponent: ToggleComponent,
+    } = props;
     const [dropdownId, setDropdownId] = useState(createId());
     return (
         <Dropdown
@@ -25,39 +34,45 @@ const Select = (props) => {
                         cursor: pointer;
                     `}
                 }
+                ${props?.toggleStyles ?? ``}
             `}
             menuStyles={css`
                 /* width: calc(100% - 20px); */
                 width: 100%;
+                ${props?.menuStyles ?? ``}
             `}
             callable={!readOnly}
             toggle={
-                <Input
-                    value={
-                        multiselect
-                            ? options
-                                  .filter((i) => value?.includes(i?.value))
-                                  .map((i) => i?.label)
-                                  ?.join?.(`, `)
-                            : options?.find?.((i) => i?.value === value)?.label ?? ``
-                    }
-                    readOnly
-                    extra={css`
-                        width: 100%;
-                        /* background: ${({ theme }) => theme.background.secondary}; */
-                        /* border: 1px solid ${({ theme }) => theme.grey}; */
-                        cursor: default;
-                        ${!readOnly &&
-                        css`
-                            border: 1px solid #dadada;
-                            background: ${({ theme }) => theme.background.secondary};
-                            color: ${({ theme }) => theme.text.primary};
-                            cursor: pointer;
+                ToggleComponent ? (
+                    <ToggleComponent options={options} label={value} />
+                ) : (
+                    <Input
+                        value={
+                            multiselect
+                                ? options
+                                      .filter((i) => value?.includes(i?.value))
+                                      .map((i) => i?.label)
+                                      ?.join?.(`, `)
+                                : options?.find?.((i) => i?.value === value)?.label ?? ``
+                        }
+                        readOnly
+                        extra={css`
+                            width: 100%;
+                            /* background: ${({ theme }) => theme.background.secondary}; */
+                            /* border: 1px solid ${({ theme }) => theme.grey}; */
+                            cursor: default;
+                            ${!readOnly &&
+                            css`
+                                border: 1px solid #dadada;
+                                background: ${({ theme }) => theme.background.secondary};
+                                color: ${({ theme }) => theme.text.primary};
+                                cursor: pointer;
+                            `}
                         `}
-                    `}
-                    rightIcon={`select-arrow`}
-                    placeholder={placeholder}
-                />
+                        rightIcon={`select-arrow`}
+                        placeholder={placeholder}
+                    />
+                )
             }
             menu={
                 <>

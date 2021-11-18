@@ -36,6 +36,7 @@ const DatasourceAdHocQueryModal = () => {
     };
     const closeModal = () => {
         clearForm();
+        setError(undefined);
         eventDispatch(`CLOSE_${MODALS.DATASOURCE_AD_HOC_QUERY_MODAL}_MODAL`);
     };
     return (

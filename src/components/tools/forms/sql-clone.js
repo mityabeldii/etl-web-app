@@ -189,20 +189,22 @@ const SQLClone = () => {
                     extra={`flex: 0.5; margin-right: 16px !important;`}
                 />
             </Control.Row>
-            <Control.Row>
-                <Control.Select
-                    name={`operatorConfigData.updateSettings.lastUpdatedField`}
-                    label={`Поле последнего обновления`}
-                    options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
-                    readOnly={!params?.source?.columns?.length}
-                />
-                <Control.Select
-                    name={`operatorConfigData.updateSettings.primaryKey`}
-                    label={`Первичный ключ`}
-                    options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
-                    readOnly={!params?.source?.columns?.length}
-                />
-            </Control.Row>
+            {_.get(data, `operatorConfigData.updateSettings.updateType`) !== `full` && (
+                <Control.Row>
+                    <Control.Select
+                        name={`operatorConfigData.updateSettings.lastUpdatedField`}
+                        label={`Поле последнего обновления`}
+                        options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                        readOnly={!params?.source?.columns?.length}
+                    />
+                    <Control.Select
+                        name={`operatorConfigData.updateSettings.primaryKey`}
+                        label={`Первичный ключ`}
+                        options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                        readOnly={!params?.source?.columns?.length}
+                    />
+                </Control.Row>
+            )}
         </>
     );
 };

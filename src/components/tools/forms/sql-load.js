@@ -179,20 +179,22 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                     extra={`flex: 0.5; margin-right: 16px !important;`}
                 />
             </Control.Row>
-            <Control.Row>
-                <Control.Select
-                    name={`operatorConfigData.updateSettings.lastUpdatedField`}
-                    label={`Поле последнего обновления`}
-                    options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
-                    readOnly={!params?.target?.columns?.length}
-                />
-                <Control.Select
-                    name={`operatorConfigData.updateSettings.primaryKey`}
-                    label={`Первичный ключ`}
-                    options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
-                    readOnly={!params?.target?.columns?.length}
-                />
-            </Control.Row>
+            {_.get(data, `operatorConfigData.updateSettings.updateType`) !== `full` && (
+                <Control.Row>
+                    <Control.Select
+                        name={`operatorConfigData.updateSettings.lastUpdatedField`}
+                        label={`Поле последнего обновления`}
+                        options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
+                        readOnly={!params?.target?.columns?.length}
+                    />
+                    <Control.Select
+                        name={`operatorConfigData.updateSettings.primaryKey`}
+                        label={`Первичный ключ`}
+                        options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
+                        readOnly={!params?.target?.columns?.length}
+                    />
+                </Control.Row>
+            )}
         </>
     );
 };

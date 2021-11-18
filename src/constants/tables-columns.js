@@ -165,7 +165,7 @@ const ProcessesHistoryTable = {
             extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
             transform: ({ row }) => `**${row?.processName}**\n\n${row?.processId}`,
         },
-        { name: `id`, label: `ID запуска процесса` },
+        { name: `processRunId`, label: `ID запуска процесса`, extra: `flex: 2;` },
         {
             name: `startAndStop`,
             label: `Старт и завершение`,
