@@ -75,6 +75,7 @@ const DatasourceTablePreview = {
 const ProcessesList = {
     useBackendProcessing: false,
     withPagination: false,
+    booleanOperation: `disjunction`,
     columns: [
         {
             name: `active`,

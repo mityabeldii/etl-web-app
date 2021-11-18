@@ -13,12 +13,13 @@ import { eventDispatch } from "../../hooks/useEventListener";
 import ProcessesAPI from "../../api/processes-api";
 
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
+import useQueryParams from "../../hooks/useQueryParams";
 
 const ProcessesListPage = () => {
+    const { params: filters } = useQueryParams();
     const openCreateProcessModal = () => {
         eventDispatch(`OPEN_${MODALS.CREATE_PROCESS_MODAL}_MODAL`);
     };
-    const [filters, setFilters] = useState({});
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
@@ -31,14 +32,9 @@ const ProcessesListPage = () => {
                 name={TABLES.PROCESSES_LIST}
                 fetchFunction={ProcessesAPI.getProcesses}
                 {...tablesColumns[TABLES.PROCESSES_LIST]}
-                // filters={filters}
+                filters={filters}
                 // booleanOperation={`disjunction`}
-                extraHeader={
-                    <SearchBar
-                        value={filters}
-                        onChange={setFilters}
-                    />
-                }
+                extraHeader={<SearchBar />}
             />
         </>
     );
@@ -53,17 +49,18 @@ const Heading = styled(H1)`
     }
 `;
 
-const SearchBar = ({ value = {}, onChange = () => {} }) => {
-    const checked = value?.active === true;
+const SearchBar = () => {
+    const { params, setParams, setByKey } = useQueryParams();
+    const checked = params?.active === `true`;
     const toggleCheck = () => {
-        onChange({ ...value, active: !(checked === true) });
+        setByKey(`active`, !(checked === true));
     };
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada;`}>
             <Search
-                value={value?.host ?? ``}
+                value={params?.processName ?? ``}
                 onChange={(e) => {
-                    onChange({ ...value, host: e.target.value, port: e.target.value });
+                    setParams({ ...params, processName: e.target.value, id: e.target.value });
                 }}
             />
             {/* <RowWrapper
@@ -88,7 +85,7 @@ const SearchBar = ({ value = {}, onChange = () => {} }) => {
 const Search = styled(Input).attrs((props) => {
     return {
         ...props,
-        placeholder: `Название или хост источника`,
+        placeholder: `Название или ID процесса`,
         leftIcon: `search`,
         leftIconStyles: `left: 20px;`,
         extra: css`

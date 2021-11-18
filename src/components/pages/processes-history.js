@@ -52,9 +52,9 @@ const SearchBar = () => {
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada;`}>
             <Search
-                value={params?.id ?? ``}
+                value={params?.processRunId ?? ``}
                 onChange={(e) => {
-                    setParams({ ...params, id: e.target.value ?? ``, processId: e.target.value ?? `` });
+                    setByKey(`processRunId`, e.target.value ?? ``);
                 }}
             />
             <Select
@@ -128,7 +128,7 @@ const SearchBar = () => {
 const Search = styled(Input).attrs((props) => {
     return {
         ...props,
-        placeholder: `ID процесса или его запуска`,
+        placeholder: `ID запуска процесса`,
         leftIcon: `search`,
         leftIconStyles: `left: 20px;`,
         extra: css`

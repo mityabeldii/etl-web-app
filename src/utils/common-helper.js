@@ -112,9 +112,10 @@ const CommonHelper = {
     },
 
     QSToObject: (search) => {
-        return JSON.parse(
+        const parsedObject = JSON.parse(
             ('{"' + decodeURI(search.replace(/^\?/, "")).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}').replace(/""/g, "")
         );
+        return Object.fromEntries(Object.entries(parsedObject)?.map?.(([key, value], index) => [key, new URLSearchParams(search).get(key)]));
     },
 
     objectToQS: (obj = {}) => `?` + new URLSearchParams(obj).toString(),

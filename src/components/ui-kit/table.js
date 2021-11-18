@@ -180,7 +180,7 @@ const Table = (props) => {
                             useBackendProcessing ||
                             Object.keys(_.pickBy(filters, _.identity)).length === 0 ||
                             Object.entries(_.pickBy(filters, _.identity))
-                                .map(([key, value], index) => !value || `${_.get(i, key)}`?.includes?.(value))
+                                .map(([key, value], index) => !value || `${_.get(i, key)}`?.toLowerCase?.()?.includes?.(value?.toLowerCase?.()))
                                 ?.reduce?.(
                                     ...{
                                         conjunction: [(a, b) => a && b, true],
