@@ -13,6 +13,7 @@ import { eventDispatch } from "../../hooks/useEventListener";
 import DatasourceAPI from "../../api/datasource-api";
 import { useStorageListener } from "../../hooks/useStorage";
 import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
+import DatasourceAdHocQueryModal from "../modals/datasource-ad-hoc-query-modal";
 
 const DatasourcePage = () => {
     const { pathname } = useLocation();
@@ -54,6 +55,8 @@ const DatasourcePage = () => {
 
     return (
         <>
+            <DatasourceAdHocQueryModal />
+
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Heading>
                     <Link to={`/datasources`}>

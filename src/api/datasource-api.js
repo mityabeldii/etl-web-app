@@ -139,9 +139,10 @@ const DatasourceAPI = {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.post(`${base_url}/api/v1/ad-hoc-query`, { datasourceId, schemaName, query })).data;
+                handleSuccess({ message: `Success` });
                 return response;
             } catch (error) {
-                throw handleError(error);
+                throw error;
             }
         });
     },

@@ -1,34 +1,37 @@
 /*eslint-disable*/
+import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { MODALS, FORMS } from "../../constants/config";
+import { useParams } from "react-router-dom";
 
 import { Frame, Button, Input, Dropdown, H1, P, Link, RowWrapper, Form } from "../ui-kit/styled-templates";
 import { Control } from "../ui-kit/control";
 import PopUpWrapper from "./pop-up-wrapper";
 import Select from "../ui-kit/select";
 
+import DatasourceAPI from "../../api/datasource-api";
+
 import useFormControl from "../../hooks/useFormControl";
 import { eventDispatch } from "../../hooks/useEventListener";
-import DatasourceAPI from "../../api/datasource-api";
+import { useStorageListener } from "../../hooks/useStorage";
+import _ from "lodash";
 
 const schema = (yup) =>
     yup.object().shape({
-        name: yup.string().required(`Это поле обязательно`),
-        host: yup.string().required(`Это поле обязательно`),
-        port: yup.string().required(`Это поле обязательно`),
-        base: yup.string().required(`Это поле обязательно`),
-        username: yup.string().required(`Это поле обязательно`),
-        password: yup.string().required(`Это поле обязательно`),
+        query: yup.string().required(`Это поле обязательно`),
     });
 
 const DatasourceAdHocQueryModal = () => {
     const { onSubmit, setValue, clearForm } = useFormControl({ name: FORMS.DATASOURCE_AD_HOC_FORM, schema });
-    const handleSubmit = (data) => {
+    const { selectedSourceId: datasourceId } = useParams();
+    const schemaName = useStorageListener((state) => state?.datasources?.structures?.find?.((i) => +i?.id === +datasourceId)?.data?.schema);
+    const [error, setError] = useState();
+    const handleSubmit = async (data) => {
         try {
-            console.log(data);
-            // const response = await DatasourceAPI.adHocQuery({});
+            setError(undefined);
+            const response = await DatasourceAPI.adHocQuery({ ...data, datasourceId, schema: schemaName });
         } catch (error) {
-            
+            setError(error?.response?.data?.message);
         }
     };
     const closeModal = () => {
@@ -37,12 +40,16 @@ const DatasourceAdHocQueryModal = () => {
     };
     return (
         <PopUpWrapper name={MODALS.DATASOURCE_AD_HOC_QUERY_MODAL} onClickOutside={closeModal}>
-            <Form name={FORMS.DATASOURCE_AD_HOC_FORM} onSubmit={onSubmit(handleSubmit)} extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}>
+            <Form
+                name={FORMS.DATASOURCE_AD_HOC_FORM}
+                onSubmit={onSubmit(handleSubmit)}
+                extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}
+            >
                 <Control.Row>
                     <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px; align-items: flex-start;`}>Выполнить Ad-Hoc запрос</H1>
                 </Control.Row>
                 <Control.Textarea
-                    name={`query_text`}
+                    name={`query`}
                     placeholder={`Enter your query here`}
                     controlStyles={`flex: 1;`}
                     extra={css`
@@ -54,6 +61,21 @@ const DatasourceAdHocQueryModal = () => {
                         min-height: 120px;
                     `}
                 />
+                {error && (
+                    <ErrorBox>
+                        <RowWrapper>
+                            <Frame
+                                extra={({ theme }) =>
+                                    `font-weight: 600; font-size: 14px; line-height: 20px; color: ${theme.red}; margin-bottom: 2px;`
+                                }
+                            >
+                                Ошибка выполнения запроса
+                            </Frame>
+                            <ErrorSign />
+                        </RowWrapper>
+                        {error}
+                    </ErrorBox>
+                )}
                 <RowWrapper extra={`justify-content: flex-end;`}>
                     {/* <Frame
                         extra={({ theme }) => css`
@@ -80,11 +102,29 @@ const DatasourceAdHocQueryModal = () => {
                         Выполнить
                     </Button>
                 </RowWrapper>
-
             </Form>
         </PopUpWrapper>
     );
 };
+
+const ErrorSign = styled(Frame)`
+    width: 24px;
+    height: 24px;
+    background: url("${require(`../../assets/icons/error-outline.svg`).default}") no-repeat center center / contain;
+`;
+
+const ErrorBox = styled(Frame)`
+    width: 100%;
+    padding: 18px 32px;
+    box-sizing: border-box;
+    background: #f6dfdf;
+    border: 1px solid ${({ theme }) => theme.red};
+    border-radius: 4px;
+    color: ${({ theme }) => theme.red};
+    margin-bottom: 25px;
+    font-size: 12px;
+    line-height: 16px;
+`;
 
 export default DatasourceAdHocQueryModal;
 /*eslint-enable*/
