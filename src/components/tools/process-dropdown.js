@@ -9,7 +9,7 @@ import ProcessesAPI from "../../api/processes-api";
 
 import { eventDispatch } from "../../hooks/useEventListener";
 import { MODALS } from "../../constants/config";
-import { linkTo } from "../../utils/common-helper";
+import { linkTo, objectToQS } from "../../utils/common-helper";
 
 const ProcessDropdown = ({ cellState = {} }) => {
     const { row = {} } = cellState;
@@ -46,10 +46,16 @@ const ProcessDropdown = ({ cellState = {} }) => {
                             label: `Редактировать конфигурацию`,
                             src: `processes-more-config-edit`,
                             onClick: ({ row }) => {
-                                linkTo(`/processes/configuration/${row?.id}?edit=true`);
+                                linkTo(`/processes/configuration/${row?.id}${objectToQS({ edit: true })}`);
                             },
                         },
-                        { label: `История запусков процесса`, src: `processes-more-launches-history` },
+                        {
+                            label: `История запусков процесса`,
+                            src: `processes-more-launches-history`,
+                            onClick: ({ row }) => {
+                                linkTo(`/history/processes${objectToQS({ id: row?.id })}`);
+                            },
+                        },
                         { label: `История запусков задач`, src: `processes-more-tasks-history` },
                         {
                             label: `Ручной запуск`,
