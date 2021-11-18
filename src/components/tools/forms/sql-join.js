@@ -12,6 +12,7 @@ import DatasourceAPI from "../../../api/datasource-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { getStorage, useStorageListener } from "../../../hooks/useStorage";
+import TasksHelper from "../../../utils/tasks-helper";
 
 const SQLJoin = ({ tasks = [], mode = `view` }) => {
     const { data, removeValue, setValue } = useFormControl({ name: FORMS.CREATE_TASK });
@@ -90,19 +91,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     <Control.Select
                         name={`operatorConfigData.joinSettings.conditions.[${index}].leftJoinField`}
                         options={
-                            (data?.operator === OPERATORS.JOIN
-                                ? Object.values(
-                                      _.get(
-                                          tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
-                                          `operatorConfigData.storageStructure`
-                                      ) ?? {}
-                                  )?.flat?.()
-                                : //   ?.map?.(({ sourceFieldName: storageFieldName }) => ({ storageFieldName }))
-                                  _.get(
-                                      tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
-                                      `operatorConfigData.storageStructure`
-                                  )
-                            )?.map?.(({ storageFieldName: i }) => ({
+                            TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
                                 value: i,
                                 label: i,
                                 muted: _.get(data, `operatorConfigData.joinSettings.conditions`)
@@ -117,18 +106,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     <Control.Select
                         name={`operatorConfigData.joinSettings.conditions.[${index}].rightJoinField`}
                         options={
-                            (data?.operator === OPERATORS.JOIN
-                                ? Object.values(
-                                      _.get(
-                                          tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.joinTaskIdSource`)) ?? {},
-                                          `operatorConfigData.storageStructure`
-                                      ) ?? {}
-                                  )?.flat?.()
-                                : _.get(
-                                      tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.joinTaskIdSource`)) ?? {},
-                                      `operatorConfigData.storageStructure`
-                                  )
-                            )?.map?.(({ storageFieldName: i }) => ({
+                            TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.joinTaskIdSource`))?.map?.((i) => ({
                                 value: i,
                                 label: i,
                                 muted: _.get(data, `operatorConfigData.joinSettings.conditions`)
@@ -180,19 +158,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     <Control.Select
                         name={`operatorConfigData.storageStructure.leftSourceFields.[${index}].sourceFieldName`}
                         options={
-                            (data?.operator === OPERATORS.JOIN
-                                ? Object.values(
-                                      _.get(
-                                          tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
-                                          `operatorConfigData.storageStructure`
-                                      ) ?? {}
-                                  )?.flat?.()
-                                : //   ?.map?.(({ sourceFieldName: storageFieldName }) => ({ storageFieldName }))
-                                  _.get(
-                                      tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`)) ?? {},
-                                      `operatorConfigData.storageStructure`
-                                  )
-                            )?.map?.(({ storageFieldName: i }) => ({
+                            TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
                                 value: i,
                                 label: i,
                                 muted: _.get(data, `operatorConfigData.storageStructure.leftSourceFields`)
@@ -245,10 +211,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     <Control.Select
                         name={`operatorConfigData.storageStructure.rightSourceFields.[${index}].sourceFieldName`}
                         options={
-                            _.get(
-                                tasks?.find?.((i) => i?.id === _.get(data, `operatorConfigData.joinTaskIdSource`)) ?? {},
-                                `operatorConfigData.storageStructure`
-                            )?.map?.(({ storageFieldName: i }) => ({
+                            TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.joinTaskIdSource`))?.map?.((i) => ({
                                 value: i,
                                 label: i,
                                 muted: _.get(data, `operatorConfigData.storageStructure.rightSourceFields`)

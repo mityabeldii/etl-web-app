@@ -9,6 +9,7 @@ import Select from "../ui-kit/select";
 
 import useFormControl from "../../hooks/useFormControl";
 import { eventDispatch } from "../../hooks/useEventListener";
+import DatasourceAPI from "../../api/datasource-api";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -23,7 +24,12 @@ const schema = (yup) =>
 const DatasourceAdHocQueryModal = () => {
     const { onSubmit, setValue, clearForm } = useFormControl({ name: FORMS.DATASOURCE_AD_HOC_FORM, schema });
     const handleSubmit = (data) => {
-        console.log(data);
+        try {
+            console.log(data);
+            // const response = await DatasourceAPI.adHocQuery({});
+        } catch (error) {
+            
+        }
     };
     const closeModal = () => {
         clearForm();
@@ -74,6 +80,7 @@ const DatasourceAdHocQueryModal = () => {
                         Выполнить
                     </Button>
                 </RowWrapper>
+
             </Form>
         </PopUpWrapper>
     );

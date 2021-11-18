@@ -12,6 +12,7 @@ import DatasourceAPI from "../../../api/datasource-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { getStorage, useStorageListener } from "../../../hooks/useStorage";
+import TasksHelper from "../../../utils/tasks-helper";
 
 const SQLCalculated = ({ tasks = [], mode = `view` }) => {
     const { data, removeValue, setValue } = useFormControl({ name: FORMS.CREATE_TASK });
@@ -85,12 +86,10 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                                 name={`operatorConfigData.calculationSettings.[${index}].attr1`}
                                 label={`Аргумент 1`}
                                 options={
-                                    tasks
-                                        ?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`))
-                                        ?.operatorConfigData?.storageStructure?.map?.(({ storageFieldName }) => ({
-                                            label: storageFieldName,
-                                            value: storageFieldName,
-                                        })) ?? []
+                                    TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                                        value: i,
+                                        label: i,
+                                    })) ?? []
                                 }
                                 readOnly={!_.get(data, `operatorConfigData.taskIdSource`)}
                             />
@@ -98,12 +97,10 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                                 name={`operatorConfigData.calculationSettings.[${index}].attr2`}
                                 label={`Аргумент 2`}
                                 options={
-                                    tasks
-                                        ?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`))
-                                        ?.operatorConfigData?.storageStructure?.map?.(({ storageFieldName }) => ({
-                                            label: storageFieldName,
-                                            value: storageFieldName,
-                                        })) ?? []
+                                    TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                                        value: i,
+                                        label: i,
+                                    })) ?? []
                                 }
                                 readOnly={
                                     !_.get(data, `operatorConfigData.taskIdSource`) ||
@@ -181,12 +178,13 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                             label={``}
                             extra={`flex: 1;`}
                             options={
-                                tasks
-                                    ?.find?.((i) => i?.id === _.get(data, `operatorConfigData.taskIdSource`))
-                                    ?.operatorConfigData?.storageStructure?.map?.(({ storageFieldName }) => ({
-                                        label: storageFieldName,
-                                        value: storageFieldName,
-                                    })) ?? []
+                                TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                                    value: i,
+                                    label: i,
+                                    muted: _.get(data, `operatorConfigData.storageStructure`)
+                                        ?.map?.((i) => i?.sourceFieldName)
+                                        ?.includes?.(i),
+                                })) ?? []
                             }
                             readOnly={!_.get(data, `operatorConfigData.taskIdSource`)}
                         />

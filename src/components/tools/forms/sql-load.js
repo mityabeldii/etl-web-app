@@ -12,6 +12,7 @@ import DatasourceAPI from "../../../api/datasource-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { getStorage, useStorageListener } from "../../../hooks/useStorage";
+import TasksHelper from "../../../utils/tasks-helper";
 
 const SQLLoad = ({ tasks = [], mode = `view` }) => {
     const { data, removeValue, setValue } = useFormControl({ name: FORMS.CREATE_TASK });
@@ -111,16 +112,13 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                             name={`operatorConfigData.target.mappingStructure.${index}.sourceFieldName`}
                             value={item?.sourceFieldName}
                             options={
-                                tasks
-                                    ?.find?.((i) => i?.id === data?.operatorConfigData?.taskIdSource)
-                                    ?.operatorConfigData?.storageStructure?.map?.((i) => i?.storageFieldName)
-                                    ?.map((i) => ({
-                                        label: i,
-                                        value: i,
-                                        muted: _.get(data, `operatorConfigData.target.mappingStructure`)
-                                            ?.map?.((i) => i?.sourceFieldName)
-                                            ?.includes?.(i),
-                                    })) ?? []
+                                TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                                    value: i,
+                                    label: i,
+                                    muted: _.get(data, `operatorConfigData.target.mappingStructure`)
+                                        ?.map?.((i) => i?.sourceFieldName)
+                                        ?.includes?.(i),
+                                })) ?? []
                             }
                         />
                         <MappingArrow />
