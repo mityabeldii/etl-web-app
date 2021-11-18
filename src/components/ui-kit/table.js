@@ -265,9 +265,13 @@ const Table = (props) => {
     );
 };
 
+const smartStringify = (value) => {
+    return !!value ? typeof value !== `string` ? JSON.stringify(value) : value : `-`;
+};
+
 const TableCell = ({ cellState }) => {
     const { row, column, value } = cellState;
-    const transformedValue = JSON.stringify(column?.transform?.(cellState) ?? value ?? row?.[column?.name] ?? `-`);
+    const transformedValue = smartStringify(column?.transform?.(cellState) ?? value ?? row?.[column?.name]);
     const cellContent = useMemo(
         () =>
             ({
