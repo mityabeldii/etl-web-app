@@ -2,7 +2,7 @@
 import _ from "lodash";
 import { useParams } from "react-router";
 
-import { OPERATORS } from "../constants/config";
+import { OPERATORS, TABLES } from "../constants/config";
 
 import { getStorage } from "../hooks/useStorage";
 
@@ -14,6 +14,22 @@ const TasksHelper = {
         const structure = _.get(task, `operatorConfigData.storageStructure`);
         const { operator } = task;
         return (operator === OPERATORS.JOIN ? Object.values(structure ?? {})?.flat?.() : structure)?.map?.(({ storageFieldName: i }) => i) ?? [];
+    },
+    getSourcesNames: (task) => {
+        const { process_id } = useParams();
+        const sources = [
+            getStorage(
+                (state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows?.find(({ id }) => id === task?.operatorConfigData?.source?.sourceId)?.name
+            ),
+            getStorage(
+                (state) => _.get(state, `processes.${process_id}.tasks`)?.find?.((i) => i?.id === task?.operatorConfigData?.taskIdSource)?.taskName
+            ),
+            getStorage(
+                (state) =>
+                    _.get(state, `processes.${process_id}.tasks`)?.find?.((i) => i?.id === task?.operatorConfigData?.joinTaskIdSource)?.taskName
+            ),
+        ]?.filter?.((i) => i);
+        return sources?.join?.(`, `);
     },
 };
 

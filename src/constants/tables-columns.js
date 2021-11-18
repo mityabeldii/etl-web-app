@@ -2,13 +2,14 @@
 import _ from "lodash";
 import moment from "moment-timezone";
 
-import { SORT_ORDERS, TABLES, STATUSES, ROLES, MODALS, FORMS } from "./config";
+import { SORT_ORDERS, TABLES, STATUSES, ROLES, MODALS, FORMS, OPERATORS } from "./config";
 import { createId, linkTo } from "../utils/common-helper";
 
 import ProcessesAPI from "../api/processes-api";
 
-import { putStorage, mergeStorage } from "../hooks/useStorage";
+import { putStorage, getStorage, mergeStorage } from "../hooks/useStorage";
 import { eventDispatch } from "../hooks/useEventListener";
+import TasksHelper from "../utils/tasks-helper";
 
 const DatasourceList = {
     useBackendProcessing: false,
@@ -121,7 +122,13 @@ const ETLProcessesConfigurationTable = {
         },
         { name: `taskQueue`, label: `Порядок` },
         { name: `downstreamTaskIds`, label: `Следующие задачи` },
-        { name: `???`, label: `Источники данных` },
+        {
+            name: `datasource`,
+            label: `Источники данных`,
+            transform: ({ row: task }) => {
+                return TasksHelper.getSourcesNames(task);
+            },
+        },
         // { name: `active`, label: `Статистика` },
         {
             name: `editbutton`,

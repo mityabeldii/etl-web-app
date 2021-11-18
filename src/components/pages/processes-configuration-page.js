@@ -31,6 +31,9 @@ const ProcessesConfigurationPage = () => {
         ProcessesAPI.getProcessById(process_id);
         ProcessesAPI.getProcessTasks(process_id);
     }, [process_id]);
+    useEffect(() => {
+        DatasourceAPI.getDatasources();
+    }, []);
 
     const handleOpenCreateTaskModal = () => {
         eventDispatch(`OPEN_${MODALS.CREATE_TASK}_MODAL`, { mode: `create` });
