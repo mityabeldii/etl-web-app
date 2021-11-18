@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React from "react";
+import React, { useEffect } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
@@ -36,6 +36,20 @@ const SQLClone = () => {
                 ) ?? [],
         },
     }));
+    useEffect(() => {
+        const sourceId = _.get(data, `operatorConfigData.source.sourceId`);
+        if (sourceId) {
+            DatasourceAPI.getSchemas(sourceId);
+            DatasourceAPI.getDatasourceTables(sourceId);
+        }
+    }, [_.get(data, `operatorConfigData.source.sourceId`)]);
+    useEffect(() => {
+        const targetId = _.get(data, `operatorConfigData.target.targetId`);
+        if (targetId) {
+            DatasourceAPI.getSchemas(targetId);
+            DatasourceAPI.getDatasourceTables(targetId);
+        }
+    }, [_.get(data, `operatorConfigData.target.targetId`)]);
     return (
         <>
             <Br />
@@ -57,8 +71,6 @@ const SQLClone = () => {
                             `operatorConfigData.source.sourceTableName`,
                             `operatorConfigData.source.sourceTableFields`,
                         ]);
-                        DatasourceAPI.getSchemas(e.target.value);
-                        DatasourceAPI.getDatasourceTables(e.target.value);
                     }}
                 />
                 <Control.Checkbox label={`Указать SQL-запрос`} name={`operatorConfigData.source.sqlQuery`} isRequired />
@@ -112,8 +124,6 @@ const SQLClone = () => {
                             `operatorConfigData.target.targetTableName`,
                             `operatorConfigData.target.mappingStructure`,
                         ]);
-                        DatasourceAPI.getSchemas(e.target.value);
-                        DatasourceAPI.getDatasourceTables(e.target.value);
                     }}
                 />
             </Control.Row>

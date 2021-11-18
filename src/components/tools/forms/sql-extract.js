@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React from "react";
+import React, { useEffect } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
@@ -27,6 +27,13 @@ const SQLExtract = () => {
                     ?.columns?.map?.(({ name: sourceFieldName, type: sourceFieldType }) => ({ sourceFieldName, sourceFieldType })) ?? [],
         },
     }));
+    useEffect(() => {
+        const sourceId = _.get(data, `operatorConfigData.source.sourceId`);
+        if (sourceId) {
+            DatasourceAPI.getSchemas(sourceId);
+            DatasourceAPI.getDatasourceTables(sourceId);
+        }
+    }, [_.get(data, `operatorConfigData.source.sourceId`)]);
     return (
         <>
             <Br />
@@ -48,9 +55,6 @@ const SQLExtract = () => {
                             `operatorConfigData.source.sourceTableName`,
                             `operatorConfigData.source.sourceTableFields`,
                         ]);
-                        DatasourceAPI.getSchemas(e.target.value);
-                        DatasourceAPI.getDatasourceTables(e.target.value);
-                        // DatasourceAPI.getDatasourceTableStructure(e.target.value);
                     }}
                 />
                 <Control.Checkbox label={`Указать SQL-запрос`} name={`operatorConfigData.source.sqlQuery`} isRequired />

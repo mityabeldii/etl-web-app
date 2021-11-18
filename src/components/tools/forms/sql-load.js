@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React from "react";
+import React, { useEffect } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
@@ -31,6 +31,13 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                 ) ?? [],
         },
     }));
+    useEffect(() => {
+        const targetId = _.get(data, `operatorConfigData.target.targetId`);
+        if (targetId) {
+            DatasourceAPI.getSchemas(targetId);
+            DatasourceAPI.getDatasourceTables(targetId);
+        }
+    }, [_.get(data, `operatorConfigData.target.targetId`)]);
     return (
         <>
             <Br />
