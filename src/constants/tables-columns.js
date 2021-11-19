@@ -121,7 +121,7 @@ const ETLProcessesConfigurationTable = {
             cell: { type: `operator` },
         },
         { name: `taskQueue`, label: `Порядок` },
-        { name: `downstreamTaskIds`, label: `Следующие задачи` },
+        { name: `taskDescription`, label: `Описание задачи` },
         {
             name: `datasource`,
             label: `Источники данных`,
