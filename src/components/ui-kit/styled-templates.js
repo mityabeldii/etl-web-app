@@ -454,7 +454,7 @@ export const Dropdown = (props) => {
                 .find((i) => i?.includes(`dropdown-menu`)) &&
             closeOnChildrenClick
         ) {
-            setOpened(false);
+            // setOpened(false);
         }
     };
     const handleToggleClick = (event) => {

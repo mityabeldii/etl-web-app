@@ -41,9 +41,9 @@ export const FORMS = {
 
 export const PROCESS_STATUS = {
     success: "Успешно",
-    in_progress: "В процессе",
-    error: "Ошибка",
-    force_completed: "Завершен принудительно",
+    running: "В процессе",
+    failed: "Ошибка",
+    shutdown: "Завершен принудительно",
 };
 
 export const OPERATORS = {

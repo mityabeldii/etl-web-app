@@ -101,7 +101,7 @@ const ProcessesList = {
             },
         },
         { name: `startDate`, label: `След. запуск`, transform: ({ row }) => `${row.lastDate ?? `-`}` },
-        { name: `statistics`, label: `Статистика`, cell: { type: `statistics` } },
+        { name: `processStat`, label: `Статистика`, cell: { type: `statistics` } },
         { name: `morebutton`, label: ``, cell: { type: `process_more_button`, extra: `justify-content: flex-end;` } },
     ],
 };

@@ -126,7 +126,7 @@ const DatasourceAPI = {
             try {
                 const response = (await axios.get(`${base_url}/process-instances`)).data;
                 putStorage(`tables.${TABLES.PROCESSES_HISTORY}`, {
-                    rows: response,
+                    rows: response?.sort?.((a, b) => b?.processStartDate - a?.processStartDate) ?? [],
                     pagination: response?._meta ?? {},
                 });
                 return response;

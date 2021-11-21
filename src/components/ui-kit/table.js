@@ -266,7 +266,7 @@ const Table = (props) => {
 };
 
 const smartStringify = (value) => {
-    return !!value ? typeof value !== `string` ? JSON.stringify(value) : value : `-`;
+    return !!value ? (typeof value !== `string` ? JSON.stringify(value) : value) : `-`;
 };
 
 const TableCell = ({ cellState }) => {
@@ -317,7 +317,7 @@ const TableCell = ({ cellState }) => {
                                 <Tooltip
                                     key={index}
                                     label={PROCESS_STATUS?.[status]}
-                                    children={<StatisticsItem key={index} status={status} value={transformedValue?.[status] ?? `0`} />}
+                                    children={<StatisticsItem key={index} status={status} value={row?.[column?.name]?.[status] ?? `0`} />}
                                 />
                             );
                         })}
@@ -389,13 +389,13 @@ const StatisticsItem = styled(Frame)`
     width: 24px;
     height: 24px;
     border: 2px solid
-        ${({ theme, status = `force_completed` }) =>
+        ${({ theme, status = `failed` }) =>
             ({
                 success: theme.green,
-                in_progress: theme.yellow,
-                error: theme.red,
-                force_completed: theme.grey,
-            }?.[status ?? `force_completed`])};
+                running: theme.yellow,
+                failed: theme.red,
+                shutdown: theme.grey,
+            }?.[status ?? `failed`])};
     border-radius: 50%;
 
     &:after {
