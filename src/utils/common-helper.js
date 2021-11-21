@@ -207,6 +207,6 @@ export let sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export let validateOnlyDigits = (s) => /^\d+$/.test(s || `0`);
 
-export let togglePush = (array = [], value) => [...array, value].filter((i) => (array?.includes?.(value) ? i !== value : true));
+export let togglePush = (array = [], value) => [...array, value].filter((i) => (array?.find?.(j => _.isEqual(j, value)) ? !_.isEqual(i, value) : true));
 
 /*eslint-enable*/

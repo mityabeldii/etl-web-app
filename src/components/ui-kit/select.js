@@ -1,6 +1,7 @@
 /*eslint-disable*/
 import { useState } from "react";
 import styled, { css } from "styled-components";
+import _ from "lodash";
 
 import Input from "./input";
 import { Dropdown, Frame } from "./styled-templates";
@@ -12,6 +13,7 @@ import { eventDispatch } from "../../hooks/useEventListener";
 
 const Select = (props) => {
     const {
+        name,
         options = [],
         extra = ``,
         value,
@@ -50,7 +52,8 @@ const Select = (props) => {
                         value={
                             multiselect
                                 ? options
-                                      .filter((i) => value?.includes(i?.value))
+                                      //   .filter((i) => value?.includes(i?.value))
+                                      .filter((i) => value?.find?.((j) => _.isEqual(j, i.value)))
                                       .map((i) => i?.label)
                                       ?.join?.(`, `)
                                 : options?.find?.((i) => i?.value === value)?.label ?? ``
@@ -77,7 +80,7 @@ const Select = (props) => {
             menu={
                 <>
                     {options.map((option, index) => {
-                        const selected = value === option.value;
+                        const selected = _.isEqual(value, option.value);
                         const muted = option?.muted && option.value !== value;
                         return (
                             <Option
@@ -100,7 +103,9 @@ const Select = (props) => {
                                 }}
                             >
                                 {option.label}
-                                {(value === option.value || value?.includes?.(option.value)) && <Check />}
+                                {(_.isEqual(value, option.value) ||
+                                    value?.includes?.(option.value) ||
+                                    value?.find?.((j) => _.isEqual(j, option?.value))) && <Check />}
                             </Option>
                         );
                     })}

@@ -37,6 +37,19 @@ const SQLClone = () => {
         },
     }));
     useEffect(() => {
+        if (!!_.get(data, `operatorConfigData.source.sourceId`) && !!_.get(data, `operatorConfigData.source.sourceTableName`)) {
+            DatasourceAPI.getTableColumns(
+                _.get(data, `operatorConfigData.source.sourceId`),
+                _.get(data, `operatorConfigData.source.sourceTableName`)
+            );
+        }
+    }, [_.get(data, `operatorConfigData.source.sourceId`), _.get(data, `operatorConfigData.source.sourceTableName`)]);
+    useEffect(() => {
+        if (!!_.get(data, `operatorConfigData.target.targetId`) && !!_.get(data, `operatorConfigData.target.targetTableName`)) {
+            DatasourceAPI.getTableColumns(_.get(data, `operatorConfigData.target.targetId`), _.get(data, `operatorConfigData.target.targetTableName`));
+        }
+    }, [_.get(data, `operatorConfigData.target.targetId`), _.get(data, `operatorConfigData.target.targetTableName`)]);
+    useEffect(() => {
         const sourceId = _.get(data, `operatorConfigData.source.sourceId`);
         if (sourceId) {
             DatasourceAPI.getSchemas(sourceId);
@@ -87,9 +100,9 @@ const SQLClone = () => {
                     label={`Имя таблицы в источнике`}
                     options={params?.source?.tables?.map?.((item) => ({ label: item, value: item }))}
                     readOnly={!params?.source?.tables?.length}
-                    onChange={(e) => {
-                        DatasourceAPI.getTableColumns(data?.operatorConfigData?.source?.sourceId, e.target.value);
-                    }}
+                    // onChange={(e) => {
+                    //     DatasourceAPI.getTableColumns(data?.operatorConfigData?.source?.sourceId, e.target.value);
+                    // }}
                 />
             </Control.Row>
             <Control.Row>
@@ -139,9 +152,9 @@ const SQLClone = () => {
                     label={`Имя таблицы в промежуточном хранилище`}
                     options={params?.target?.tables?.map?.((item) => ({ label: item, value: item }))}
                     readOnly={!params?.target?.tables?.length}
-                    onChange={(e) => {
-                        DatasourceAPI.getTableColumns(data?.operatorConfigData?.target?.targetId, e.target.value);
-                    }}
+                    // onChange={(e) => {
+                    //     DatasourceAPI.getTableColumns(data?.operatorConfigData?.target?.targetId, e.target.value);
+                    // }}
                 />
             </Control.Row>
             <Br />

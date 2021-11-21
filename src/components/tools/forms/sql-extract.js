@@ -28,6 +28,11 @@ const SQLExtract = () => {
         },
     }));
     useEffect(() => {
+        if (_.get(data, `operatorConfigData.source.sourceTableName`)) {
+            DatasourceAPI.getDatasourceTableStructure(_.get(data, `operatorConfigData.source.sourceId`));
+        }
+    }, [_.get(data, `operatorConfigData.source.sourceTableName`)]);
+    useEffect(() => {
         const sourceId = _.get(data, `operatorConfigData.source.sourceId`);
         if (sourceId) {
             DatasourceAPI.getSchemas(sourceId);
@@ -71,10 +76,6 @@ const SQLExtract = () => {
                     label={`Имя таблицы в источнике`}
                     options={params?.source?.tables?.map?.((item) => ({ label: item, value: item }))}
                     readOnly={!params?.source?.tables?.length}
-                    onChange={(e) => {
-                        // DatasourceAPI.getTableColumns(data?.operatorConfigData?.source?.sourceId, e.target.value);
-                        DatasourceAPI.getDatasourceTableStructure(_.get(data, `operatorConfigData.source.sourceId`));
-                    }}
                 />
             </Control.Row>
             <Control.Row>
