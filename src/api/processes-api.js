@@ -117,7 +117,8 @@ const ProcessesAPI = {
             try {
                 const response = (await axios.post(`${base_url}/process/${processId}/process-runs`)).data;
                 await ProcessesAPI.getProcessTasks(processId);
-                handleSuccess([response]);
+                // handleSuccess([response]);
+                handleSuccess({ message: `Процесс с id ${processId} запущен` });
                 return response;
             } catch (error) {
                 throw handleError(error);
