@@ -1,4 +1,4 @@
-export const base_url = `http://65.108.61.88:8087/etl`;
+export const base_url = process.env.REACT_APP_BASE_URL;
 
 export const EVENTS = {
     UPDATE_STORAGE: "UPDATE_STORAGE",

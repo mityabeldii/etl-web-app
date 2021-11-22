@@ -21,8 +21,8 @@
         "yup": "^0.32.11"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
+        "start": "env-cmd -f .env.dev react-scripts start",
+        "build": "env-cmd -f .env.dev react-scripts build",
         "deploy:surge": "surge --project ./build/ --domain etl.surge.sh",
         "commit": "git add . && git status -s && git commit -m `date '+%d.%m.%Y🌿%H:%M'` && git push",
         "save": "yarn build && yarn deploy:surge && yarn commit"
