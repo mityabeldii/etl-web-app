@@ -91,15 +91,15 @@ const ProcessesList = {
         },
         { name: `processName`, label: `Имя процесса`, cell: { type: `process_name`, extra: `* { line-height: 8px; };` } },
         { name: `cron`, label: `Расписание`, cell: { type: `crontab` } },
-        {
-            name: `lastDate`,
-            label: `Посл. запуск`,
-            tooltip: { label: `В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n 2021-01-11 14:15` },
-            transform: ({ row }) => `${row.lastDate ?? `-`}\n\n${row.lastStatus ?? `-`}`,
-            cell: {
-                extra: `* { line-height: 8px; }; * { line-height: 19px !important; margin: 0; }; > * { > * { &:first-child { margin-bottom: 8px; }; }; };`,
-            },
-        },
+        // {
+        //     name: `lastDate`,
+        //     label: `Посл. запуск`,
+        //     tooltip: { label: `В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n 2021-01-11 14:15` },
+        //     transform: ({ row }) => `${row.lastDate ?? `-`}\n\n${row.lastStatus ?? `-`}`,
+        //     cell: {
+        //         extra: `* { line-height: 8px; }; * { line-height: 19px !important; margin: 0; }; > * { > * { &:first-child { margin-bottom: 8px; }; }; };`,
+        //     },
+        // },
         { name: `startDate`, label: `След. запуск`, transform: ({ row }) => `${row.lastDate ?? `-`}` },
         { name: `processStat`, label: `Статистика`, cell: { type: `statistics` } },
         { name: `morebutton`, label: ``, cell: { type: `process_more_button`, extra: `justify-content: flex-end;` } },
