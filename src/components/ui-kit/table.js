@@ -293,7 +293,7 @@ const TableCell = ({ cellState }) => {
                         onChange={() => {
                             column?.cell?.onChange?.(cellState);
                         }}
-                        checked={transformedValue === true}
+                        checked={row?.[column?.name] === true}
                     />
                 ),
                 process_name: (
