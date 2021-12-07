@@ -220,7 +220,7 @@ const ASYNC_STATUSES = {
 };
 
 export const Button = (props) => {
-    const { extendedIndicators = false, onClick, disabled = false, successLabel, errorLabel, extra = ``, leftIcon } = props;
+    const { extendedIndicators = false, onClick, disabled = false, successLabel, errorLabel, extra = ``, leftIcon, type = `button` } = props;
     const [status, setStatus] = useState(ASYNC_STATUSES.REGULAR);
 
     const newExtra =
@@ -251,7 +251,7 @@ export const Button = (props) => {
     const newDisabled = disabled === true || [ASYNC_STATUSES.PENDING, ASYNC_STATUSES.SUCCESS, ASYNC_STATUSES.ERROR].includes(status);
 
     return (
-        <ButtonWrapper {...props} extra={newExtra} onClick={newOnClick} disabled={newDisabled} leftIcon={leftIcon}>
+        <ButtonWrapper {...props} extra={newExtra} onClick={newOnClick} disabled={newDisabled} leftIcon={leftIcon} type={type}>
             {{
                 pending: <Spinner />,
                 success: successLabel ?? `Success`,

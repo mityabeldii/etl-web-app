@@ -18,18 +18,18 @@ import useQueryParams from "../../hooks/useQueryParams";
 import Select from "../ui-kit/select";
 import { convertHex } from "../../utils/colors-helper";
 
-const ProcessHistoryPage = () => {
+const TasksHistoryPage = () => {
     const { search } = useLocation();
     const { params } = useQueryParams();
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
-                <Heading>История запуска процессов</Heading>
+                <Heading>История запуска задач в ETL-процессах</Heading>
             </RowWrapper>
             <Table
-                name={TABLES.PROCESSES_HISTORY}
-                fetchFunction={DatasourceAPI.getProcessesHistory}
-                {...tablesColumns[TABLES.PROCESSES_HISTORY]}
+                name={TABLES.TASKS_HISTORY}
+                fetchFunction={DatasourceAPI.getTasksHistory}
+                {...tablesColumns[TABLES.TASKS_HISTORY]}
                 extraHeader={<SearchBar />}
                 filters={params}
             />
@@ -141,5 +141,5 @@ const Search = styled(Input).attrs((props) => {
     };
 })``;
 
-export default ProcessHistoryPage;
+export default TasksHistoryPage;
 /*eslint-enable*/

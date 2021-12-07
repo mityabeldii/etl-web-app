@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, { Suspense } from "react";
+import React, { Suspense, lazy } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import styled from "styled-components";
 
@@ -11,6 +11,7 @@ import DatasourcePage from "../pages/datasource-page";
 import ETLProcessesListPage from "../pages/processes-list-page";
 import ProcessesConfigurationPage from "../pages/processes-configuration-page";
 import ProcessesHistory from "../pages/processes-history";
+import TasksHistory from "../pages/tasks-history";
 
 import Alerts from "../modals/alerts";
 import CreateDataSourceModal from "../modals/create-datasource-modal";
@@ -37,6 +38,7 @@ const RouterApp = () => {
                             <Route exact path={`/processes`} component={ETLProcessesListPage} />
                             <Route exact path={`/processes/configuration/:process_id`} component={ProcessesConfigurationPage} />
                             <Route exact path={`/history/processes`} component={ProcessesHistory} />
+                            <Route exact path={`/history/tasks`} component={TasksHistory} />
                             <Route path={`/`}>
                                 <Redirect to={`/datasources`} />
                             </Route>

@@ -22,7 +22,7 @@ const menuSections = [
         icon: `menu-monitoring`,
         items: [
             { label: `История запуска ETL-процессов`, link: `/history/processes` },
-            // { label: `История запуска задач`, link: `/history/tasks` },
+            { label: `История запуска задач`, link: `/history/tasks` },
             // { label: `Журнал событий`, link: `/events-log` },
         ],
     },

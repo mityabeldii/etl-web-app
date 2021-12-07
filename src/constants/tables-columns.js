@@ -164,28 +164,29 @@ const ETLProcessesConfigurationTable = {
 
 const ProcessesHistoryTable = {
     useBackendProcessing: false,
-    withPagination: false,
+    withPagination: true,
     booleanOperation: `disjunction`,
     columns: [
         {
             name: `processId`,
             label: `Процесс`,
             extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
-            transform: ({ row }) => `**${row?.processName}**\n\n${row?.processId}`,
+            transform: ({ row }) => `**${row?.processName}**`,
         },
-        { name: `processRunId`, label: `ID запуска процесса`, extra: `flex: 2;` },
+        { name: `processRunId`, label: `ID запуска`, extra: `flex: 2;` },
+        { name: `processRunId`, label: `Процесс`, extra: `flex: 2;` },
         {
             name: `startAndStop`,
-            label: `Старт и завершение`,
-            extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
+            label: `Старт / Завершение`,
+            extra: `flex: 2; > * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
             transform: ({ row }) =>
-                `${row?.processStartDate ? moment(row?.processStartDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
-                    row?.processEndDate ? moment(row?.processEndDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
+                `${row?.startDate ? moment(row?.startDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
+                    row?.endDate ? moment(row?.endDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
                 }`,
         },
+        { name: `tryNumber`, label: `Попытка`, extra: `flex: 0.5;` },
         { name: `state`, label: `Статус`, extra: `flex: unset; width: 200px;`, cell: { type: `processstatus` } },
         { name: ``, label: ``, extra: `flex: unset; width: 100px;`, cell: { type: `eventlogbutton` } },
-        { name: ``, label: ``, extra: `flex: unset; width: 20px;`, cell: { type: `icon`, src: `arrow-right-grey` } },
     ],
 };
 
@@ -196,6 +197,7 @@ const tablesColumns = {
     [TABLES.PROCESSES_LIST]: ProcessesList,
     [TABLES.TASKS_TABLE]: ETLProcessesConfigurationTable,
     [TABLES.PROCESSES_HISTORY]: ProcessesHistoryTable,
+    [TABLES.TASKS_HISTORY]: ProcessesHistoryTable,
 };
 
 export default tablesColumns;

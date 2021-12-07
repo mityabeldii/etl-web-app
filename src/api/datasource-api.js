@@ -135,6 +135,22 @@ const DatasourceAPI = {
             }
         });
     },
+
+    async getTasksHistory() {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.get(`${base_url}/api/v1/task-instances`)).data;
+                putStorage(`tables.${TABLES.TASKS_HISTORY}`, {
+                    rows: response ?? [],
+                    pagination: response?._meta ?? {},
+                });
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+
     adHocQuery({ datasourceId, schemaName, query }) {
         return loadingCounterWrapper(async () => {
             try {
