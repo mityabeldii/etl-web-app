@@ -8,18 +8,20 @@ import Select from "../ui-kit/select";
 import Table from "../ui-kit/table";
 import { Control } from "../ui-kit/control";
 
-import { MODALS, TABLES } from "../../constants/config";
-import tablesColumns from "../../constants/tables-columns";
-import { eventDispatch } from "../../hooks/useEventListener";
-
-import DatasourceAPI from "../../api/datasource-api";
-
-import { useStorageListener } from "../../hooks/useStorage";
 import EditAccessCredentialsModal from "../modals/edit-access-credentials-modal";
 import CreateScheaInStorageModal from "../modals/create-schema-in-storage-modal";
 import EditSchemaNameModal from "../modals/edit-schema-name-modal";
 import CreateTableInSchemaModal from "../modals/create-table-in-schema-modal";
 import EditTableNameModal from "../modals/edit-table-name-modal";
+import DatasourceAdHocQueryModal from "../modals/datasource-ad-hoc-query-modal";
+
+import { MODALS, TABLES } from "../../constants/config";
+import tablesColumns from "../../constants/tables-columns";
+
+import DatasourceAPI from "../../api/datasource-api";
+
+import { eventDispatch } from "../../hooks/useEventListener";
+import { useStorageListener } from "../../hooks/useStorage";
 
 const StructureTable = () => {
     const rows = [
@@ -105,6 +107,9 @@ const IntermidiateStoragePage = () => {
                 },
             });
         },
+        openAdHocModal: () => {
+            eventDispatch(`OPEN_${MODALS.DATASOURCE_AD_HOC_QUERY_MODAL}_MODAL`);
+        },
     };
     return (
         <>
@@ -113,6 +118,7 @@ const IntermidiateStoragePage = () => {
             <EditSchemaNameModal />
             <CreateTableInSchemaModal />
             <EditTableNameModal />
+            <DatasourceAdHocQueryModal />
 
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Heading>
@@ -202,7 +208,7 @@ const IntermidiateStoragePage = () => {
                     >
                         Добавить таблицу
                     </Button>
-                    <Button extra={`width: 100%; margin-top: 36px;`} background={`blue`}>
+                    <Button extra={`width: 100%; margin-top: 36px;`} background={`blue`} onClick={handlers.openAdHocModal}>
                         Ad-Hoc запрос
                     </Button>
                 </Frame>
