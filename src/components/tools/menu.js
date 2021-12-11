@@ -8,14 +8,14 @@ import { Frame, RowWrapper } from "../ui-kit/styled-templates";
 
 const menuSections = [
     { label: `Источники данных`, icon: `menu-data-source`, items: [{ label: `Список источников данных`, link: `/datasources` }] },
-    // {
-    //     label: `Структура хранилища`,
-    //     icon: `menu-storage-structure`,
-    //     items: [
-    //         { label: `Промежуточное хранилище`, link: `/intermediate-storage` },
-    //         { label: `Хранилище`, link: `/storage` },
-    //     ],
-    // },
+    {
+        label: `Структура хранилища`,
+        icon: `menu-storage-structure`,
+        items: [
+            { label: `Промежуточное хранилище`, link: `/storage/intermediate` },
+            // { label: `Хранилище`, link: `/storage` },
+        ],
+    },
     { label: `ETL-процессы`, icon: `menu-etl-processes`, items: [{ label: `Список ETL-процессов`, link: `/processes` }] },
     {
         label: `Мониторинг ETL-процессов`,
