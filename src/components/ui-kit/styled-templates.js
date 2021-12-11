@@ -43,6 +43,13 @@ export const H1 = styled(Frame)`
     font-size: 24px;
     line-height: 24px;
     color: ${({ theme }) => theme.text.primary};
+    flex-direction: row;
+    justify-content: flex-start;
+
+    span {
+        margin: 0 5px;
+        color: ${({ theme }) => theme.blue};
+    }
 
     ${({ extra }) => extra}
 `;
@@ -52,6 +59,7 @@ export const H2 = styled(Frame)`
     font-weight: 600;
     font-size: 18px;
     line-height: 22px;
+    align-items: flex-start;
 
     ${({ extra }) => extra}
 `;

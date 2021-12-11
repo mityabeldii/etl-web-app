@@ -22,20 +22,20 @@ const schema = (yup) =>
         password: yup.string().required(`Это поле обязательно`),
     });
 
-const EditSchemaNameModal = () => {
-    const { onSubmit, clearForm } = useFormControl({ name: FORMS.EDIT_SCHEMA_NAME, schema });
+const EditTableNameModal = () => {
+    const { onSubmit, clearForm } = useFormControl({ name: FORMS.EDIT_TABLE_NAME, schema });
     const handleSubmit = async (data) => {
         await DatasourceAPI.createDatasource(data);
-        eventDispatch(`CLOSE_${MODALS.EDIT_SCHEMA_NAME}_MODAL`);
+        eventDispatch(`CLOSE_${MODALS.EDIT_TABLE_NAME}_MODAL`);
     };
     const closeModal = () => {
         clearForm();
-        eventDispatch(`CLOSE_${MODALS.EDIT_SCHEMA_NAME}_MODAL`);
+        eventDispatch(`CLOSE_${MODALS.EDIT_TABLE_NAME}_MODAL`);
     };
     return (
-        <PopUpWrapper name={MODALS.EDIT_SCHEMA_NAME} onClickOutside={closeModal}>
-            <Form name={FORMS.EDIT_SCHEMA_NAME} onSubmit={onSubmit(handleSubmit)}>
-                <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Редактировать наименование схемы</H1>
+        <PopUpWrapper name={MODALS.EDIT_TABLE_NAME} onClickOutside={closeModal}>
+            <Form name={FORMS.EDIT_TABLE_NAME} onSubmit={onSubmit(handleSubmit)}>
+                <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Редактировать наименование таблицы</H1>
                 <Control.Row>
                     <Control.Input name={`name`} label={`Новое наименование`} placeholder={`Новое наименование`} isRequired />
                 </Control.Row>
@@ -52,5 +52,5 @@ const EditSchemaNameModal = () => {
     );
 };
 
-export default EditSchemaNameModal;
+export default EditTableNameModal;
 /*eslint-enable*/

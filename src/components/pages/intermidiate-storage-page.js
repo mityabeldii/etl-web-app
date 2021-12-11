@@ -18,6 +18,8 @@ import { useStorageListener } from "../../hooks/useStorage";
 import EditAccessCredentialsModal from "../modals/edit-access-credentials-modal";
 import CreateScheaInStorageModal from "../modals/create-schema-in-storage-modal";
 import EditSchemaNameModal from "../modals/edit-schema-name-modal";
+import CreateTableInSchemaModal from "../modals/create-table-in-schema-modal";
+import EditTableNameModal from "../modals/edit-table-name-modal";
 
 const StructureTable = () => {
     const rows = [
@@ -83,12 +85,34 @@ const IntermidiateStoragePage = () => {
                 },
             });
         },
+        openCreateTableInSchemaModal: () => {
+            eventDispatch(`OPEN_${MODALS.CREATE_TABLE_IN_SCHEMA}_MODAL`);
+        },
+        openEditTableNameModal: () => {
+            eventDispatch(`OPEN_${MODALS.EDIT_TABLE_NAME}_MODAL`);
+        },
+        openDeleteTableModal: () => {
+            eventDispatch(`OPEN_${MODALS.MODALITY}_MODAL`, {
+                title: `Удаление таблицы, содержащей данные`,
+                description: `Таблица, которую вы хотите удалить, содержит данные. Удаление таблицы приведет к их утрате.`,
+                cancelButton: {
+                    background: `#DADADA`,
+                    children: `Отмена`,
+                },
+                confirmButton: {
+                    background: `red`,
+                    children: `Удалить`,
+                },
+            });
+        },
     };
     return (
         <>
             <EditAccessCredentialsModal />
             <CreateScheaInStorageModal />
             <EditSchemaNameModal />
+            <CreateTableInSchemaModal />
+            <EditTableNameModal />
 
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Heading>
@@ -116,10 +140,10 @@ const IntermidiateStoragePage = () => {
                     <H2 extra={`margin-bottom: 16px; height: 38px;`}>Схема</H2>
                     <Select />
                     <RowWrapper extra={`margin-top: 4px;`}>
-                        <Button extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`} onClick={handlers.openEditSchemaNameModal} >
+                        <Button extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`} onClick={handlers.openEditSchemaNameModal}>
                             <Icon src={`edit-white`} />
                         </Button>
-                        <Button extra={`width: 100%; flex: 1; min-width: unset;`} background={`red`} onClick={handlers.openDeleteSchemeModal} >
+                        <Button extra={`width: 100%; flex: 1; min-width: unset;`} background={`red`} onClick={handlers.openDeleteSchemeModal}>
                             <Icon src={`cross-white`} />
                         </Button>
                     </RowWrapper>
@@ -148,10 +172,10 @@ const IntermidiateStoragePage = () => {
                         vulputate
                     </Button>
                     <RowWrapper extra={`margin-top: 4px;`}>
-                        <Button extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`}>
+                        <Button extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`} onClick={handlers.openEditTableNameModal}>
                             <Icon src={`edit-white`} />
                         </Button>
-                        <Button extra={`width: 100%; flex: 1; min-width: unset;`} background={`red`}>
+                        <Button extra={`width: 100%; flex: 1; min-width: unset;`} background={`red`} onClick={handlers.openDeleteTableModal}>
                             <Icon src={`cross-white`} />
                         </Button>
                     </RowWrapper>
@@ -174,6 +198,7 @@ const IntermidiateStoragePage = () => {
                         extra={`width: 100%; margin-top: 12px; padding: 8px 15px; font-size: 13px;`}
                         background={`orange`}
                         leftIcon={`plus-in-circle-white`}
+                        onClick={handlers.openCreateTableInSchemaModal}
                     >
                         Добавить таблицу
                     </Button>
