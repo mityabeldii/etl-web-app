@@ -19,6 +19,7 @@ import CreateDataSourceModal from "../modals/create-datasource-modal";
 import EditDataSourceModal from "../modals/edit-datasource-modal";
 import CreateProcessModal from "../modals/create-process-modal";
 import EditProcessAttributesModal from "../modals/edit-process-attributes-modal";
+import Modality from "../modals/modality";
 
 const RouterApp = () => {
     return (
@@ -28,6 +29,8 @@ const RouterApp = () => {
             <EditDataSourceModal />
             <CreateProcessModal />
             <EditProcessAttributesModal />
+
+            <Modality/>
 
             <RowWrapper>
                 <Menu />

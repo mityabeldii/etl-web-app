@@ -548,4 +548,17 @@ export const RemoveRowButton = (props) =>
         />
     );
 
+export const ErrorBox = styled(Frame)`
+    width: 100%;
+    padding: 18px 32px;
+    box-sizing: border-box;
+    background: #f6dfdf;
+    border: 1px solid ${({ theme }) => theme.red};
+    border-radius: 4px;
+    color: ${({ theme }) => theme.red};
+    margin-bottom: 25px;
+    font-size: 12px;
+    line-height: 16px;
+`;
+
 /*eslint-enable*/

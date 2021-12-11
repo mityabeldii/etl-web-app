@@ -7,7 +7,7 @@ import CaseHalper from "../utils/case-helper";
 
 import { API_URL, base_url, TABLES } from "../constants/config";
 import { getStorage, mergeStorage, putStorage } from "../hooks/useStorage";
-import { objectPut, downloadURI, sleep } from "../utils/common-helper";
+import { objectPut, downloadURI, sleep, objectToQS } from "../utils/common-helper";
 
 const DatasourceAPI = {
     async getDatasources() {
@@ -136,10 +136,10 @@ const DatasourceAPI = {
         });
     },
 
-    async getTasksHistory() {
+    async getTasksHistory(options) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`${base_url}/api/v1/task-instances`)).data;
+                const response = (await axios.get(`${base_url}/api/v1/task-instances${objectToQS(options)}`)).data;
                 putStorage(`tables.${TABLES.TASKS_HISTORY}`, {
                     rows: response ?? [],
                     pagination: response?._meta ?? {},

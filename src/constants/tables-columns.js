@@ -163,7 +163,7 @@ const ETLProcessesConfigurationTable = {
 };
 
 const ProcessesHistoryTable = {
-    useBackendProcessing: false,
+    useBackendProcessing: true,
     withPagination: true,
     booleanOperation: `disjunction`,
     columns: [

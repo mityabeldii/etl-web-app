@@ -77,7 +77,7 @@ const Table = (props) => {
             putStorage(`tables.${name}.pagination`, { currentPage, perPage }, { silent: true });
         }
         if (useBackendProcessing) {
-            const newData = await fetchFunction();
+            const newData = await fetchFunction({ limit: perPage, offset: currentPage + 1 });
         }
     }, [JSON.stringify({ debouncedParams, sort, name, currentPage, perPage, dependencies })]);
 

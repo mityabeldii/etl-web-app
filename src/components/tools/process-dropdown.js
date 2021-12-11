@@ -56,7 +56,13 @@ const ProcessDropdown = ({ cellState = {} }) => {
                                 linkTo(`/history/processes${objectToQS({ id: row?.id })}`);
                             },
                         },
-                        { label: `История запусков задач`, src: `processes-more-tasks-history` },
+                        {
+                            label: `История запусков задач`,
+                            src: `processes-more-tasks-history`,
+                            onClick: () => {
+                                linkTo(`/history/tasks${objectToQS({ id: row?.id })}`);
+                            },
+                        },
                         {
                             label: `Ручной запуск`,
                             src: `processes-more-manual-start`,

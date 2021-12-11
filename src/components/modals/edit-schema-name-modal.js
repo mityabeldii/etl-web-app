@@ -1,0 +1,56 @@
+/*eslint-disable*/
+import { useState } from "react";
+import styled, { css } from "styled-components";
+import { MODALS, FORMS } from "../../constants/config";
+
+import { Frame, Button, Input, Dropdown, H1, P, Link, Form, ErrorBox } from "../ui-kit/styled-templates";
+import { Control } from "../ui-kit/control";
+import PopUpWrapper from "./pop-up-wrapper";
+
+import DatasourceAPI from "../../api/datasource-api";
+
+import { eventDispatch } from "../../hooks/useEventListener";
+import useFormControl from "../../hooks/useFormControl";
+
+const schema = (yup) =>
+    yup.object().shape({
+        name: yup.string().required(`Это поле обязательно`),
+        host: yup.string().required(`Это поле обязательно`),
+        port: yup.string().required(`Это поле обязательно`),
+        base: yup.string().required(`Это поле обязательно`),
+        user: yup.string().required(`Это поле обязательно`),
+        password: yup.string().required(`Это поле обязательно`),
+    });
+
+const EditSchemaNameModal = () => {
+    const { onSubmit, clearForm } = useFormControl({ name: FORMS.EDIT_SCHEMA_NAME, schema });
+    const handleSubmit = async (data) => {
+        await DatasourceAPI.createDatasource(data);
+        eventDispatch(`CLOSE_${MODALS.EDIT_SCHEMA_NAME}_MODAL`);
+    };
+    const closeModal = () => {
+        clearForm();
+        eventDispatch(`CLOSE_${MODALS.EDIT_SCHEMA_NAME}_MODAL`);
+    };
+    return (
+        <PopUpWrapper name={MODALS.EDIT_SCHEMA_NAME} onClickOutside={closeModal}>
+            <Form name={FORMS.EDIT_SCHEMA_NAME} onSubmit={onSubmit(handleSubmit)}>
+                <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Редактировать наименование схемы</H1>
+                <Control.Row>
+                    <Control.Input name={`name`} label={`Имя`} placeholder={`Новое наименование`} isRequired />
+                </Control.Row>
+                <Control.Row>
+                    <Button background={`grey`} variant={`outlined`} extra={`margin-left: calc(50% + 8px);`} type={`cancel`} onClick={closeModal}>
+                        Отменить
+                    </Button>
+                    <Button background={`green`} type={`submit`}>
+                        Сохранить
+                    </Button>
+                </Control.Row>
+            </Form>
+        </PopUpWrapper>
+    );
+};
+
+export default EditSchemaNameModal;
+/*eslint-enable*/

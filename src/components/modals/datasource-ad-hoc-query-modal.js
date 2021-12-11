@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import { MODALS, FORMS } from "../../constants/config";
 import { useParams } from "react-router-dom";
 
-import { Frame, Button, Input, Dropdown, H1, P, Link, RowWrapper, Form } from "../ui-kit/styled-templates";
+import { Frame, Button, Input, Dropdown, H1, P, Link, RowWrapper, Form, ErrorBox } from "../ui-kit/styled-templates";
 import { Control } from "../ui-kit/control";
 import PopUpWrapper from "./pop-up-wrapper";
 import Select from "../ui-kit/select";
@@ -112,19 +112,6 @@ const ErrorSign = styled(Frame)`
     width: 24px;
     height: 24px;
     background: url("${require(`../../assets/icons/error-outline.svg`).default}") no-repeat center center / contain;
-`;
-
-const ErrorBox = styled(Frame)`
-    width: 100%;
-    padding: 18px 32px;
-    box-sizing: border-box;
-    background: #f6dfdf;
-    border: 1px solid ${({ theme }) => theme.red};
-    border-radius: 4px;
-    color: ${({ theme }) => theme.red};
-    margin-bottom: 25px;
-    font-size: 12px;
-    line-height: 16px;
 `;
 
 export default DatasourceAdHocQueryModal;

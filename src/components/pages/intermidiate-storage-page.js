@@ -15,6 +15,9 @@ import { eventDispatch } from "../../hooks/useEventListener";
 import DatasourceAPI from "../../api/datasource-api";
 
 import { useStorageListener } from "../../hooks/useStorage";
+import EditAccessCredentialsModal from "../modals/edit-access-credentials-modal";
+import CreateScheaInStorageModal from "../modals/create-schema-in-storage-modal";
+import EditSchemaNameModal from "../modals/edit-schema-name-modal";
 
 const StructureTable = () => {
     const rows = [
@@ -53,23 +56,51 @@ const PreviewTable = () => {
 };
 
 const IntermidiateStoragePage = () => {
-    const [search, setSearch] = useState(``);
-    const openCreateDataSourceModal = () => {
-        eventDispatch(`OPEN_${MODALS.CREATE_DATA_SOURCE_MODAL}_MODAL`);
+    const handlers = {
+        openCreateDatasourceModal: () => {
+            eventDispatch(`OPEN_${MODALS.CREATE_DATA_SOURCE_MODAL}_MODAL`);
+        },
+        openEditAccessCredentialsModal: () => {
+            eventDispatch(`OPEN_${MODALS.EDIT_ACCESS_CREDENTIALS}_MODAL`);
+        },
+        openCreateSchemaInStorageModal: () => {
+            eventDispatch(`OPEN_${MODALS.CREATE_SCHEMA_IN_STORAGE}_MODAL`);
+        },
+        openEditSchemaNameModal: () => {
+            eventDispatch(`OPEN_${MODALS.EDIT_SCHEMA_NAME}_MODAL`);
+        },
+        openDeleteSchemeModal: () => {
+            eventDispatch(`OPEN_${MODALS.MODALITY}_MODAL`, {
+                title: `Удаление схемы, содержащей данные`,
+                description: `Схема, которую вы хотите удалить, содержит данные. Удаление схемы приведет к их утрате.`,
+                cancelButton: {
+                    background: `#DADADA`,
+                    children: `Отмена`,
+                },
+                confirmButton: {
+                    background: `red`,
+                    children: `Удалить`,
+                },
+            });
+        },
     };
     return (
         <>
+            <EditAccessCredentialsModal />
+            <CreateScheaInStorageModal />
+            <EditSchemaNameModal />
+
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Heading>
                     Структура хранилища <span>Staging</span>
                 </Heading>
-                <Button leftIcon={`plus-in-circle-white`} background={`orange`} onClick={openCreateDataSourceModal}>
+                <Button leftIcon={`plus-in-circle-white`} background={`orange`} onClick={handlers.openCreateDatasourceModal}>
                     Добавить источник
                 </Button>
             </RowWrapper>
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <H2>Реквизиты доступа</H2>
-                <Button background={`blue`} onClick={openCreateDataSourceModal}>
+                <Button background={`blue`} onClick={handlers.openEditAccessCredentialsModal}>
                     Редактировать реквизиты
                 </Button>
             </RowWrapper>
@@ -85,14 +116,19 @@ const IntermidiateStoragePage = () => {
                     <H2 extra={`margin-bottom: 16px; height: 38px;`}>Схема</H2>
                     <Select />
                     <RowWrapper extra={`margin-top: 4px;`}>
-                        <Button extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`}>
+                        <Button extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`} onClick={handlers.openEditSchemaNameModal} >
                             <Icon src={`edit-white`} />
                         </Button>
-                        <Button extra={`width: 100%; flex: 1; min-width: unset;`} background={`red`}>
+                        <Button extra={`width: 100%; flex: 1; min-width: unset;`} background={`red`} onClick={handlers.openDeleteSchemeModal} >
                             <Icon src={`cross-white`} />
                         </Button>
                     </RowWrapper>
-                    <Button extra={`width: 100%; margin-top: 12px; padding: 8px 11px;`} leftIcon={`plus-in-circle-white`} background={`orange`}>
+                    <Button
+                        extra={`width: 100%; margin-top: 12px; padding: 8px 11px;`}
+                        leftIcon={`plus-in-circle-white`}
+                        background={`orange`}
+                        onClick={handlers.openCreateSchemaInStorageModal}
+                    >
                         Добавить схему
                     </Button>
                     <H2 extra={`margin-top: 35px; height: 35px;`}>Таблицы</H2>
