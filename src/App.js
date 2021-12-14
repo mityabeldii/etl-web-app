@@ -1,6 +1,7 @@
 /*eslint-disable*/
 import { ThemeProvider } from "styled-components";
 import { HashRouter } from "react-router-dom";
+import moment from "moment-timezone";
 
 import RouterApp from "./components/apps/router-app";
 
@@ -10,6 +11,8 @@ import { setUpInterceptors } from "./utils/api-helper";
 import { StorageProvider } from "./hooks/useStorage";
 
 // setUpInterceptors();
+
+moment.tz.setDefault("Europe/Moscow");
 
 const App = () => {
     return (
