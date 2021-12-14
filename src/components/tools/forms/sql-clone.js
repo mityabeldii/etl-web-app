@@ -260,7 +260,7 @@ const SQLClone = () => {
                             <Control.Row>
                                 <Control.Select
                                     name={`operatorConfigData.updateSettings.lastUpdatedFieldSource`}
-                                    label={`Поле последнего обновления таблицы-источника`}
+                                    label={`Поле последнего обновления источника`}
                                     options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
                                     readOnly={!params?.source?.columns?.length}
                                 />
