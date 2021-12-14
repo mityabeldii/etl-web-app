@@ -179,10 +179,12 @@ const ProcessesHistoryTable = {
             name: `startAndStop`,
             label: `Старт / Завершение`,
             extra: `flex: 2; > * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
-            transform: ({ row }) =>
-                `${row?.startDate ? moment(row?.processStartDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
-                    row?.endDate ? moment(row?.processEndDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
-                }`,
+            transform: ({ row }) => {
+                console.log(row)
+                return `${row?.processStartDate ? moment(row?.processStartDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
+                    row?.processEndDate ? moment(row?.processEndDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
+                }`
+            },
         },
         { name: `tryNumber`, label: `Попытка`, extra: `flex: 0.5;` },
         { name: `state`, label: `Статус`, extra: `flex: unset; width: 200px;`, cell: { type: `processstatus` } },
