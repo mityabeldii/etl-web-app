@@ -174,7 +174,7 @@ const ProcessesHistoryTable = {
             transform: ({ row }) => `**${row?.processName}**`,
         },
         { name: `processRunId`, label: `ID запуска`, extra: `flex: 2;` },
-        { name: `processRunId`, label: `Процесс`, extra: `flex: 2;` },
+        { name: `id`, label: `Процесс`, extra: `flex: 2;` },
         {
             name: `startAndStop`,
             label: `Старт / Завершение`,
