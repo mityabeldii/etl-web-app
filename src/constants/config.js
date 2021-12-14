@@ -70,8 +70,12 @@ export const OPERATORS = {
 };
 
 export const UPDATE_TYPES = {
-    full: `Полное`,
-    increment: `Итерационное`,
+    REPLACE: `Полная замена`,
+    INCREMENT_UPSERT: `Инкрементальное обновление`,
+    INCREMENT_INSERT: `Инкрементальное добавление`,
+    INCREMENT_LOAD: `Загрузка инкремента`,
+    UPSERT: `Обновление`,
+    INSERT: `Добавление`,
 };
 
 export const LOGIC_OPERATOR = {

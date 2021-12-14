@@ -46,7 +46,10 @@ const SQLClone = () => {
     }, [_.get(data, `operatorConfigData.source.sourceId`), _.get(data, `operatorConfigData.source.sourceTableName`)]);
     useEffect(() => {
         if (!!_.get(data, `operatorConfigData.target.targetId`) && !!_.get(data, `operatorConfigData.target.targetTableName`)) {
-            DatasourceAPI.getTableColumns(_.get(data, `operatorConfigData.target.targetId`), _.get(data, `operatorConfigData.target.targetTableName`));
+            DatasourceAPI.getTableColumns(
+                _.get(data, `operatorConfigData.target.targetId`),
+                _.get(data, `operatorConfigData.target.targetTableName`)
+            );
         }
     }, [_.get(data, `operatorConfigData.target.targetId`), _.get(data, `operatorConfigData.target.targetTableName`)]);
     useEffect(() => {
@@ -93,7 +96,7 @@ const SQLClone = () => {
                     name={`operatorConfigData.source.sourceSchemaName`}
                     label={`Имя схемы в источнике`}
                     options={params?.source?.schemas?.map?.((item) => ({ label: item, value: item }))}
-                    readOnly={!params.source?.schemas?.length}
+                    readOnly={!params?.source?.schemas?.length}
                 />
                 <Control.Select
                     name={`operatorConfigData.source.sourceTableName`}
@@ -109,7 +112,7 @@ const SQLClone = () => {
                 <Control.Select
                     label={`Поля для извлечения`}
                     multiselect
-                    options={params.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                    options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
                     value={_.get(data, `operatorConfigData.source.sourceTableFields`)?.map?.((item) => item?.sourceFieldName)}
                     onChange={(e) => {
                         setValue(
@@ -117,7 +120,7 @@ const SQLClone = () => {
                             e.target.value.map((i) => ({ sourceFieldName: i }))
                         );
                     }}
-                    readOnly={!params.source?.columns?.length}
+                    readOnly={!params?.source?.columns?.length}
                 />
             </Control.Row>
             <Br />
@@ -198,26 +201,80 @@ const SQLClone = () => {
                 <Control.Select
                     name={`operatorConfigData.updateSettings.updateType`}
                     label={`Тип обновления`}
-                    options={Object.entries(UPDATE_TYPES).map(([value, label], index) => ({ label, value }))}
+                    options={Object.entries(_.pick(UPDATE_TYPES, [`REPLACE`, `INCREMENT_UPSERT`, `INCREMENT_INSERT`, `INCREMENT_LOAD`])).map(
+                        ([value, label], index) => ({ label, value })
+                    )}
                     extra={`flex: 0.5; margin-right: 16px !important;`}
                 />
             </Control.Row>
-            {_.get(data, `operatorConfigData.updateSettings.updateType`) !== `full` && (
-                <Control.Row>
-                    <Control.Select
-                        name={`operatorConfigData.updateSettings.lastUpdatedField`}
-                        label={`Поле последнего обновления`}
-                        options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
-                        readOnly={!params?.source?.columns?.length}
-                    />
-                    <Control.Select
-                        name={`operatorConfigData.updateSettings.primaryKey`}
-                        label={`Первичный ключ`}
-                        options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
-                        readOnly={!params?.source?.columns?.length}
-                    />
-                </Control.Row>
-            )}
+            {
+                {
+                    REPLACE: null,
+                    INCREMENT_UPSERT: (
+                        <>
+                            <Control.Row>
+                                <Control.Select
+                                    name={`operatorConfigData.updateSettings.lastUpdatedFieldSource`}
+                                    label={`Поле последнего обновления источника`}
+                                    options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                                    readOnly={!params?.source?.columns?.length}
+                                />
+                                <Control.Select
+                                    name={`operatorConfigData.updateSettings.lastUpdatedFieldTarget`}
+                                    label={`Поле последнего обновления целевой таблицы`}
+                                    options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
+                                    readOnly={!params?.target?.columns?.length}
+                                />
+                            </Control.Row>
+                            <Control.Row>
+                                <Control.Select
+                                    name={`operatorConfigData.updateSettings.primaryKey`}
+                                    label={`Первичный ключ таблицы-источника`}
+                                    extra={`flex: 0.5; margin-right: 16px !important;`}
+                                    options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                                    readOnly={!params?.source?.columns?.length}
+                                />
+                            </Control.Row>
+                        </>
+                    ),
+                    INCREMENT_INSERT: (
+                        <>
+                            <Control.Row>
+                                <Control.Select
+                                    name={`operatorConfigData.updateSettings.lastCreatedFieldSource`}
+                                    label={`Поле создания записи таблицы-источника`}
+                                    options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                                    readOnly={!params?.source?.columns?.length}
+                                />
+                                <Control.Select
+                                    name={`operatorConfigData.updateSettings.lastCreatedFieldTarget`}
+                                    label={`Поле создания записи целевой таблицы`}
+                                    options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
+                                    readOnly={!params?.target?.columns?.length}
+                                />
+                            </Control.Row>
+                        </>
+                    ),
+                    INCREMENT_LOAD: (
+                        <>
+                            <Control.Row>
+                                <Control.Select
+                                    name={`operatorConfigData.updateSettings.lastUpdatedFieldSource`}
+                                    label={`Поле последнего обновления таблицы-источника`}
+                                    options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                                    readOnly={!params?.source?.columns?.length}
+                                />
+                                <Control.Select
+                                    name={`operatorConfigData.updateSettings.lastUpdatedFieldTarget`}
+                                    label={`Поле последнего обновления целевой таблицы`}
+                                    options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
+                                    readOnly={!params?.target?.columns?.length}
+                                />
+                            </Control.Row>
+                        </>
+                    ),
+                }?.[_.get(data, `operatorConfigData.updateSettings.updateType`)]
+            }
         </>
     );
 };
