@@ -15,6 +15,7 @@ import useFormControl from "../../hooks/useFormControl";
 import { eventDispatch } from "../../hooks/useEventListener";
 import { useStorageListener } from "../../hooks/useStorage";
 import _ from "lodash";
+import ModalsHelper from "../../utils/modals-helper";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -37,7 +38,7 @@ const DatasourceAdHocQueryModal = () => {
     const closeModal = () => {
         clearForm();
         setError(undefined);
-        eventDispatch(`CLOSE_${MODALS.DATASOURCE_AD_HOC_QUERY_MODAL}_MODAL`);
+        ModalsHelper.hideModal(MODALS.DATASOURCE_AD_HOC_QUERY_MODAL);
     };
     return (
         <PopUpWrapper name={MODALS.DATASOURCE_AD_HOC_QUERY_MODAL} onClickOutside={closeModal}>

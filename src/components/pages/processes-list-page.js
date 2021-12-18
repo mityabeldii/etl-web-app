@@ -8,17 +8,18 @@ import Table from "../ui-kit/table";
 
 import { MODALS, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
-import { eventDispatch } from "../../hooks/useEventListener";
+import ModalsHelper from '../../utils/modals-helper'
 
 import ProcessesAPI from "../../api/processes-api";
 
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
 import useQueryParams from "../../hooks/useQueryParams";
+import { eventDispatch } from "../../hooks/useEventListener";
 
 const ProcessesListPage = () => {
     const { params: filters } = useQueryParams();
     const openCreateProcessModal = () => {
-        eventDispatch(`OPEN_${MODALS.CREATE_PROCESS_MODAL}_MODAL`);
+        ModalsHelper.showModal(MODALS.CREATE_PROCESS_MODAL);
     };
     return (
         <>

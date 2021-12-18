@@ -18,6 +18,7 @@ import { eventDispatch } from "../../hooks/useEventListener";
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
 import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
 import useQueryParams from "../../hooks/useQueryParams";
+import ModalsHelper from "../../utils/modals-helper";
 
 const ProcessesConfigurationPage = () => {
     const { process_id } = useParams();
@@ -36,7 +37,7 @@ const ProcessesConfigurationPage = () => {
     }, []);
 
     const handleOpenCreateTaskModal = () => {
-        eventDispatch(`OPEN_${MODALS.CREATE_TASK}_MODAL`, { mode: `create` });
+        ModalsHelper.showModal(MODALS.CREATE_TASK, { mode: `create` });
     };
 
     return useMemo(

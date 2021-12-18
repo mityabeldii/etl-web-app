@@ -11,6 +11,7 @@ import useFormControl from "../../hooks/useFormControl";
 import ProcessesAPI from "../../api/processes-api";
 
 import { eventDispatch } from "../../hooks/useEventListener";
+import ModalsHelper from "../../utils/modals-helper";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -27,7 +28,7 @@ const CreateProcessModal = () => {
         } catch (error) {}
     };
     const closeModal = () => {
-        eventDispatch(`CLOSE_${MODALS.CREATE_PROCESS_MODAL}_MODAL`);
+        ModalsHelper.hideModal(MODALS.CREATE_PROCESS_MODAL);
     };
     return (
         <PopUpWrapper name={MODALS.CREATE_PROCESS_MODAL} onClickOutside={clearForm}>

@@ -10,6 +10,7 @@ import DatasourceAPI from "../../api/datasource-api";
 
 import { eventDispatch } from "../../hooks/useEventListener";
 import useFormControl from "../../hooks/useFormControl";
+import ModalsHelper from "../../utils/modals-helper";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -25,11 +26,11 @@ const CreateDataSouceModal = () => {
     const { onSubmit, clearForm } = useFormControl({ name: FORMS.CREATE_DATA_SOURCE_MODAL, schema });
     const handleSubmit = async (data) => {
         await DatasourceAPI.createDatasource(data);
-        eventDispatch(`CLOSE_${MODALS.CREATE_DATA_SOURCE_MODAL}_MODAL`);
+        ModalsHelper.hideModal(MODALS.CREATE_DATA_SOURCE_MODAL)
     };
     const closeModal = () => {
         clearForm();
-        eventDispatch(`CLOSE_${MODALS.CREATE_DATA_SOURCE_MODAL}_MODAL`);
+        ModalsHelper.hideModal(MODALS.CREATE_DATA_SOURCE_MODAL);
     };
     return (
         <PopUpWrapper name={MODALS.CREATE_DATA_SOURCE_MODAL} onClickOutside={closeModal}>

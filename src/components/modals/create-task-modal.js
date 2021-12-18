@@ -20,6 +20,8 @@ import { MODALS, FORMS, OPERATORS, TABLES, UPDATE_TYPES, JOIN_TYPE, LOGIC_OPERAT
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import { useStorageListener } from "../../hooks/useStorage";
 import useFormControl from "../../hooks/useFormControl";
+import useModal from "../../hooks/useModal";
+import ModalsHelper from "../../utils/modals-helper";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -39,14 +41,16 @@ const CrateTaskModal = () => {
 
     // console.log(data);
 
-    useEventListener(`OPEN_${MODALS.CREATE_TASK}_MODAL`, (e) => {
-        const { mode } = e.detail;
-        setMode(mode);
-        setReadOnly(mode === `view`);
+    useModal(MODALS.CREATE_TASK, {
+        onOpen: (e) => {
+            const { mode } = e;
+            setMode(mode);
+            setReadOnly(mode === `view`);
+        },
     });
 
     const closeModal = () => {
-        eventDispatch(`CLOSE_${MODALS.CREATE_TASK}_MODAL`);
+        ModalsHelper.hideModal(MODALS.CREATE_TASK);
     };
     const handleSubmit = async (data) => {
         try {

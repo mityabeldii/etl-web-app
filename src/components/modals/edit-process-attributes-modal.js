@@ -10,6 +10,8 @@ import ProcessesAPI from "../../api/processes-api";
 
 import useFormControl from "../../hooks/useFormControl";
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
+import useModal from "../../hooks/useModal";
+import ModalsHelper from "../../utils/modals-helper";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -28,10 +30,10 @@ const EditProcessAttributesModal = () => {
     };
     const closeModal = () => {
         clearForm();
-        eventDispatch(`CLOSE_${MODALS.EDIT_PROCESS_ATTRIBUTES}_MODAL`);
+        ModalsHelper.hideModal(MODALS.EDIT_PROCESS_ATTRIBUTES);
     };
-    useEventListener(`OPEN_${MODALS.EDIT_PROCESS_ATTRIBUTES}_MODAL`, (d) => {
-        Object.entries(d?.detail).forEach(([key, value], index) => {
+    useModal(MODALS.EDIT_PROCESS_ATTRIBUTES, (d) => {
+        Object.entries(d).forEach(([key, value], index) => {
             setValue(key, value ?? ``);
         });
     });

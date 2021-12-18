@@ -10,6 +10,7 @@ import ProcessesAPI from "../../api/processes-api";
 import { eventDispatch } from "../../hooks/useEventListener";
 import { MODALS } from "../../constants/config";
 import { linkTo, objectToQS } from "../../utils/common-helper";
+import ModalsHelper from "../../utils/modals-helper";
 
 const ProcessDropdown = ({ cellState = {} }) => {
     const { row = {} } = cellState;
@@ -23,7 +24,7 @@ const ProcessDropdown = ({ cellState = {} }) => {
                             label: `Редактировать атрибуты`,
                             src: `processes-more-edit-attributes`,
                             onClick: ({ row }) => {
-                                eventDispatch(`OPEN_${MODALS.EDIT_PROCESS_ATTRIBUTES}_MODAL`, row);
+                                ModalsHelper.showModal(MODALS.EDIT_PROCESS_ATTRIBUTES, row);
                             },
                         },
                         {

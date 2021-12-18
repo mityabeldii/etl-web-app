@@ -12,11 +12,12 @@ import { eventDispatch } from "../../hooks/useEventListener";
 
 import DatasourceAPI from "../../api/datasource-api";
 import { useStorageListener } from "../../hooks/useStorage";
+import ModalsHelper from "../../utils/modals-helper";
 
 const DatasourcesListPage = () => {
     const [search, setSearch] = useState(``);
     const openCreateDataSourceModal = () => {
-        eventDispatch(`OPEN_${MODALS.CREATE_DATA_SOURCE_MODAL}_MODAL`);
+        ModalsHelper.showModal(MODALS.CREATE_DATA_SOURCE_MODAL);
     };
     const handleSearchChange = (e) => {
         setSearch(e.target.value);

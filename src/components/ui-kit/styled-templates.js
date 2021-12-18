@@ -429,6 +429,8 @@ export const Dropdown = (props) => {
         id,
         closeOnChildrenClick = true,
         callable = true,
+        toggleProps = {},
+        menuProps = {},
     } = props;
     const [opened, setOpened] = useState(false);
     const menuRef = useRef();
@@ -472,16 +474,17 @@ export const Dropdown = (props) => {
     };
     return (
         <DropdownStyles.Wrapper extra={wrapperStyles} className={uniqueId.current}>
-            <DropdownStyles.Toggle ref={toggleRef} extra={toggleStyles} onClick={handleToggleClick}>
+            <DropdownStyles.Toggle {...toggleProps} ref={toggleRef} extra={(toggleProps?.extra ?? ``) + toggleStyles} onClick={handleToggleClick}>
                 {toggle}
             </DropdownStyles.Toggle>
             <DropdownStyles.Menu
+                {...menuProps}
                 ref={menuRef}
                 visible={opened}
                 toggleSize={toggleSize}
                 onClick={handleMenuItemClick}
                 direction={direction}
-                extra={menuStyles}
+                extra={(menuProps?.extra ?? ``) + menuStyles}
             >
                 <DropdownStyles.ScrollWrapper extra={scrollWrapperStyles}>{menu}</DropdownStyles.ScrollWrapper>
             </DropdownStyles.Menu>

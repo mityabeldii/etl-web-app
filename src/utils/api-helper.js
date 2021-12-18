@@ -70,7 +70,7 @@ export const loadingCounterWrapper = async (action) => {
     } catch (error) {
         throw error;
     } finally {
-        await sleep(100)
+        await sleep(100);
         putStorage(`loading_counter`, Math.max((window?.storage?.loading_counter ?? 0) - 1, 0));
     }
 };
@@ -81,26 +81,14 @@ export const POSTOptions = (name) => {
     const { currentPage = 0, perPage = 10 } = pagination;
     return {
         params: {
-            query: {
-                sort,
-                pagination: { page: currentPage, perPage: perPage },
-                filter,
-            },
+            limit: perPage,
+            offset: currentPage,
         },
     };
 };
 
 export const GETOptions = (options = {}) => {
-    Object.keys(options?.filter ?? {})
-        .filter((i) => [`_from`, `_to`].map((j) => i.includes(j)).includes(true))
-        .forEach((i) => {
-            options.filter[i] = moment(options?.filter?.[i]).format(`YYYY-MM-DD HH:mm:ss`);
-        });
-    return {
-        params: {
-            setting: JSON.stringify(POSTOptions(options)),
-        },
-    };
+    return POSTOptions(options);
 };
 
 /*eslint-enable*/

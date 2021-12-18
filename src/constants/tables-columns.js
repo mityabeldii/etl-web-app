@@ -10,6 +10,8 @@ import ProcessesAPI from "../api/processes-api";
 import { putStorage, getStorage, mergeStorage } from "../hooks/useStorage";
 import { eventDispatch } from "../hooks/useEventListener";
 import TasksHelper from "../utils/tasks-helper";
+import ModalsHelper from "../utils/modals-helper";
+import DatasourceAPI from "../api/datasource-api";
 
 const DatasourceList = {
     useBackendProcessing: false,
@@ -42,7 +44,7 @@ const DatasourceList = {
                 leftIconStyles: `margin-right: 0;`,
                 onClick: (row) => {
                     putStorage(`forms.${FORMS.EDIT_DATA_SOURCE_MODAL}.values`, row);
-                    eventDispatch(`OPEN_${MODALS.EDIT_DATA_SOURCE_MODAL}_MODAL`);
+                    ModalsHelper.showModal(MODALS.EDIT_DATA_SOURCE_MODAL);
                 },
             },
         },
@@ -55,6 +57,23 @@ const DatasourceList = {
                 leftIcon: `delete-outline`,
                 extra: `box-shadow: unset; padding: 8px; min-width: unset;`,
                 leftIconStyles: `margin-right: 0;`,
+                onClick: (row) => {
+                    ModalsHelper.showModal(MODALS.MODALITY, {
+                        title: `Удаление источника данных`,
+                        description: `Вы действительно хотите удалить источник данных ${row?.name}?`,
+                        confirmButton: {
+                            children: `Удалить`,
+                            background: `red`,
+                            onClick: async () => {
+                                DatasourceAPI.deleteDatasource(row?.id);
+                            },
+                        },
+                        cancelButton: {
+                            background: `grey`,
+                            children: `Отмена`,
+                        }
+                    });
+                }
             },
         },
     ],
@@ -115,7 +134,7 @@ const ETLProcessesConfigurationTable = {
             name: `operator`,
             label: `Имя оператора`,
             onCellClick: ({ row }) => {
-                eventDispatch(`OPEN_${MODALS.CREATE_TASK}_MODAL`, { mode: `view` });
+                ModalsHelper.showModal(MODALS.CREATE_TASK, { mode: `view` });
                 putStorage(`forms.${FORMS.CREATE_TASK}.values`, row);
             },
             cell: { type: `operator` },
@@ -140,7 +159,7 @@ const ETLProcessesConfigurationTable = {
                 extra: `justify-content: flex-end;`,
             },
             onCellClick: ({ row }) => {
-                eventDispatch(`OPEN_${MODALS.CREATE_TASK}_MODAL`, { mode: `edit` });
+                ModalsHelper.showModal(MODALS.CREATE_TASK, { mode: `edit` });
                 putStorage(`forms.${FORMS.CREATE_TASK}.values`, row);
             },
         },

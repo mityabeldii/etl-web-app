@@ -9,50 +9,53 @@ import { convertHex } from "../../utils/colors-helper";
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import useComponentSize from "../../hooks/useComponentSize";
+import useModal from "../../hooks/useModal";
 
 const PopUpWrapper = (props) => {
-    const { name = ``, disableDarkOverlay = false, extra = ``, preventClosing = false, withCross = true, onClickOutside = () => {} } = props;
+    const {
+        name = ``,
+        disableDarkOverlay = false,
+        extra = ``,
+        preventClosing = false,
+        withCros = true,
+        whiteCros = false,
+        onClickOutside = () => {},
+        onOpen = () => {},
+        onClose = () => {},
+    } = props;
 
-    const [visible, setVisible] = useState(false);
-    const [shouldRender, setShouldRender] = useState(visible);
+    const { isOpened, shouldMount, open, close, setPreventClosing } = useModal(name, { onOpen, onClose });
     const ref = useRef();
 
-    useEventListener(`OPEN_${name}_MODAL`, () => {
-        setShouldRender(true);
-        setVisible(true);
-    });
-    useEventListener(`CLOSE_${name}_MODAL`, () => {
-        if (!preventClosing) {
-            setVisible(false);
-            setTimeout(() => {
-                setShouldRender(false);
-            }, 200);
+    useEffect(() => setPreventClosing(preventClosing), [preventClosing]);
+
+    const handleClose = (e) => {
+        if (!(window.innerWidth - e.x < 7)) {
+            onClickOutside?.();
+            close();
         }
-    });
+    };
+    useOnClickOutside(ref, handleClose);
+
     const { height } = useComponentSize(ref, props.children);
 
     useEffect(() => {
-        document.getElementsByTagName(`body`)[0].style.overflowY = visible ? `hidden` : `auto`;
-    }, [visible]);
+        document.getElementsByTagName(`body`)[0].style.overflowY = isOpened ? `hidden` : `auto`;
+    }, [isOpened]);
 
-    const onClose = () => {
-        onClickOutside?.();
-        window.dispatchEvent(new CustomEvent(`CLOSE_${name}_MODAL`));
-    };
-    useOnClickOutside(ref, onClose);
 
-    // if (!shouldRender) {
-    //     return null
-    // }
+    if (!shouldMount) {
+        return null;
+    }
 
     return (
         <>
-            {!disableDarkOverlay ? <DarkOverlay visible={visible} /> : null}
+            {!disableDarkOverlay ? <DarkOverlay isOpened={isOpened} /> : null}
             <Frame
-                visible={visible}
+                isOpened={isOpened}
                 extra={css`
-                    visibility: ${({ visible }) => (visible ? `visible` : `hidden`)};
-                    opacity: ${({ visible }) => (visible ? 1 : 0)};
+                    visibility: ${({ isOpened }) => (isOpened ? `visible` : `hidden`)};
+                    opacity: ${({ isOpened }) => (isOpened ? 1 : 0)};
                     position: absolute;
                     top: 0;
                     right: 0;
@@ -67,17 +70,17 @@ const PopUpWrapper = (props) => {
                 `}
             >
                 <Frame
-                    visible={visible}
+                    isOpened={isOpened}
                     extra={css`
-                        visibility: ${({ visible }) => (visible ? `visible` : `hidden`)};
-                        opacity: ${({ visible }) => (visible ? 1 : 0)};
+                        visibility: ${({ isOpened }) => (isOpened ? `visible` : `hidden`)};
+                        opacity: ${({ isOpened }) => (isOpened ? 1 : 0)};
                         display: flex;
                         width: 100%;
                         min-height: min-content;
                     `}
                 >
-                    <OpenProjectTab visible={visible} extra={extra} ref={ref}>
-                        {withCross ? <Cross onClick={onClose} /> : null}
+                    <OpenProjectTab isOpened={isOpened} extra={extra} ref={ref}>
+                        {withCros ? <Cross onClick={onClose} /> : null}
                         {props.children}
                     </OpenProjectTab>
                 </Frame>
@@ -87,11 +90,11 @@ const PopUpWrapper = (props) => {
 
     return (
         <>
-            {!disableDarkOverlay ? <DarkOverlay visible={visible} /> : null}
+            {!disableDarkOverlay ? <DarkOverlay isOpened={isOpened} /> : null}
             {/* <Frame extra={`flex: 1; display: flex; overflow: auto;`}> */}
             {/* <Frame extra={`display: flex; min-height: min-content;`}> */}
-            <OpenProjectTab visible={visible} extra={extra} ref={ref}>
-                {withCross ? <Cross onClick={onClose} /> : null}
+            <OpenProjectTab isOpened={isOpened} extra={extra} ref={ref}>
+                {withCros ? <Cross onClick={onClose} /> : null}
                 {props.children}
             </OpenProjectTab>
             {/* </Frame> */}
@@ -149,10 +152,10 @@ const OpenProjectTab = styled(Frame)`
     max-width: 760px;
     position: relative;
 
-    transform: translate(0, ${({ visible }) => (visible ? `0` : `50px`)});
+    transform: translate(0, ${({ isOpened }) => (isOpened ? `0` : `50px`)});
 
-    visibility: ${(props) => (props.visible ? `visible` : `hidden`)};
-    opacity: ${(props) => (props.visible ? 1 : 0)};
+    visibility: ${(props) => (props.isOpened ? `visible` : `hidden`)};
+    opacity: ${(props) => (props.isOpened ? 1 : 0)};
 
     @media only screen and (max-width: 600px) {
         min-width: auto;
@@ -167,9 +170,9 @@ const OpenProjectTab = styled(Frame)`
 const DarkOverlay = styled(Frame)`
     width: 100vw;
     height: 100vh;
-    background: ${(props) => convertHex(props.theme.text.dark, props.visible * 0.2)};
-    visibility: ${(props) => (props.visible ? `visible` : `hidden`)};
-    /* backdrop-filter: blur(${(props) => props.visible * props.blur * 24}px); */
+    background: ${(props) => convertHex(props.theme.text.dark, props.isOpened * 0.2)};
+    visibility: ${(props) => (props.isOpened ? `visible` : `hidden`)};
+    /* backdrop-filter: blur(${(props) => props.isOpened * props.blur * 24}px); */
     position: fixed;
     top: 0;
     left: 0;

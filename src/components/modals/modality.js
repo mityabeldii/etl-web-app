@@ -11,20 +11,24 @@ import DatasourceAPI from "../../api/datasource-api";
 
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import useFormControl from "../../hooks/useFormControl";
+import useModal from "../../hooks/useModal";
+import ModalsHelper from "../../utils/modals-helper";
 
 const Modality = () => {
     const [data, setData] = useState({});
-    useEventListener(`OPEN_${MODALS.MODALITY}_MODAL`, (d) => {
-        setData(d?.detail);
+    useModal(MODALS.MODALITY, {
+        onOpen: (d) => {
+            setData(d);
+        },
     });
     const closeModal = () => {
-        eventDispatch(`CLOSE_${MODALS.MODALITY}_MODAL`);
+        ModalsHelper.hideModal(MODALS.MODALITY);
     };
     return (
         <PopUpWrapper name={MODALS.MODALITY} onClickOutside={closeModal}>
             <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>{data?.title}</H1>
             <Frame>{data?.description}</Frame>
-            <Frame extra={`flex-direction: row; width: 100%; justify-content: flex-end; margin-top: 35px`} >
+            <Frame extra={`flex-direction: row; width: 100%; justify-content: flex-end; margin-top: 35px`}>
                 <Button
                     variant={`outlined`}
                     {...data?.cancelButton}
@@ -32,7 +36,16 @@ const Modality = () => {
                     onClick={closeModal}
                     type={`cancel`}
                 />
-                <Button {...data?.confirmButton} type={`submit`} />
+                <Button
+                    {...data?.confirmButton}
+                    type={`submit`}
+                    onClick={async (e) => {
+                        try {
+                            await data?.confirmButton?.onClick(e);
+                            closeModal();
+                        } catch (error) {}
+                    }}
+                />
             </Frame>
         </PopUpWrapper>
     );

@@ -2,7 +2,7 @@
 import axios from "axios";
 import _ from "lodash";
 
-import { handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
+import { GETOptions, handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
 import CaseHalper from "../utils/case-helper";
 
 import { API_URL, base_url, TABLES } from "../constants/config";
@@ -78,18 +78,18 @@ const DatasourceAPI = {
         });
     },
 
-    async getDatasourceTablePreview(id, tableName) {
+    async getDatasourceTablePreview(id, tableName, options = {}) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`${base_url}/api/v1/query/${id}/${tableName}`)).data;
-                putStorage(
-                    `datasources.preview`,
-                    Object.values(
-                        Object.fromEntries(
-                            [{ id, [tableName]: response }, ...getStorage((state) => state?.datasources?.data ?? [])].map((i) => [i?.id, i])
-                        )
-                    )
-                );
+                const response = (await axios.get(`${base_url}/api/v1/query/${id}/${tableName}`, GETOptions(options))).data;
+                putStorage(`datasources.preview.${id}.${tableName}`, {
+                    rows: _.map(response?.rows, `cells`)?.map?.((i) => Object.fromEntries(i?.map?.((i) => [i?.column, i?.value]))),
+                    pagination: {
+                        perPage: response?.rowCount,
+                        currentPage: response?.page,
+                        totalCount: response?.totalRowCount,
+                    },
+                });
                 return response;
             } catch (error) {
                 throw handleError(error);
@@ -156,6 +156,47 @@ const DatasourceAPI = {
             try {
                 const response = (await axios.post(`${base_url}/api/v1/ad-hoc-query`, { datasourceId, schemaName, query })).data;
                 handleSuccess({ message: `Success` });
+                return response;
+            } catch (error) {
+                throw error;
+            }
+        });
+    },
+
+    updateDatasourceSchema(datasourceId, schemaName) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.post(`${base_url}/api/v1/schemes`, { datasourceId, schemaName })).data;
+                await DatasourceAPI.getDatasources();
+                handleSuccess({ message: `Источник c ID ${id} успешно удален` });
+                return response;
+            } catch (error) {
+                handleError(error);
+                throw error;
+            }
+        });
+    },
+
+    renameSchema(datasourceId, oldSchemaName, newSchemaName) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.put(`${base_url}/api/v1/schemes`, { datasourceId, oldSchemaName, newSchemaName })).data;
+                await DatasourceAPI.getDatasources();
+                handleSuccess({ message: `Источник c ID ${id} успешно удален` });
+                return response;
+            } catch (error) {
+                handleError(error);
+                throw error;
+            }
+        });
+    },
+
+    deleteDatasource(id) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.delete(`${base_url}/api/v1/datasource/${id}`)).data;
+                await DatasourceAPI.getDatasources();
+                handleSuccess({ message: `Источник c ID ${id} успешно удален` });
                 return response;
             } catch (error) {
                 throw error;

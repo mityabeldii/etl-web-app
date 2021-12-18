@@ -8,6 +8,7 @@ import PopUpWrapper from "./pop-up-wrapper";
 
 import useFormControl from "../../hooks/useFormControl";
 import { eventDispatch } from "../../hooks/useEventListener";
+import ModalsHelper from "../../utils/modals-helper";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -26,7 +27,7 @@ const EditDataSourceModal = () => {
     };
     const closeModal = () => {
         clearForm();
-        eventDispatch(`CLOSE_${MODALS.EDIT_DATA_SOURCE_MODAL}_MODAL`);
+        ModalsHelper.hideModal(MODALS.EDIT_DATA_SOURCE_MODAL)
     };
     return (
         <PopUpWrapper name={MODALS.EDIT_DATA_SOURCE_MODAL} onClickOutside={closeModal}>

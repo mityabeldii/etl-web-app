@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import styled, { css } from "styled-components";
 
 const Input = (props) => {
-    const { type = `text`, extra = ``, rightIcon, rightIconStyles = ``, leftIcon, leftIconStyles = `` } = props;
+    const { type = `text`, extra = ``, rightIconStyles = ``, leftIcon, leftIconStyles = ``, rightIcon = {} } = props;
     const [passwordVisible, setPasswordVisible] = useState(false);
     return (
         <Span type={type} extra={extra}>
@@ -16,8 +16,8 @@ const Input = (props) => {
                         setPasswordVisible(!passwordVisible);
                     }}
                 />
-            ) : rightIcon ? (
-                <Icon src={rightIcon} extra={rightIconStyles} />
+            ) : rightIcon?.src ? (
+                <Icon {...rightIcon} />
             ) : null}
         </Span>
     );
@@ -79,7 +79,7 @@ export const StyledInput = styled.input`
         css`
             cursor: default;
             background: #ebebeb;
-            color: #67686D;
+            color: #67686d;
         `}
 
     ::-webkit-input-placeholder {

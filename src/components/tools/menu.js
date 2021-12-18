@@ -3,6 +3,7 @@ import { Fragment } from "react";
 import { useLocation, Link } from "react-router-dom";
 import styled, { css, keyframes } from "styled-components";
 import { useStorageListener } from "../../hooks/useStorage";
+import { objectToQS } from "../../utils/common-helper";
 
 import { Frame, RowWrapper } from "../ui-kit/styled-templates";
 
@@ -12,7 +13,7 @@ const menuSections = [
         label: `Структура хранилища`,
         icon: `menu-storage-structure`,
         items: [
-            { label: `Промежуточное хранилище`, link: `/storage/intermediate` },
+            { label: `Промежуточное хранилище`, link: `/storage/intermediate${objectToQS({ type: `STAGING` })}` },
             // { label: `Хранилище`, link: `/storage` },
         ],
     },

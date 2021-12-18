@@ -76,7 +76,9 @@ const Table = (props) => {
         if (!tableState?.pagination) {
             putStorage(`tables.${name}.pagination`, { currentPage, perPage }, { silent: true });
         }
+        console.log(useBackendProcessing)
         if (useBackendProcessing) {
+            console.log(`> > >  FETCHING < < <`);
             const newData = await fetchFunction({ limit: perPage, offset: currentPage + 1 });
         }
     }, [JSON.stringify({ debouncedParams, sort, name, currentPage, perPage, dependencies })]);
@@ -550,6 +552,10 @@ const STr = styled(Frame)`
     box-sizing: border-box;
     border-bottom: 1px solid #dadada;
     align-items: flex-start;
+
+    > * {
+        word-break: break-all;
+    };
 
     ${({ extra }) => extra}
 `;

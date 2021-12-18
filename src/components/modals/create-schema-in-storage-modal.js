@@ -11,6 +11,7 @@ import DatasourceAPI from "../../api/datasource-api";
 
 import { eventDispatch } from "../../hooks/useEventListener";
 import useFormControl from "../../hooks/useFormControl";
+import ModalsHelper from "../../utils/modals-helper";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -27,11 +28,11 @@ const CreateScheaInStorageModal = () => {
     const [error, setError] = useState();
     const handleSubmit = async (data) => {
         await DatasourceAPI.createDatasource(data);
-        eventDispatch(`CLOSE_${MODALS.CREATE_SCHEMA_IN_STORAGE}_MODAL`);
+        ModalsHelper.hideModal(MODALS.CREATE_SCHEMA_IN_STORAGE);
     };
     const closeModal = () => {
         clearForm();
-        eventDispatch(`CLOSE_${MODALS.CREATE_SCHEMA_IN_STORAGE}_MODAL`);
+        ModalsHelper.hideModal(MODALS.CREATE_SCHEMA_IN_STORAGE);
     };
     return (
         <PopUpWrapper name={MODALS.CREATE_SCHEMA_IN_STORAGE} onClickOutside={closeModal}>

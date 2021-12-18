@@ -10,6 +10,7 @@ import DatasourceAPI from "../../api/datasource-api";
 
 import { eventDispatch } from "../../hooks/useEventListener";
 import useFormControl from "../../hooks/useFormControl";
+import ModalsHelper from "../../utils/modals-helper";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -25,11 +26,11 @@ const EditAccessCredentialsModal = () => {
     const { onSubmit, clearForm } = useFormControl({ name: FORMS.EDIT_ACCESS_CREDENTIALS, schema });
     const handleSubmit = async (data) => {
         await DatasourceAPI.createDatasource(data);
-        eventDispatch(`CLOSE_${MODALS.EDIT_ACCESS_CREDENTIALS}_MODAL`);
+        ModalsHelper.hideModal(MODALS.EDIT_ACCESS_CREDENTIALS);
     };
     const closeModal = () => {
         clearForm();
-        eventDispatch(`CLOSE_${MODALS.EDIT_ACCESS_CREDENTIALS}_MODAL`);
+        ModalsHelper.hideModal(MODALS.EDIT_ACCESS_CREDENTIALS);
     };
     return (
         <PopUpWrapper name={MODALS.EDIT_ACCESS_CREDENTIALS} onClickOutside={closeModal}>
