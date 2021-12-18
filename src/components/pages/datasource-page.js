@@ -30,6 +30,13 @@ const DatasourcePage = () => {
             ?.data?.tables?.find?.((i) => i?.name === selectedTable)?.columns ?? [];
     const preview = useStorageListener((state) => _.get(state, `datasources.preview.${selectedSourceId}.${selectedTable}.rows`)) ?? [];
 
+    const fetchPreviewFunction = async () => {
+        if (selectedSourceId && selectedTable) {
+            const response = await DatasourceAPI.getDatasourceTablePreview(selectedSourceId, selectedTable);
+            return response;
+        }
+    };
+
     useEffect(() => {
         DatasourceAPI.getDatasources();
     }, []);
@@ -98,11 +105,7 @@ const DatasourcePage = () => {
                     <Table
                         name={TABLES.DATASOURCE_TABLE_PREVIEW}
                         columns={Object.keys(preview?.[0] ?? {})?.map?.((i) => ({ name: i, label: i }))}
-                        rows={preview}
-                        useBackendProcessing={true}
-                        fetchFunction={(options) => {
-
-                        }}
+                        fetchFunction={fetchPreviewFunction}
                     />
                 </Frame>
             </RowWrapper>

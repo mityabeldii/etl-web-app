@@ -45,28 +45,24 @@ const StructureTable = ({ rows }) => {
     );
 };
 
-const PreviewTable = ({ rows, columns }) => {
-    return useMemo(
-        () => (
-            <Table
-                name={`DATASOURCE_TABLE_PREVIE`}
-                withPagination={false}
-                columns={_.map(columns, `name`)?.map?.((i) => ({ label: i, name: i }))}
-                rows={rows}
-                useBackendProcessing={true}
-                fetchFunction={(options) => {
-                    console.log(options);
-                    // DatasourceAPI.getDatasourceTablePreview(selectedDatasource?.id, selectedTableName)
-                }}
-            />
-        ),
-        [rows]
-    );
-};
-
 const IntermidiateStoragePage = () => {
     const { params = { type: selectedDatasourceType }, setByKey } = useQueryParams();
     const { type: selectedDatasourceType, table: selectedTableName } = params;
+
+    useEffect(DatasourceAPI.getDatasources, []);
+    const datasources = useStorageListener((state) => state?.tables?.DATASOURCE_LIST?.rows ?? []);
+    const datasourcesNames = [`STAGING`, `DWH`];
+    const selectedDatasource = _.find(datasources, { type: selectedDatasourceType });
+    useEffect(() => {
+        if (selectedDatasource?.id) {
+            DatasourceAPI.getDatasourceTableStructure(selectedDatasource?.id);
+            DatasourceAPI.getSchemas(selectedDatasource?.id);
+        }
+    }, [selectedDatasource?.id]);
+    const structure = useStorageListener((state) => _.find(_.get(state, `datasources.structures`), { id: selectedDatasource?.id })?.data ?? {});
+    const schemas = useStorageListener((state) => _.get(state, `datasources.schemas[${selectedDatasource?.id}]`) ?? []);
+    const { tables } = structure;
+    const selectedTable = _.find(tables, { name: selectedTableName });
 
     const handlers = {
         openCreateDatasourceModal: () => {
@@ -127,28 +123,16 @@ const IntermidiateStoragePage = () => {
         changeSchema: async (e) => {
             await DatasourceAPI.updateDatasourceSchema(selectedDatasource.id, selectedDatasource.schema, e.target.value);
         },
+        fetchPreviewFunction: async () => {
+            if (selectedDatasource?.id && selectedTableName) {
+                const response = await DatasourceAPI.getDatasourceTablePreview(selectedDatasource?.id, selectedTableName);
+                return response;
+            }
+        },
     };
 
-    useEffect(DatasourceAPI.getDatasources, []);
-    const datasources = useStorageListener((state) => state?.tables?.DATASOURCE_LIST?.rows ?? []);
-    const datasourcesNames = [`STAGING`, `DWH`];
-    const selectedDatasource = _.find(datasources, { type: selectedDatasourceType });
-    useEffect(() => {
-        if (selectedDatasource?.id) {
-            DatasourceAPI.getDatasourceTableStructure(selectedDatasource?.id);
-            DatasourceAPI.getSchemas(selectedDatasource?.id);
-        }
-    }, [selectedDatasource?.id]);
-    useEffect(() => {
-        if (selectedDatasource?.id && selectedTableName) {
-            DatasourceAPI.getDatasourceTablePreview(selectedDatasource?.id, selectedTableName);
-        }
-    }, [selectedDatasource?.id, selectedTableName]);
-    const structure = useStorageListener((state) => _.find(_.get(state, `datasources.structures`), { id: selectedDatasource?.id })?.data ?? {});
-    const schemas = useStorageListener((state) => _.get(state, `datasources.schemas[${selectedDatasource?.id}]`) ?? []);
-    const preview = useStorageListener((state) => _.get(state, `datasources.preview.${selectedDatasource?.id}.${selectedTableName}`) ?? []);
-    const { tables } = structure;
-    const selectedTable = _.find(tables, { name: selectedTableName });
+    useEffect(handlers.fetchPreviewFunction, [selectedDatasource?.id, selectedTableName]);
+
     return (
         <>
             <EditAccessCredentialsModal />
@@ -309,22 +293,12 @@ const IntermidiateStoragePage = () => {
                                         <RightSectionHeader>
                                             Предпросмотр таблицы <span>{selectedTable?.name}</span>
                                         </RightSectionHeader>
-                                        <Frame extra={`flex-direction: row;`}>
-                                            <Frame>Показывать строк:</Frame>
-                                            <Select
-                                                extra={`margin-left: 5px; width: 50px;`}
-                                                value={preview?.pagination?.perPage}
-                                                options={[5, 10, 15].map?.((i) => ({ label: i, value: i }))}
-                                                onChange={(e) => {
-                                                    putStorage(
-                                                        `datasources.preview.${selectedDatasource?.id}.${selectedTableName}.pagination.perPage`,
-                                                        e.target.value
-                                                    );
-                                                }}
-                                            />
-                                        </Frame>
                                     </RowWrapper>
-                                    <PreviewTable columns={selectedTable?.columns} rows={preview?.rows} />
+                                    <Table
+                                        name={TABLES.DATASOURCE_TABLE_PREVIEW}
+                                        columns={_.map(selectedTable?.columns, `name`)?.map?.((i) => ({ label: i, name: i }))}
+                                        fetchFunction={handlers.fetchPreviewFunction}
+                                    />
                                 </>
                             )}
                         </Frame>

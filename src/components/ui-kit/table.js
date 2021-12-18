@@ -76,10 +76,8 @@ const Table = (props) => {
         if (!tableState?.pagination) {
             putStorage(`tables.${name}.pagination`, { currentPage, perPage }, { silent: true });
         }
-        console.log(useBackendProcessing)
         if (useBackendProcessing) {
-            console.log(`> > >  FETCHING < < <`);
-            const newData = await fetchFunction({ limit: perPage, offset: currentPage + 1 });
+            const newData = await fetchFunction({ perPage, currentPage: currentPage + 1 });
         }
     }, [JSON.stringify({ debouncedParams, sort, name, currentPage, perPage, dependencies })]);
 
@@ -218,15 +216,15 @@ const Table = (props) => {
                         {new Array(6)
                             .fill(0)
                             .map((item, index) => currentPage - 3 + index)
-                            .filter((i) => i >= 0 && i >= currentPage - 1 && i < maxPageNumber)
+                            .filter((i) => i >= 0 && i >= currentPage - 2 && i < maxPageNumber)
                             .slice(0, 3)
                             .map((item, index) => (
                                 <PageNumberWrapper
                                     key={index}
-                                    selected={currentPage === item}
+                                    selected={currentPage === item + 1}
                                     onClick={() => {
                                         if (useBackendProcessing) {
-                                            putStorage(`tables.${name}.pagination.currentPage`, item);
+                                            putStorage(`tables.${name}.pagination.currentPage`, item + 1);
                                         } else {
                                             frontendPagination.handlePageNavigation(item);
                                         }
@@ -555,7 +553,7 @@ const STr = styled(Frame)`
 
     > * {
         word-break: break-all;
-    };
+    }
 
     ${({ extra }) => extra}
 `;

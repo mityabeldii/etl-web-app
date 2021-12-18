@@ -78,18 +78,20 @@ const DatasourceAPI = {
         });
     },
 
-    async getDatasourceTablePreview(id, tableName, options = {}) {
+    async getDatasourceTablePreview(id, tableName) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`${base_url}/api/v1/query/${id}/${tableName}`, GETOptions(options))).data;
-                putStorage(`datasources.preview.${id}.${tableName}`, {
+                const response = (await axios.get(`${base_url}/api/v1/query/${id}/${tableName}`, GETOptions(TABLES.DATASOURCE_TABLE_PREVIEW))).data;
+                const data = {
                     rows: _.map(response?.rows, `cells`)?.map?.((i) => Object.fromEntries(i?.map?.((i) => [i?.column, i?.value]))),
                     pagination: {
                         perPage: response?.rowCount,
                         currentPage: response?.page,
                         totalCount: response?.totalRowCount,
                     },
-                });
+                };
+                putStorage(`datasources.preview.${id}.${tableName}`, data);
+                putStorage(`tables.${TABLES.DATASOURCE_TABLE_PREVIEW}`, data);
                 return response;
             } catch (error) {
                 throw handleError(error);

@@ -65,7 +65,7 @@ export let handleError = (error) => {
 export const loadingCounterWrapper = async (action) => {
     putStorage(`loading_counter`, (window?.storage?.loading_counter ?? 0) + 1);
     try {
-        let response = await action();
+        const response = await action();
         return response;
     } catch (error) {
         throw error;
