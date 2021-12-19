@@ -2,7 +2,7 @@
 import axios from "axios";
 import _ from "lodash";
 
-import { GETOptions, handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
+import { convertPaginatedResponse, GETOptions, handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
 import CaseHalper from "../utils/case-helper";
 
 import { API_URL, base_url, TABLES } from "../constants/config";
@@ -15,7 +15,7 @@ const DatasourceAPI = {
             try {
                 const response = (await axios.get(`${base_url}/api/v1/datasource`)).data;
                 putStorage(`tables.${TABLES.DATASOURCE_LIST}`, {
-                    rows: response,
+                    rows: _.orderBy(response, [`id`], [`asc`]),
                     pagination: response?._meta ?? {},
                 });
                 return response;
@@ -42,6 +42,19 @@ const DatasourceAPI = {
                     )
                 ).data;
                 await DatasourceAPI.getDatasources();
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+
+    async updateDatasource(data) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.put(`${base_url}/api/v1/datasource`, data)).data;
+                await DatasourceAPI.getDatasources();
+                handleSuccess({ message: `Источник с id ${data?.id} обновлен успещно` });
                 return response;
             } catch (error) {
                 throw handleError(error);
@@ -82,28 +95,9 @@ const DatasourceAPI = {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`${base_url}/api/v1/query/${id}/${tableName}`, GETOptions(TABLES.DATASOURCE_TABLE_PREVIEW))).data;
-                const data = {
-                    rows: _.map(response?.rows, `cells`)?.map?.((i) => Object.fromEntries(i?.map?.((i) => [i?.column, i?.value]))),
-                    pagination: {
-                        perPage: response?.rowCount,
-                        currentPage: response?.page,
-                        totalCount: response?.totalRowCount,
-                    },
-                };
+                const data = convertPaginatedResponse(response);
                 putStorage(`datasources.preview.${id}.${tableName}`, data);
                 putStorage(`tables.${TABLES.DATASOURCE_TABLE_PREVIEW}`, data);
-                return response;
-            } catch (error) {
-                throw handleError(error);
-            }
-        });
-    },
-
-    async getSchemas(datasourceId) {
-        return loadingCounterWrapper(async () => {
-            try {
-                const response = (await axios.get(`${base_url}/api/v1/schemes/${datasourceId}`)).data;
-                putStorage(`datasources.schemas.${datasourceId}`, response?.schemas);
                 return response;
             } catch (error) {
                 throw handleError(error);
@@ -160,34 +154,6 @@ const DatasourceAPI = {
                 handleSuccess({ message: `Success` });
                 return response;
             } catch (error) {
-                throw error;
-            }
-        });
-    },
-
-    updateDatasourceSchema(datasourceId, schemaName) {
-        return loadingCounterWrapper(async () => {
-            try {
-                const response = (await axios.post(`${base_url}/api/v1/schemes`, { datasourceId, schemaName })).data;
-                await DatasourceAPI.getDatasources();
-                handleSuccess({ message: `Источник c ID ${id} успешно удален` });
-                return response;
-            } catch (error) {
-                handleError(error);
-                throw error;
-            }
-        });
-    },
-
-    renameSchema(datasourceId, oldSchemaName, newSchemaName) {
-        return loadingCounterWrapper(async () => {
-            try {
-                const response = (await axios.put(`${base_url}/api/v1/schemes`, { datasourceId, oldSchemaName, newSchemaName })).data;
-                await DatasourceAPI.getDatasources();
-                handleSuccess({ message: `Источник c ID ${id} успешно удален` });
-                return response;
-            } catch (error) {
-                handleError(error);
                 throw error;
             }
         });

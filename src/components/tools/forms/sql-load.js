@@ -9,6 +9,7 @@ import { Control } from "../../ui-kit/control";
 import { FORMS, TABLES, UPDATE_TYPES, OPERATORS } from "../../../constants/config";
 
 import DatasourceAPI from "../../../api/datasource-api";
+import SchemasAPI from "../../../api/schemas-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { getStorage, useStorageListener } from "../../../hooks/useStorage";
@@ -34,7 +35,7 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
     useEffect(() => {
         const targetId = _.get(data, `operatorConfigData.target.targetId`);
         if (targetId) {
-            DatasourceAPI.getSchemas(targetId);
+            SchemasAPI.getSchemas(targetId);
             DatasourceAPI.getDatasourceTables(targetId);
         }
     }, [_.get(data, `operatorConfigData.target.targetId`)]);
@@ -81,7 +82,7 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                                 (i, j) => `operatorConfigData.target.mappingStructure.${j}.targetFieldName`
                             ) ?? []),
                         ]);
-                        DatasourceAPI.getSchemas(e.target.value);
+                        SchemasAPI.getSchemas(e.target.value);
                         DatasourceAPI.getDatasourceTables(e.target.value);
                     }}
                 />

@@ -11,13 +11,15 @@ import DatasourceAPI from "../../api/datasource-api";
 import { eventDispatch } from "../../hooks/useEventListener";
 import useFormControl from "../../hooks/useFormControl";
 import ModalsHelper from "../../utils/modals-helper";
+import useModal from "../../hooks/useModal";
+import { putStorage } from "../../hooks/useStorage";
 
 const schema = (yup) =>
     yup.object().shape({
         name: yup.string().required(`Это поле обязательно`),
         host: yup.string().required(`Это поле обязательно`),
         port: yup.string().required(`Это поле обязательно`),
-        base: yup.string().required(`Это поле обязательно`),
+        url: yup.string().required(`Это поле обязательно`),
         user: yup.string().required(`Это поле обязательно`),
         password: yup.string().required(`Это поле обязательно`),
     });
@@ -25,13 +27,19 @@ const schema = (yup) =>
 const EditAccessCredentialsModal = () => {
     const { onSubmit, clearForm } = useFormControl({ name: FORMS.EDIT_ACCESS_CREDENTIALS, schema });
     const handleSubmit = async (data) => {
-        await DatasourceAPI.createDatasource(data);
+        await DatasourceAPI.updateDatasource(data);
         ModalsHelper.hideModal(MODALS.EDIT_ACCESS_CREDENTIALS);
     };
     const closeModal = () => {
         clearForm();
         ModalsHelper.hideModal(MODALS.EDIT_ACCESS_CREDENTIALS);
     };
+    useModal(MODALS.EDIT_ACCESS_CREDENTIALS, {
+        onOpen: (d) => {
+            console.log(d);
+            putStorage(`forms.${FORMS.EDIT_ACCESS_CREDENTIALS}.values`, d);
+        },
+    });
     return (
         <PopUpWrapper name={MODALS.EDIT_ACCESS_CREDENTIALS} onClickOutside={closeModal}>
             <Form name={FORMS.EDIT_ACCESS_CREDENTIALS} onSubmit={onSubmit(handleSubmit)}>
@@ -42,7 +50,7 @@ const EditAccessCredentialsModal = () => {
                 </Control.Row>
                 <Control.Row>
                     <Control.Input name={`port`} label={`Порт`} placeholder={`Номер программного порта`} isRequired />
-                    <Control.Input name={`base`} label={`База`} placeholder={`Название базы данных`} isRequired />
+                    <Control.Input name={`url`} label={`База`} placeholder={`Название базы данных`} isRequired />
                 </Control.Row>
                 <Control.Row>
                     <Control.Input name={`user`} label={`Пользователь`} placeholder={`Имя пользователя источника`} isRequired />

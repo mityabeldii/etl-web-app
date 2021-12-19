@@ -17,7 +17,7 @@ import ModalsHelper from "../../utils/modals-helper";
 const DatasourcesListPage = () => {
     const [search, setSearch] = useState(``);
     const openCreateDataSourceModal = () => {
-        ModalsHelper.showModal(MODALS.CREATE_DATA_SOURCE_MODAL);
+        ModalsHelper.showModal(MODALS.CREATE_DATASOURCE_MODAL);
     };
     const handleSearchChange = (e) => {
         setSearch(e.target.value);

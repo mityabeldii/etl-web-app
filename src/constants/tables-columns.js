@@ -43,8 +43,8 @@ const DatasourceList = {
                 extra: `box-shadow: unset; padding: 8px; min-width: unset;`,
                 leftIconStyles: `margin-right: 0;`,
                 onClick: (row) => {
-                    putStorage(`forms.${FORMS.EDIT_DATA_SOURCE_MODAL}.values`, row);
-                    ModalsHelper.showModal(MODALS.EDIT_DATA_SOURCE_MODAL);
+                    putStorage(`forms.${FORMS.EDIT_DATASOURCE_MODAL}.values`, row);
+                    ModalsHelper.showModal(MODALS.EDIT_DATASOURCE_MODAL);
                 },
             },
         },

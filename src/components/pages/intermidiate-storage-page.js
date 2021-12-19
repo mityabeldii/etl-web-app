@@ -20,6 +20,7 @@ import { MODALS, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
 
 import DatasourceAPI from "../../api/datasource-api";
+import SchemasAPI from "../../api/schemas-api";
 
 import { eventDispatch } from "../../hooks/useEventListener";
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
@@ -46,7 +47,7 @@ const StructureTable = ({ rows }) => {
 };
 
 const IntermidiateStoragePage = () => {
-    const { params = { type: selectedDatasourceType }, setByKey } = useQueryParams();
+    const { params = { type: selectedDatasourceType }, setByKey, removeParam } = useQueryParams();
     const { type: selectedDatasourceType, table: selectedTableName } = params;
 
     useEffect(DatasourceAPI.getDatasources, []);
@@ -56,7 +57,7 @@ const IntermidiateStoragePage = () => {
     useEffect(() => {
         if (selectedDatasource?.id) {
             DatasourceAPI.getDatasourceTableStructure(selectedDatasource?.id);
-            DatasourceAPI.getSchemas(selectedDatasource?.id);
+            SchemasAPI.getSchemas(selectedDatasource?.id);
         }
     }, [selectedDatasource?.id]);
     const structure = useStorageListener((state) => _.find(_.get(state, `datasources.structures`), { id: selectedDatasource?.id })?.data ?? {});
@@ -66,16 +67,16 @@ const IntermidiateStoragePage = () => {
 
     const handlers = {
         openCreateDatasourceModal: () => {
-            ModalsHelper.showModal(MODALS.CREATE_DATA_SOURCE_MODAL);
+            ModalsHelper.showModal(MODALS.CREATE_DATASOURCE_MODAL);
         },
-        openEditAccessCredentialsModal: () => {
-            ModalsHelper.showModal(MODALS.EDIT_ACCESS_CREDENTIALS);
+        openEditDatasourceModal: () => {
+            ModalsHelper.showModal(MODALS.EDIT_DATASOURCE_MODAL, selectedDatasource);
         },
         openCreateSchemaInStorageModal: () => {
-            ModalsHelper.showModal(MODALS.CREATE_SCHEMA_IN_STORAGE);
+            ModalsHelper.showModal(MODALS.CREATE_SCHEMA_IN_STORAGE, selectedDatasource);
         },
-        openEditSchemaNameModal: () => {
-            ModalsHelper.showModal(MODALS.EDIT_SCHEMA_NAME);
+        openRenameSchemaModal: () => {
+            ModalsHelper.showModal(MODALS.EDIT_SCHEMA_NAME, selectedDatasource);
         },
         openDeleteSchemeModal: () => {
             ModalsHelper.showModal(MODALS.MODALITY, {
@@ -88,6 +89,9 @@ const IntermidiateStoragePage = () => {
                 confirmButton: {
                     background: `red`,
                     children: `Удалить`,
+                    onClick: async () => {
+                        await SchemasAPI.deleteSchema(selectedDatasource?.id, selectedDatasource?.schema);
+                    },
                 },
             });
         },
@@ -121,7 +125,8 @@ const IntermidiateStoragePage = () => {
             setByKey(`table`, table);
         },
         changeSchema: async (e) => {
-            await DatasourceAPI.updateDatasourceSchema(selectedDatasource.id, selectedDatasource.schema, e.target.value);
+            removeParam(`table`);
+            await DatasourceAPI.updateDatasource({ ...selectedDatasource, schema: e.target.value });
         },
         fetchPreviewFunction: async () => {
             if (selectedDatasource?.id && selectedTableName) {
@@ -131,7 +136,7 @@ const IntermidiateStoragePage = () => {
         },
     };
 
-    useEffect(handlers.fetchPreviewFunction, [selectedDatasource?.id, selectedTableName]);
+    useEffect(handlers.fetchPreviewFunction, [selectedDatasource?.id, selectedDatasource?.schema, selectedTableName]);
 
     return (
         <>
@@ -162,7 +167,7 @@ const IntermidiateStoragePage = () => {
                 <>
                     <RowWrapper extra={`margin-bottom: 28px;`}>
                         <H2>Реквизиты доступа</H2>
-                        <Button background={`blue`} onClick={handlers.openEditAccessCredentialsModal}>
+                        <Button background={`blue`} onClick={handlers.openEditDatasourceModal}>
                             Редактировать реквизиты
                         </Button>
                     </RowWrapper>
@@ -218,10 +223,7 @@ const IntermidiateStoragePage = () => {
                                 onChange={handlers.changeSchema}
                             />
                             <RowWrapper extra={`margin-top: 4px;`}>
-                                <Button
-                                    extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`}
-                                    onClick={handlers.openEditSchemaNameModal}
-                                >
+                                <Button extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`} onClick={handlers.openRenameSchemaModal}>
                                     <Icon src={`edit-white`} />
                                 </Button>
                                 <Button extra={`width: 100%; flex: 1; min-width: unset;`} background={`red`} onClick={handlers.openDeleteSchemeModal}>
@@ -279,7 +281,7 @@ const IntermidiateStoragePage = () => {
                                 Ad-Hoc запрос
                             </Button>
                         </Frame>
-                        <Frame extra={`width: 100%; flex: 1; margin-left: 30px;`}>
+                        <Frame extra={`width: 100%; flex: 1; margin-left: 30px; max-width: calc(100% - 164px - 30px);`}>
                             {selectedTable && (
                                 <>
                                     <RowWrapper extra={`margin-bottom: 16px;`}>

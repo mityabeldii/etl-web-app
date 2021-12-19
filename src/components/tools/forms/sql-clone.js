@@ -9,6 +9,7 @@ import { Control } from "../../ui-kit/control";
 import { FORMS, TABLES, UPDATE_TYPES } from "../../../constants/config";
 
 import DatasourceAPI from "../../../api/datasource-api";
+import SchemasAPI from "../../../api/schemas-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { useStorageListener } from "../../../hooks/useStorage";
@@ -55,14 +56,14 @@ const SQLClone = () => {
     useEffect(() => {
         const sourceId = _.get(data, `operatorConfigData.source.sourceId`);
         if (sourceId) {
-            DatasourceAPI.getSchemas(sourceId);
+            SchemasAPI.getSchemas(sourceId);
             DatasourceAPI.getDatasourceTables(sourceId);
         }
     }, [_.get(data, `operatorConfigData.source.sourceId`)]);
     useEffect(() => {
         const targetId = _.get(data, `operatorConfigData.target.targetId`);
         if (targetId) {
-            DatasourceAPI.getSchemas(targetId);
+            SchemasAPI.getSchemas(targetId);
             DatasourceAPI.getDatasourceTables(targetId);
         }
     }, [_.get(data, `operatorConfigData.target.targetId`)]);

@@ -87,6 +87,18 @@ export const POSTOptions = (name) => {
     };
 };
 
+export const convertPaginatedResponse = (response) => {
+    const data = {
+        rows: _.map(response?.rows, `cells`)?.map?.((i) => Object.fromEntries(i?.map?.((i) => [i?.column, i?.value]))),
+        pagination: {
+            perPage: response?.rowCount,
+            currentPage: response?.page,
+            totalCount: response?.totalRowCount,
+        },
+    };
+    return data;
+};
+
 export const GETOptions = (options = {}) => {
     return POSTOptions(options);
 };

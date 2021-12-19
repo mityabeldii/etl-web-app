@@ -9,6 +9,7 @@ import { Control } from "../../ui-kit/control";
 import { FORMS, TABLES, UPDATE_TYPES } from "../../../constants/config";
 
 import DatasourceAPI from "../../../api/datasource-api";
+import SchemasAPI from "../../../api/schemas-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { getStorage, useStorageListener } from "../../../hooks/useStorage";
@@ -35,7 +36,7 @@ const SQLExtract = () => {
     useEffect(() => {
         const sourceId = _.get(data, `operatorConfigData.source.sourceId`);
         if (sourceId) {
-            DatasourceAPI.getSchemas(sourceId);
+            SchemasAPI.getSchemas(sourceId);
             DatasourceAPI.getDatasourceTables(sourceId);
         }
     }, [_.get(data, `operatorConfigData.source.sourceId`)]);

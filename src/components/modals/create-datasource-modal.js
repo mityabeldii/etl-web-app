@@ -23,18 +23,18 @@ const schema = (yup) =>
     });
 
 const CreateDataSouceModal = () => {
-    const { onSubmit, clearForm } = useFormControl({ name: FORMS.CREATE_DATA_SOURCE_MODAL, schema });
+    const { onSubmit, clearForm } = useFormControl({ name: FORMS.CREATE_DATASOURCE_MODAL, schema });
     const handleSubmit = async (data) => {
         await DatasourceAPI.createDatasource(data);
-        ModalsHelper.hideModal(MODALS.CREATE_DATA_SOURCE_MODAL)
+        ModalsHelper.hideModal(MODALS.CREATE_DATASOURCE_MODAL)
     };
     const closeModal = () => {
         clearForm();
-        ModalsHelper.hideModal(MODALS.CREATE_DATA_SOURCE_MODAL);
+        ModalsHelper.hideModal(MODALS.CREATE_DATASOURCE_MODAL);
     };
     return (
-        <PopUpWrapper name={MODALS.CREATE_DATA_SOURCE_MODAL} onClickOutside={closeModal}>
-            <Form name={FORMS.CREATE_DATA_SOURCE_MODAL} onSubmit={onSubmit(handleSubmit)}>
+        <PopUpWrapper name={MODALS.CREATE_DATASOURCE_MODAL} onClickOutside={closeModal}>
+            <Form name={FORMS.CREATE_DATASOURCE_MODAL} onSubmit={onSubmit(handleSubmit)}>
                 <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Добавить источник данных</H1>
                 <Control.Row>
                     <Control.Input name={`name`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />

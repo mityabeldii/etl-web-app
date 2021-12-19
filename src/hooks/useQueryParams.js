@@ -15,7 +15,10 @@ const useQueryParams = () => {
     const setByKey = (key, value) => {
         linkTo(`${pathname}${objectToQS(_.pickBy({ ...params, [key]: value }, _.identity))}`);
     };
-    return { params, setParams, clearParams, setByKey };
+    const removeParam = (key) => {
+        linkTo(`${pathname}${objectToQS(_.omit(params, key))}`);
+    };
+    return { params, setParams, clearParams, setByKey, removeParam };
 };
 
 export default useQueryParams;
