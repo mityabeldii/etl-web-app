@@ -63,21 +63,7 @@ const DatasourceAdHocQueryModal = () => {
                         min-height: 120px;
                     `}
                 />
-                {error && (
-                    <ErrorBox>
-                        <RowWrapper>
-                            <Frame
-                                extra={({ theme }) =>
-                                    `font-weight: 600; font-size: 14px; line-height: 20px; color: ${theme.red}; margin-bottom: 2px;`
-                                }
-                            >
-                                Ошибка выполнения запроса
-                            </Frame>
-                            <ErrorSign />
-                        </RowWrapper>
-                        {error}
-                    </ErrorBox>
-                )}
+                {error && <ErrorBox.Component title={`Ошибка выполнения запроса`} description={error} />}
                 <RowWrapper extra={`justify-content: flex-end;`}>
                     {/* <Frame
                         extra={({ theme }) => css`
@@ -108,12 +94,6 @@ const DatasourceAdHocQueryModal = () => {
         </PopUpWrapper>
     );
 };
-
-const ErrorSign = styled(Frame)`
-    width: 24px;
-    height: 24px;
-    background: url("${require(`../../assets/icons/error-outline.svg`).default}") no-repeat center center / contain;
-`;
 
 export default DatasourceAdHocQueryModal;
 /*eslint-enable*/

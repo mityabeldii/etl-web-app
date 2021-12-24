@@ -30,7 +30,7 @@ const SchemasAPI = {
                 handleSuccess({ message: `Схема ${schemaName} успешно создана` });
                 return response;
             } catch (error) {
-                handleError(error);
+                // handleError(error);
                 throw error;
             }
         });

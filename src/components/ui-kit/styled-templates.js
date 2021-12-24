@@ -559,17 +559,46 @@ export const RemoveRowButton = (props) =>
         />
     );
 
-export const ErrorBox = styled(Frame)`
-    width: 100%;
-    padding: 18px 32px;
-    box-sizing: border-box;
-    background: #f6dfdf;
-    border: 1px solid ${({ theme }) => theme.red};
-    border-radius: 4px;
-    color: ${({ theme }) => theme.red};
-    margin-bottom: 25px;
-    font-size: 12px;
-    line-height: 16px;
-`;
+export const ErrorBox = {
+    Styles: {
+        Wrapper: styled(Frame)`
+            width: 100%;
+            padding: 18px 32px;
+            box-sizing: border-box;
+            background: #f6dfdf;
+            border: 1px solid ${({ theme }) => theme.red};
+            border-radius: 4px;
+            color: ${({ theme }) => theme.red};
+            margin-bottom: 25px;
+            font-size: 12px;
+            line-height: 16px;
+            margin-top: 24px;
+            align-items: flex-start;
+        `,
+        Sign: styled(Frame)`
+            width: 24px;
+            height: 24px;
+            background: url("${require(`../../assets/icons/error-outline.svg`).default}") no-repeat center center / contain;
+        `,
+        Title: styled(Frame)`
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 20px;
+            color: ${({ theme }) => theme.red};
+            margin-bottom: 2px;
+        `,
+    },
+    Component: ({ title, description }) => {
+        return (
+            <ErrorBox.Styles.Wrapper>
+                <RowWrapper>
+                    <ErrorBox.Styles.Title>{title}</ErrorBox.Styles.Title>
+                    <ErrorBox.Styles.Sign />
+                </RowWrapper>
+                {description}
+            </ErrorBox.Styles.Wrapper>
+        );
+    },
+};
 
 /*eslint-enable*/

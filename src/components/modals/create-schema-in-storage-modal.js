@@ -29,9 +29,15 @@ const CreateScheaInStorageModal = () => {
             setValues({ datasourceId: d?.id });
         },
     });
+    const [error, setError] = useState(null);
     const handleSubmit = async (data) => {
-        await SchemasAPI.createSchema(data);
-        closeModal();
+        try {
+            setError(null);
+            await SchemasAPI.createSchema(data);
+            closeModal();
+        } catch ({ message }) {
+            setError(message);
+        }
     };
     return (
         <PopUpWrapper name={MODALS.CREATE_SCHEMA_IN_STORAGE} onClickOutside={closeModal}>
@@ -49,6 +55,7 @@ const CreateScheaInStorageModal = () => {
                     </Button>
                 </Control.Row>
             </Form>
+            {error && <ErrorBox.Component title={`Ошибка выполнения запроса`} description={error} />}
         </PopUpWrapper>
     );
 };
