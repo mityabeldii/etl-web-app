@@ -1,10 +1,10 @@
 /*eslint-disable*/
-import _ from 'lodash';
-import { useEffect } from 'react';
+import _ from "lodash";
+import { useEffect } from "react";
 
-import ModalsHelper from '../utils/modals-helper';
+import ModalsHelper from "../utils/modals-helper";
 
-import { putStorage, useStorageListener } from './useStorage';
+import { putStorage, useStorageListener } from "./useStorage";
 
 const useModal = (name, options) => {
     const { onOpen = () => {}, onClose = () => {} } = options ?? {};

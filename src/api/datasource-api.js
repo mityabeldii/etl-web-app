@@ -35,7 +35,7 @@ const DatasourceAPI = {
                             {
                                 ...data,
                                 url: `jdbc:postgresql://${data?.host}:${data?.port}/${data?.base}`,
-                                type: "SOURCE",
+                                type: data?.type ?? "SOURCE",
                             },
                             [`base`]
                         )

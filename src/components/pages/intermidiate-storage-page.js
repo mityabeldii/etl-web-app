@@ -22,11 +22,12 @@ import tablesColumns from "../../constants/tables-columns";
 import DatasourceAPI from "../../api/datasource-api";
 import SchemasAPI from "../../api/schemas-api";
 
+import { copyToClipboard } from "../../utils/common-helper";
+import ModalsHelper from "../../utils/modals-helper";
+
 import { eventDispatch } from "../../hooks/useEventListener";
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
 import useQueryParams from "../../hooks/useQueryParams";
-import { copyToClipboard } from "../../utils/common-helper";
-import ModalsHelper from "../../utils/modals-helper";
 
 const StructureTable = ({ rows }) => {
     return useMemo(
@@ -50,24 +51,26 @@ const IntermidiateStoragePage = () => {
     const { params = { type: selectedDatasourceType }, setByKey, removeParam } = useQueryParams();
     const { type: selectedDatasourceType, table: selectedTableName } = params;
 
-    useEffect(DatasourceAPI.getDatasources, []);
     const datasources = useStorageListener((state) => state?.tables?.DATASOURCE_LIST?.rows ?? []);
     const datasourcesNames = [`STAGING`, `DWH`];
     const selectedDatasource = _.find(datasources, { type: selectedDatasourceType });
+    const structure = useStorageListener((state) => _.find(_.get(state, `datasources.structures`), { id: selectedDatasource?.id })?.data ?? {});
+    const schemas = useStorageListener((state) => _.get(state, `datasources.schemas[${selectedDatasource?.id}]`) ?? []);
+    const { tables } = structure;
+    const selectedTable = _.find(tables, { name: selectedTableName });
+    const [selectedSchema, setSelectedSchema] = useState();
+
+    useEffect(DatasourceAPI.getDatasources, []);
     useEffect(() => {
         if (selectedDatasource?.id) {
             DatasourceAPI.getDatasourceTableStructure(selectedDatasource?.id);
             SchemasAPI.getSchemas(selectedDatasource?.id);
         }
     }, [selectedDatasource?.id]);
-    const structure = useStorageListener((state) => _.find(_.get(state, `datasources.structures`), { id: selectedDatasource?.id })?.data ?? {});
-    const schemas = useStorageListener((state) => _.get(state, `datasources.schemas[${selectedDatasource?.id}]`) ?? []);
-    const { tables } = structure;
-    const selectedTable = _.find(tables, { name: selectedTableName });
 
     const handlers = {
         openCreateDatasourceModal: () => {
-            ModalsHelper.showModal(MODALS.CREATE_DATASOURCE_MODAL);
+            ModalsHelper.showModal(MODALS.CREATE_DATASOURCE_MODAL, { type: selectedDatasourceType });
         },
         openEditDatasourceModal: () => {
             ModalsHelper.showModal(MODALS.EDIT_DATASOURCE_MODAL, selectedDatasource);
@@ -76,7 +79,7 @@ const IntermidiateStoragePage = () => {
             ModalsHelper.showModal(MODALS.CREATE_SCHEMA_IN_STORAGE, selectedDatasource);
         },
         openRenameSchemaModal: () => {
-            ModalsHelper.showModal(MODALS.EDIT_SCHEMA_NAME, selectedDatasource);
+            ModalsHelper.showModal(MODALS.EDIT_SCHEMA_NAME, { datasourceId: selectedDatasource?.id, name: selectedSchema });
         },
         openDeleteSchemeModal: () => {
             ModalsHelper.showModal(MODALS.MODALITY, {
@@ -90,13 +93,13 @@ const IntermidiateStoragePage = () => {
                     background: `red`,
                     children: `Удалить`,
                     onClick: async () => {
-                        await SchemasAPI.deleteSchema(selectedDatasource?.id, selectedDatasource?.schema);
+                        await SchemasAPI.deleteSchema(selectedDatasource?.id, selectedSchema);
                     },
                 },
             });
         },
         openCreateTableInSchemaModal: () => {
-            ModalsHelper.showModal(MODALS.CREATE_TABLE_IN_SCHEMA);
+            ModalsHelper.showModal(MODALS.CREATE_TABLE_IN_SCHEMA, { datasourceId: selectedDatasource?.id, schema: selectedSchema });
         },
         openEditTableNameModal: () => {
             ModalsHelper.showModal(MODALS.EDIT_TABLE_NAME);
@@ -125,8 +128,7 @@ const IntermidiateStoragePage = () => {
             setByKey(`table`, table);
         },
         changeSchema: async (e) => {
-            removeParam(`table`);
-            await DatasourceAPI.updateDatasource({ ...selectedDatasource, schema: e.target.value });
+            setSelectedSchema(e.target.value);
         },
         fetchPreviewFunction: async () => {
             if (selectedDatasource?.id && selectedTableName) {
@@ -219,17 +221,28 @@ const IntermidiateStoragePage = () => {
                             <H2 extra={`margin-bottom: 16px; height: 38px;`}>Схема</H2>
                             <Select
                                 options={schemas?.map?.((i) => ({ label: i, value: i }))}
-                                value={selectedDatasource?.schema}
+                                value={selectedSchema}
                                 onChange={handlers.changeSchema}
                             />
-                            <RowWrapper extra={`margin-top: 4px;`}>
-                                <Button extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`} onClick={handlers.openRenameSchemaModal}>
-                                    <Icon src={`edit-white`} />
-                                </Button>
-                                <Button extra={`width: 100%; flex: 1; min-width: unset;`} background={`red`} onClick={handlers.openDeleteSchemeModal}>
-                                    <Icon src={`cross-white`} />
-                                </Button>
-                            </RowWrapper>
+                            {!!selectedSchema && (
+                                <>
+                                    <RowWrapper extra={`margin-top: 4px;`}>
+                                        <Button
+                                            extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`}
+                                            onClick={handlers.openRenameSchemaModal}
+                                        >
+                                            <Icon src={`edit-white`} />
+                                        </Button>
+                                        <Button
+                                            extra={`width: 100%; flex: 1; min-width: unset;`}
+                                            background={`red`}
+                                            onClick={handlers.openDeleteSchemeModal}
+                                        >
+                                            <Icon src={`cross-white`} />
+                                        </Button>
+                                    </RowWrapper>
+                                </>
+                            )}
                             <Button
                                 extra={`width: 100%; margin-top: 12px; padding: 8px 11px;`}
                                 leftIcon={`plus-in-circle-white`}
@@ -274,6 +287,7 @@ const IntermidiateStoragePage = () => {
                                 background={`orange`}
                                 leftIcon={`plus-in-circle-white`}
                                 onClick={handlers.openCreateTableInSchemaModal}
+                                disabled={!selectedSchema}
                             >
                                 Добавить таблицу
                             </Button>

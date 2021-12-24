@@ -1,6 +1,5 @@
 /*eslint-disable*/
 import styled, { css } from "styled-components";
-import { MODALS, FORMS } from "../../constants/config";
 
 import { Frame, Button, Input, Dropdown, H1, P, Link, Form } from "../ui-kit/styled-templates";
 import { Control } from "../ui-kit/control";
@@ -8,9 +7,12 @@ import PopUpWrapper from "./pop-up-wrapper";
 
 import DatasourceAPI from "../../api/datasource-api";
 
+import ModalsHelper from "../../utils/modals-helper";
+import { MODALS, FORMS } from "../../constants/config";
+
 import { eventDispatch } from "../../hooks/useEventListener";
 import useFormControl from "../../hooks/useFormControl";
-import ModalsHelper from "../../utils/modals-helper";
+import useModal from "../../hooks/useModal";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -23,18 +25,22 @@ const schema = (yup) =>
     });
 
 const CreateDataSouceModal = () => {
-    const { onSubmit, clearForm } = useFormControl({ name: FORMS.CREATE_DATASOURCE_MODAL, schema });
-    const handleSubmit = async (data) => {
-        await DatasourceAPI.createDatasource(data);
-        ModalsHelper.hideModal(MODALS.CREATE_DATASOURCE_MODAL)
-    };
-    const closeModal = () => {
-        clearForm();
-        ModalsHelper.hideModal(MODALS.CREATE_DATASOURCE_MODAL);
+    const { onSubmit, clearForm, setValues } = useFormControl({ name: FORMS.CREATE_DATASOURCE, schema });
+    const { close: closeModal } = useModal(MODALS.CREATE_DATASOURCE_MODAL, {
+        onClose: clearForm,
+        onOpen: (d) => {
+            setValues(d);
+        },
+    });
+    const handlers = {
+        submit: async (data) => {
+            await DatasourceAPI.createDatasource(data);
+            closeModal();
+        },
     };
     return (
         <PopUpWrapper name={MODALS.CREATE_DATASOURCE_MODAL} onClickOutside={closeModal}>
-            <Form name={FORMS.CREATE_DATASOURCE_MODAL} onSubmit={onSubmit(handleSubmit)}>
+            <Form name={FORMS.CREATE_DATASOURCE} onSubmit={onSubmit(handlers.submit)}>
                 <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Добавить источник данных</H1>
                 <Control.Row>
                     <Control.Input name={`name`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />

@@ -17,7 +17,7 @@ import useModal from "../../hooks/useModal";
 
 const schema = (yup) =>
     yup.object().shape({
-        datasrouceId: yup.number().required(`Это поле обязательно`),
+        datasourceId: yup.number().required(`Это поле обязательно`),
         oldSchemaName: yup.string().required(`Это поле обязательно`),
         newSchemaName: yup.string().required(`Это поле обязательно`),
     });
@@ -27,9 +27,9 @@ const EditSchemaNameModal = () => {
     const { close: closeModal } = useModal(MODALS.EDIT_SCHEMA_NAME, {
         onOpen: (d) => {
             setValues({
-                datasrouceId: d?.id,
-                oldSchemaName: d?.schema,
-                newSchemaName: d?.schema,
+                datasourceId: d?.datasourceId,
+                oldSchemaName: d?.name,
+                newSchemaName: d?.name,
             });
         },
         onClose: clearForm,
