@@ -82,7 +82,7 @@ const SearchBar = () => {
                         <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Процесс</Frame>
                     </RowWrapper>
                 )}
-                menuStyles={`width: max-content;`}
+                menuProps={{ extra: `width: max-content;` }}
                 value={params?.id}
                 onChange={(e) => {
                     setByKey(`id`, params?.id == e.target.value ? undefined : e.target.value);
@@ -114,7 +114,7 @@ const SearchBar = () => {
                         <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Статус</Frame>
                     </RowWrapper>
                 )}
-                menuStyles={`width: max-content;`}
+                menuProps={{ extra: `width: max-content;` }}
                 value={params?.state}
                 onChange={(e) => {
                     setByKey(`state`, params?.state === e.target.value ? undefined : e.target.value);

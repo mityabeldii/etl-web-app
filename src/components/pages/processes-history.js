@@ -19,8 +19,11 @@ import Select from "../ui-kit/select";
 import { convertHex } from "../../utils/colors-helper";
 
 const ProcessHistoryPage = () => {
-    const { search } = useLocation();
-    const { params } = useQueryParams();
+    // const { params } = useQueryParams();
+    const [params, setParams] = useState({});
+    const setByKey = (key, value) => {
+        setParams(_.pickBy({ ...params, [key]: value }, _.identity));
+    };
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
@@ -30,7 +33,7 @@ const ProcessHistoryPage = () => {
                 name={TABLES.PROCESSES_HISTORY}
                 fetchFunction={DatasourceAPI.getProcessesHistory}
                 {...tablesColumns[TABLES.PROCESSES_HISTORY]}
-                extraHeader={<SearchBar />}
+                extraHeader={<SearchBar params={params} setByKey={setByKey} />}
                 filters={params}
             />
         </>
@@ -46,8 +49,7 @@ const Heading = styled(H1)`
     }
 `;
 
-const SearchBar = () => {
-    const { params, setParams, setByKey } = useQueryParams();
+const SearchBar = ({ params, setByKey }) => {
     const processes = useStorageListener((state) => _.get(state, `tables.${TABLES.PROCESSES_HISTORY}.rows`) ?? []);
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada;`}>
@@ -82,12 +84,14 @@ const SearchBar = () => {
                         <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Процесс</Frame>
                     </RowWrapper>
                 )}
-                menuStyles={`width: max-content;`}
-                value={params?.id}
+                menuProps={{ extra: `width: max-content;` }}
+                value={params?.processId}
                 onChange={(e) => {
-                    setByKey(`id`, params?.id == e.target.value ? undefined : e.target.value);
+                    setByKey(`processId`, params?.processId == e.target.value ? undefined : e.target.value);
                 }}
-                options={processes?.map?.(({ processId: value, processName: label }) => ({ label, value }))}
+                options={processes
+                    ?.map?.(({ processId: value, processName: label }) => ({ label, value }))
+                    .filter((item, index, self) => self.findIndex((t) => t.value === item.value) === index)}
             />
             <Select
                 toggleComponent={() => (
@@ -114,7 +118,7 @@ const SearchBar = () => {
                         <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Статус</Frame>
                     </RowWrapper>
                 )}
-                menuStyles={`width: max-content;`}
+                menuProps={{ extra: `width: max-content;` }}
                 value={params?.state}
                 onChange={(e) => {
                     setByKey(`state`, params?.state === e.target.value ? undefined : e.target.value);

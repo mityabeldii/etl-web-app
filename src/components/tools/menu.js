@@ -14,7 +14,7 @@ const menuSections = [
         label: `Структура хранилища`,
         icon: `menu-storage-structure`,
         items: [
-            { label: `Промежуточное хранилище`, link: `/storage/intermediate${objectToQS({ type: `STAGING` })}` },
+            { label: `Хранилище`, link: `/storage/intermediate${objectToQS({ type: `STAGING` })}` },
             // { label: `Хранилище`, link: `/storage` },
         ],
     },
@@ -26,6 +26,7 @@ const menuSections = [
             { label: `История запуска ETL-процессов`, link: `/history/processes` },
             { label: `История запуска задач`, link: `/history/tasks` },
             // { label: `Журнал событий`, link: `/events-log` },
+            { label: `Отчеты и дашборды`, link: `/bi` },
         ],
     },
 ];
@@ -53,7 +54,7 @@ const Menu = () => {
                     ))}
                 </Fragment>
             ))}
-            <Button background={`red`} extra={`width: calc(100% - 30px);`} variant={`outlined`} onClick={keycloak?.logout}>
+            <Button background={`red`} extra={`width: calc(100% - 30px); margin-top: 10px;`} variant={`outlined`} onClick={keycloak?.logout}>
                 Выйти
             </Button>
         </Wrapper>

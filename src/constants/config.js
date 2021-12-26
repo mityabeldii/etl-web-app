@@ -63,11 +63,11 @@ export const OPERATORS = {
     SQL_CLONE: `SQL_CLONE`,
     SQL_EXTRACT: `SQL_EXTRACT`,
     SQL_LOAD: `SQL_LOAD`,
-    MAPPING: `MAPPING `,
+    // MAPPING: `MAPPING `,
     JOIN: `JOIN`,
     CALCULATED: `CALCULATED`,
-    TEST: `TEST`,
-    TEST_ERROR: `TEST_ERROR`,
+    // TEST: `TEST`,
+    // TEST_ERROR: `TEST_ERROR`,
 };
 
 export const UPDATE_TYPES = {

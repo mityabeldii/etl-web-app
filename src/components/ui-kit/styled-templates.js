@@ -422,8 +422,6 @@ export const Dropdown = (props) => {
     const {
         toggle,
         menu,
-        toggleStyles = ``,
-        menuStyles = ``,
         wrapperStyles = ``,
         scrollWrapperStyles = ``,
         id,
@@ -474,7 +472,7 @@ export const Dropdown = (props) => {
     };
     return (
         <DropdownStyles.Wrapper extra={wrapperStyles} className={uniqueId.current}>
-            <DropdownStyles.Toggle {...toggleProps} ref={toggleRef} extra={(toggleProps?.extra ?? ``) + toggleStyles} onClick={handleToggleClick}>
+            <DropdownStyles.Toggle {...toggleProps} ref={toggleRef} onClick={handleToggleClick}>
                 {toggle}
             </DropdownStyles.Toggle>
             <DropdownStyles.Menu
@@ -484,7 +482,6 @@ export const Dropdown = (props) => {
                 toggleSize={toggleSize}
                 onClick={handleMenuItemClick}
                 direction={direction}
-                extra={(menuProps?.extra ?? ``) + menuStyles}
             >
                 <DropdownStyles.ScrollWrapper extra={scrollWrapperStyles}>{menu}</DropdownStyles.ScrollWrapper>
             </DropdownStyles.Menu>

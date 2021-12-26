@@ -8,10 +8,11 @@ import PopUpWrapper from "./pop-up-wrapper";
 
 import ProcessesAPI from "../../api/processes-api";
 
+import ModalsHelper from "../../utils/modals-helper";
+
 import useFormControl from "../../hooks/useFormControl";
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import useModal from "../../hooks/useModal";
-import ModalsHelper from "../../utils/modals-helper";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -22,31 +23,32 @@ const schema = (yup) =>
 
 const EditProcessAttributesModal = () => {
     const { onSubmit, setValue, clearForm } = useFormControl({ name: FORMS.EDIT_PROCESS_ATTRIBUTES, schema });
-    const handleSubmit = async (data) => {
-        try {
-            await ProcessesAPI.updateProcess(data);
-            closeModal();
-        } catch (error) {}
-    };
-    const closeModal = () => {
-        clearForm();
-        ModalsHelper.hideModal(MODALS.EDIT_PROCESS_ATTRIBUTES);
-    };
-    useModal(MODALS.EDIT_PROCESS_ATTRIBUTES, (d) => {
-        Object.entries(d).forEach(([key, value], index) => {
-            setValue(key, value ?? ``);
-        });
+    const { close: closeModal } = useModal(MODALS.EDIT_PROCESS_ATTRIBUTES, {
+        onOpen: (d) => {
+            Object.entries(d).forEach(([key, value], index) => {
+                setValue(key, value ?? ``);
+            });
+        },
+        onClose: clearForm,
     });
+    const handlers = {
+        submit: async (data) => {
+            try {
+                await ProcessesAPI.updateProcess(data);
+                closeModal();
+            } catch (error) {}
+        },
+    };
     return (
         <PopUpWrapper name={MODALS.EDIT_PROCESS_ATTRIBUTES} onClickOutside={closeModal}>
             <Form
                 name={FORMS.EDIT_PROCESS_ATTRIBUTES}
-                onSubmit={onSubmit(handleSubmit)}
+                onSubmit={onSubmit(handlers.submit)}
                 extra={`width: 100%; flex-wrap: wrap; flex-direction: row; justify-content: flex-start;`}
             >
                 <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Атрибуты процесса</H1>
                 <Control.Row>
-                    <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />
+                    <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя процесса`} isRequired />
                 </Control.Row>
                 <Control.Row>
                     <Control.Input name={`time_of_creation`} label={`Время создания`} />

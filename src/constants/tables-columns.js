@@ -182,12 +182,12 @@ const ETLProcessesConfigurationTable = {
 };
 
 const ProcessesHistoryTable = {
-    useBackendProcessing: true,
+    useBackendProcessing: false,
     withPagination: true,
     booleanOperation: `disjunction`,
     columns: [
         {
-            name: `processId`,
+            name: `processName`,
             label: `Процесс`,
             extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
             transform: ({ row }) => `**${row?.processName}**`,

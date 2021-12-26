@@ -87,14 +87,15 @@ const ProcessDropdown = ({ cellState = {} }) => {
                     })}
                 </>
             }
-            menuStyles={({ theme }) =>
-                css`
-                    padding: 0;
-                    background: ${theme.background.secondary};
-                    border: 1px solid #d1d1d1;
-                    overflow: visible;
-                `
-            }
+            menuProps={{
+                extra: ({ theme }) =>
+                    css`
+                        padding: 0;
+                        background: ${theme.background.secondary};
+                        border: 1px solid #d1d1d1;
+                        overflow: visible;
+                    `,
+            }}
             scrollWrapperStyles={({ theme }) =>
                 css`
                     > * {

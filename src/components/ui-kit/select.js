@@ -28,22 +28,24 @@ const Select = (props) => {
         <Dropdown
             id={dropdownId}
             wrapperStyles={extra}
-            toggleStyles={css`
-                width: 100%;
-                * {
-                    ${!readOnly &&
-                    css`
-                        cursor: pointer;
-                    `}
-                }
-                ${props?.toggleStyles ?? ``}
-            `}
-            menuStyles={css`
-                /* width: calc(100% - 20px); */
-                width: 100%;
-                min-width: max-content;
-                ${props?.menuStyles ?? ``}
-            `}
+            toggleProps={{
+                extra: css`
+                    width: 100%;
+                    * {
+                        ${!readOnly &&
+                        css`
+                            cursor: pointer;
+                        `}
+                    }
+                `,
+            }}
+            menuProps={{
+                extra: css`
+                    /* width: calc(100% - 20px); */
+                    width: 100%;
+                    min-width: max-content;
+                `,
+            }}
             callable={!readOnly}
             toggle={
                 ToggleComponent ? (
@@ -105,7 +107,7 @@ const Select = (props) => {
                             >
                                 {option.label}
                                 {(_.isEqual(value, option.value) ||
-                                    (!self?.map?.(i => _.isEqual(i?.value, option.value))?.find?.(i => !!i) && value?.includes?.(option.value)) ||
+                                    (!self?.map?.((i) => _.isEqual(i?.value, option.value))?.find?.((i) => !!i) && value?.includes?.(option.value)) ||
                                     value?.find?.((j) => _.isEqual(j, option?.value))) && <Check />}
                             </Option>
                         );

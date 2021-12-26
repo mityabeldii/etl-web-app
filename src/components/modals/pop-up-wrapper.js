@@ -80,7 +80,7 @@ const PopUpWrapper = (props) => {
                     `}
                 >
                     <OpenProjectTab isOpened={isOpened} extra={extra} ref={ref}>
-                        {withCros ? <Cross onClick={onClose} /> : null}
+                        {withCros ? <Cross onClick={close} /> : null}
                         {props.children}
                     </OpenProjectTab>
                 </Frame>

@@ -39,6 +39,7 @@ const UserApp = () => {
                             <Route exact path={`/history/processes`} component={ProcessesHistory} />
                             <Route exact path={`/history/tasks`} component={TasksHistory} />
                             <Route exact path={`/storage/intermediate`} component={IntermidiateStoragePage} />
+                            <Route exact path={`/bi`} component={() => <></>} />
                             <Route path={`/`}>
                                 <Redirect to={`/datasources`} />
                             </Route>

@@ -29,7 +29,7 @@ const eventLogger = (event, error) => {
 };
 
 const tokenLogger = (tokens) => {
-    console.log("onKeycloakTokens", tokens);
+    // console.log("onKeycloakTokens", tokens);
     UserAPI.getContexts(tokens?.token);
 
 };
