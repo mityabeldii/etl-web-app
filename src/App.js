@@ -10,7 +10,9 @@ import RouterApp from "./components/apps/router-app";
 import theme from "./constants/theme-constants";
 import { setUpInterceptors } from "./utils/api-helper";
 
-import { StorageProvider } from "./hooks/useStorage";
+import { putStorage, StorageProvider } from "./hooks/useStorage";
+import axios from "axios";
+import UserAPI from "./api/user-api";
 
 // setUpInterceptors();
 
@@ -23,11 +25,13 @@ const keycloak = Keycloak({
 });
 
 const eventLogger = (event, error) => {
-    console.log("onKeycloakEvent", event, error);
+    // console.log("onKeycloakEvent", event, error);
 };
 
 const tokenLogger = (tokens) => {
     console.log("onKeycloakTokens", tokens);
+    UserAPI.getContexts(tokens?.token);
+
 };
 
 const App = () => {

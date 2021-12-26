@@ -1,11 +1,12 @@
 /*eslint-disable*/
+import { useKeycloak } from "@react-keycloak/web";
 import { Fragment } from "react";
 import { useLocation, Link } from "react-router-dom";
 import styled, { css, keyframes } from "styled-components";
 import { useStorageListener } from "../../hooks/useStorage";
 import { objectToQS } from "../../utils/common-helper";
 
-import { Frame, RowWrapper } from "../ui-kit/styled-templates";
+import { Button, Frame, RowWrapper } from "../ui-kit/styled-templates";
 
 const menuSections = [
     { label: `Источники данных`, icon: `menu-data-source`, items: [{ label: `Список источников данных`, link: `/datasources` }] },
@@ -31,6 +32,7 @@ const menuSections = [
 
 const Menu = () => {
     const { pathname } = useLocation();
+    const { keycloak = { logout } } = useKeycloak();
     return (
         <Wrapper>
             <Link to={`/`}>
@@ -51,6 +53,9 @@ const Menu = () => {
                     ))}
                 </Fragment>
             ))}
+            <Button background={`red`} extra={`width: calc(100% - 30px);`} variant={`outlined`} onClick={keycloak?.logout}>
+                Выйти
+            </Button>
         </Wrapper>
     );
 };

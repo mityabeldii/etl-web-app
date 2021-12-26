@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { useKeycloak } from "@react-keycloak/web";
@@ -14,21 +14,39 @@ import Modality from "../modals/modality";
 import { useStorageListener } from "../../hooks/useStorage";
 
 const RouterApp = () => {
-    const role = useStorageListener((state) => state?.user?.role ?? `guest`);
-    const { initialized } = useKeycloak();
+    const { initialized, keycloak } = useKeycloak();
+    const { authenticated, login } = keycloak;
+    const { role, contextsLoaded } = useStorageListener((state) => ({
+        role: state?.user?.contexts
+            ?.map?.((i) => _.map(i?.roles, `name`))
+            ?.flat?.()
+            ?.includes?.(`admin_cpsi`)
+            ? `admin`
+            : `guest`,
+        contextsLoaded: !!state?.user?.contexts,
+    }));
 
-    if (!initialized) {
-        return <Frame extra={`width: 100%; height: 100%;`}>Loading...</Frame>;
+    useEffect(() => {
+        if (initialized && !authenticated) {
+            login();
+        }
+    }, [initialized, authenticated, login]);
+
+    if (!initialized || !contextsLoaded) {
+        return <Frame extra={`width: 100%; height: 100%; min-height: 100vh;`}>Loading...</Frame>;
     }
 
     return (
         <>
             <Alerts />
             <Modality />
-
-            <Switch>
-                <Route component={role === `guest` ? GuestApp : UserApp} />
-            </Switch>
+            {initialized &&
+                authenticated &&
+                ({
+                    admin: <UserApp />,
+                    guest: <GuestApp />,
+                }?.[role] ?? <GuestApp />)}
+            )
         </>
     );
 };
