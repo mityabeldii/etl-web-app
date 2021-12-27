@@ -238,8 +238,8 @@ const TasksHistoryTable = {
             label: `Старт/Завершение`,
             extra: `flex: 2; > * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
             transform: ({ row }) =>
-                `${row?.processStartDate ? moment(row?.processStartDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
-                    row?.processEndDate ? moment(row?.processEndDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
+                `${row?.startDate ? moment(row?.startDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
+                    row?.prendDate ? moment(row?.endDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
                 }`,
         },
         { name: `state`, label: `Статус`, extra: `flex: unset; width: 200px;`, cell: { type: `processstatus` } },
