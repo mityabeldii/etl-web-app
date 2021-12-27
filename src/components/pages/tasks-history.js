@@ -13,27 +13,26 @@ import { eventDispatch } from "../../hooks/useEventListener";
 import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
 
 import DatasourceAPI from "../../api/datasource-api";
-import { useStorageListener } from "../../hooks/useStorage";
-import useQueryParams from "../../hooks/useQueryParams";
+import { putStorage, useStorageListener } from "../../hooks/useStorage";
+import useQueryParams, { etlOnlyParams } from "../../hooks/useQueryParams";
 import Select from "../ui-kit/select";
 import { convertHex } from "../../utils/colors-helper";
 
-const ProcessHistoryPage = () => {
-    // const { params } = useQueryParams();
-    const [params, setParams] = useState({});
-    const setByKey = (key, value) => {
-        setParams(_.pickBy({ ...params, [key]: value }, _.identity));
-    };
+const TasksHistoryPage = () => {
+    const { params } = useQueryParams();
+    useEffect(() => {
+        putStorage(`tables.${TABLES.TASKS_HISTORY}.filters`, etlOnlyParams(params));
+    }, [params]);
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
-                <Heading>История запуска процессов</Heading>
+                <Heading>История запуска задач в ETL-процессах</Heading>
             </RowWrapper>
             <Table
-                name={TABLES.PROCESSES_HISTORY}
-                fetchFunction={DatasourceAPI.getProcessesHistory}
-                {...tablesColumns[TABLES.PROCESSES_HISTORY]}
-                extraHeader={<SearchBar params={params} setByKey={setByKey} />}
+                name={TABLES.TASKS_HISTORY}
+                fetchFunction={DatasourceAPI.getTasksHistory}
+                {...tablesColumns[TABLES.TASKS_HISTORY]}
+                extraHeader={<SearchBar />}
                 filters={params}
             />
         </>
@@ -49,14 +48,15 @@ const Heading = styled(H1)`
     }
 `;
 
-const SearchBar = ({ params, setByKey }) => {
-    const processes = useStorageListener((state) => _.get(state, `tables.${TABLES.PROCESSES_HISTORY}.rows`) ?? []);
+const SearchBar = () => {
+    const { params, setParams, setByKey } = useQueryParams();
+    const tasks = useStorageListener((state) => _.get(state, `tables.${TABLES.TASKS_HISTORY}.rows`) ?? []);
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada;`}>
             <Search
-                value={params?.processRunId ?? ``}
+                value={params?.id ?? ``}
                 onChange={(e) => {
-                    setByKey(`processRunId`, e.target.value ?? ``);
+                    setByKey(`id`, e.target.value ?? ``);
                 }}
             />
             <Select
@@ -89,9 +89,10 @@ const SearchBar = ({ params, setByKey }) => {
                 onChange={(e) => {
                     setByKey(`processId`, params?.processId == e.target.value ? undefined : e.target.value);
                 }}
-                options={processes
+                options={tasks
                     ?.map?.(({ processId: value, processName: label }) => ({ label, value }))
-                    .filter((item, index, self) => self.findIndex((t) => t.value === item.value) === index)}
+                    ?.filter?.((i, j, self) => _.map(self, `value`)?.indexOf?.(i?.value) === j)
+                }
             />
             <Select
                 toggleComponent={() => (
@@ -132,7 +133,7 @@ const SearchBar = ({ params, setByKey }) => {
 const Search = styled(Input).attrs((props) => {
     return {
         ...props,
-        placeholder: `ID запуска процесса`,
+        placeholder: `ID запуска задачи`,
         leftIcon: `search`,
         leftIconStyles: `left: 20px;`,
         extra: css`
@@ -145,5 +146,5 @@ const Search = styled(Input).attrs((props) => {
     };
 })``;
 
-export default ProcessHistoryPage;
+export default TasksHistoryPage;
 /*eslint-enable*/

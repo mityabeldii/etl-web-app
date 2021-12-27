@@ -14,10 +14,11 @@ import DatasourceAPI from "../../api/datasource-api";
 import { useStorageListener } from "../../hooks/useStorage";
 import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
 import DatasourceAdHocQueryModal from "../modals/datasource-ad-hoc-query-modal";
+import ModalsHelper from "../../utils/modals-helper";
 
 const DatasourcePage = () => {
-    const { pathname } = useLocation();
-    const { selectedSourceId } = useParams();
+    const { selectedSourceId: dirtySelectedSourceId } = useParams();
+    const selectedSourceId = dirtySelectedSourceId?.split?.(`&`)?.[0];
     const selectedSource = useStorageListener(
         (state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows?.find?.((i) => i?.id == selectedSourceId) ?? {}
     );
@@ -27,10 +28,14 @@ const DatasourcePage = () => {
         useStorageListener((state) => state?.datasources?.structures ?? [])
             ?.find?.((i) => i?.id === selectedSourceId)
             ?.data?.tables?.find?.((i) => i?.name === selectedTable)?.columns ?? [];
-    const preview =
-        useStorageListener((state) => state?.datasources?.preview ?? [])
-            ?.find?.((i) => i?.id === selectedSourceId)
-            ?.[selectedTable]?.rows?.map?.((i) => Object.fromEntries(i?.cells?.map?.((i) => [i?.column, i?.value]))) ?? [];
+    const preview = useStorageListener((state) => _.get(state, `datasources.preview.${selectedSourceId}.${selectedTable}.rows`)) ?? [];
+
+    const fetchPreviewFunction = async () => {
+        if (selectedSourceId && selectedTable) {
+            const response = await DatasourceAPI.getDatasourceTablePreview(selectedSourceId, selectedTable);
+            return response;
+        }
+    };
 
     useEffect(() => {
         DatasourceAPI.getDatasources();
@@ -83,7 +88,7 @@ const DatasourcePage = () => {
                         background={`blue`}
                         extra={`margin-top: 24px; width: 190px;`}
                         onClick={() => {
-                            eventDispatch(`OPEN_${MODALS.DATASOURCE_AD_HOC_QUERY_MODAL}_MODAL`);
+                            ModalsHelper.showModal(MODALS.DATASOURCE_AD_HOC_QUERY_MODAL);
                         }}
                     >
                         Ad-Hoc запрос
@@ -100,7 +105,8 @@ const DatasourcePage = () => {
                     <Table
                         name={TABLES.DATASOURCE_TABLE_PREVIEW}
                         columns={Object.keys(preview?.[0] ?? {})?.map?.((i) => ({ name: i, label: i }))}
-                        rows={preview}
+                        fetchFunction={fetchPreviewFunction}
+                        useBackendProcessing={true}
                     />
                 </Frame>
             </RowWrapper>

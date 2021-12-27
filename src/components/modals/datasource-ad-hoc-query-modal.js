@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import { MODALS, FORMS } from "../../constants/config";
 import { useParams } from "react-router-dom";
 
-import { Frame, Button, Input, Dropdown, H1, P, Link, RowWrapper, Form } from "../ui-kit/styled-templates";
+import { Frame, Button, Input, Dropdown, H1, P, Link, RowWrapper, Form, ErrorBox } from "../ui-kit/styled-templates";
 import { Control } from "../ui-kit/control";
 import PopUpWrapper from "./pop-up-wrapper";
 import Select from "../ui-kit/select";
@@ -15,6 +15,7 @@ import useFormControl from "../../hooks/useFormControl";
 import { eventDispatch } from "../../hooks/useEventListener";
 import { useStorageListener } from "../../hooks/useStorage";
 import _ from "lodash";
+import ModalsHelper from "../../utils/modals-helper";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -37,7 +38,7 @@ const DatasourceAdHocQueryModal = () => {
     const closeModal = () => {
         clearForm();
         setError(undefined);
-        eventDispatch(`CLOSE_${MODALS.DATASOURCE_AD_HOC_QUERY_MODAL}_MODAL`);
+        ModalsHelper.hideModal(MODALS.DATASOURCE_AD_HOC_QUERY_MODAL);
     };
     return (
         <PopUpWrapper name={MODALS.DATASOURCE_AD_HOC_QUERY_MODAL} onClickOutside={closeModal}>
@@ -62,21 +63,7 @@ const DatasourceAdHocQueryModal = () => {
                         min-height: 120px;
                     `}
                 />
-                {error && (
-                    <ErrorBox>
-                        <RowWrapper>
-                            <Frame
-                                extra={({ theme }) =>
-                                    `font-weight: 600; font-size: 14px; line-height: 20px; color: ${theme.red}; margin-bottom: 2px;`
-                                }
-                            >
-                                Ошибка выполнения запроса
-                            </Frame>
-                            <ErrorSign />
-                        </RowWrapper>
-                        {error}
-                    </ErrorBox>
-                )}
+                {error && <ErrorBox.Component title={`Ошибка выполнения запроса`} description={error} />}
                 <RowWrapper extra={`justify-content: flex-end;`}>
                     {/* <Frame
                         extra={({ theme }) => css`
@@ -107,25 +94,6 @@ const DatasourceAdHocQueryModal = () => {
         </PopUpWrapper>
     );
 };
-
-const ErrorSign = styled(Frame)`
-    width: 24px;
-    height: 24px;
-    background: url("${require(`../../assets/icons/error-outline.svg`).default}") no-repeat center center / contain;
-`;
-
-const ErrorBox = styled(Frame)`
-    width: 100%;
-    padding: 18px 32px;
-    box-sizing: border-box;
-    background: #f6dfdf;
-    border: 1px solid ${({ theme }) => theme.red};
-    border-radius: 4px;
-    color: ${({ theme }) => theme.red};
-    margin-bottom: 25px;
-    font-size: 12px;
-    line-height: 16px;
-`;
 
 export default DatasourceAdHocQueryModal;
 /*eslint-enable*/

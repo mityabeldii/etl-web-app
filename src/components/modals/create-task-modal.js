@@ -20,6 +20,8 @@ import { MODALS, FORMS, OPERATORS, TABLES, UPDATE_TYPES, JOIN_TYPE, LOGIC_OPERAT
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import { useStorageListener } from "../../hooks/useStorage";
 import useFormControl from "../../hooks/useFormControl";
+import useModal from "../../hooks/useModal";
+import ModalsHelper from "../../utils/modals-helper";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -37,31 +39,31 @@ const CrateTaskModal = () => {
     const { tasks = [] } = process;
     useEffect(DatasourceAPI.getDatasources, []);
 
-    // console.log(data);
-
-    useEventListener(`OPEN_${MODALS.CREATE_TASK}_MODAL`, (e) => {
-        const { mode } = e.detail;
-        setMode(mode);
-        setReadOnly(mode === `view`);
+    const { close: closeModal } = useModal(MODALS.CREATE_TASK, {
+        onOpen: (e) => {
+            const { mode } = e;
+            setMode(mode);
+            setReadOnly(mode === `view`);
+        },
+        onClose: clearForm,
     });
 
-    const closeModal = () => {
-        eventDispatch(`CLOSE_${MODALS.CREATE_TASK}_MODAL`);
-    };
-    const handleSubmit = async (data) => {
-        try {
-            if (mode === `edit`) {
-                await ProcessesAPI.updateTask(process_id, data);
-            }
-            if (mode === `create`) {
-                await ProcessesAPI.createTask(process_id, { ...data, processId: process_id });
-            }
-            closeModal();
-        } catch (error) {}
+    const handlers = {
+        submit: async (data) => {
+            try {
+                if (mode === `edit`) {
+                    await ProcessesAPI.updateTask(process_id, data);
+                }
+                if (mode === `create`) {
+                    await ProcessesAPI.createTask(process_id, { ...data, processId: process_id });
+                }
+                closeModal();
+            } catch (error) {}
+        },
     };
     return (
         <PopUpWrapper name={MODALS.CREATE_TASK} onClickOutside={clearForm}>
-            <Form name={FORMS.CREATE_TASK} onSubmit={onSubmit(handleSubmit)}>
+            <Form name={FORMS.CREATE_TASK} onSubmit={onSubmit(handlers.submit)}>
                 <Control.Row>
                     <H1 extra={`margin-bottom: 20px;`}>
                         {
@@ -94,7 +96,7 @@ const CrateTaskModal = () => {
                         placeholder={`Выберите оператор для задачи`}
                         options={Object.keys(OPERATORS).map((item) => ({ label: item, value: item }))}
                         extra={`flex: 0.5; margin-right: 16px !important;`}
-                        required
+                        idRequired
                     />
                 </Control.Row>
                 {

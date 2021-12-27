@@ -43,6 +43,13 @@ export const H1 = styled(Frame)`
     font-size: 24px;
     line-height: 24px;
     color: ${({ theme }) => theme.text.primary};
+    flex-direction: row;
+    justify-content: flex-start;
+
+    span {
+        margin: 0 5px;
+        color: ${({ theme }) => theme.blue};
+    }
 
     ${({ extra }) => extra}
 `;
@@ -52,6 +59,7 @@ export const H2 = styled(Frame)`
     font-weight: 600;
     font-size: 18px;
     line-height: 22px;
+    align-items: flex-start;
 
     ${({ extra }) => extra}
 `;
@@ -158,7 +166,6 @@ export const Checkbox = styled.input.attrs((props) => {
 
 // export const Switch = (props) => {
 //     const { name = `checkbox`, extra = `` } = props;
-//     console.log(props);
 //     return (
 //         <SwitchWrapper extra={extra}>
 //             <SwitchBox id={name} type={`checkbox`} {...props} />
@@ -220,7 +227,7 @@ const ASYNC_STATUSES = {
 };
 
 export const Button = (props) => {
-    const { extendedIndicators = false, onClick, disabled = false, successLabel, errorLabel, extra = ``, leftIcon } = props;
+    const { extendedIndicators = false, onClick, disabled = false, successLabel, errorLabel, extra = ``, leftIcon, type = `button` } = props;
     const [status, setStatus] = useState(ASYNC_STATUSES.REGULAR);
 
     const newExtra =
@@ -251,7 +258,7 @@ export const Button = (props) => {
     const newDisabled = disabled === true || [ASYNC_STATUSES.PENDING, ASYNC_STATUSES.SUCCESS, ASYNC_STATUSES.ERROR].includes(status);
 
     return (
-        <ButtonWrapper {...props} extra={newExtra} onClick={newOnClick} disabled={newDisabled} leftIcon={leftIcon}>
+        <ButtonWrapper {...props} extra={newExtra} onClick={newOnClick} disabled={newDisabled} leftIcon={leftIcon} type={type}>
             {{
                 pending: <Spinner />,
                 success: successLabel ?? `Success`,
@@ -414,13 +421,13 @@ export const Dropdown = (props) => {
     const {
         toggle,
         menu,
-        toggleStyles = ``,
-        menuStyles = ``,
         wrapperStyles = ``,
         scrollWrapperStyles = ``,
         id,
         closeOnChildrenClick = true,
         callable = true,
+        toggleProps = {},
+        menuProps = {},
     } = props;
     const [opened, setOpened] = useState(false);
     const menuRef = useRef();
@@ -464,16 +471,16 @@ export const Dropdown = (props) => {
     };
     return (
         <DropdownStyles.Wrapper extra={wrapperStyles} className={uniqueId.current}>
-            <DropdownStyles.Toggle ref={toggleRef} extra={toggleStyles} onClick={handleToggleClick}>
+            <DropdownStyles.Toggle {...toggleProps} ref={toggleRef} onClick={handleToggleClick}>
                 {toggle}
             </DropdownStyles.Toggle>
             <DropdownStyles.Menu
+                {...menuProps}
                 ref={menuRef}
                 visible={opened}
                 toggleSize={toggleSize}
                 onClick={handleMenuItemClick}
                 direction={direction}
-                extra={menuStyles}
             >
                 <DropdownStyles.ScrollWrapper extra={scrollWrapperStyles}>{menu}</DropdownStyles.ScrollWrapper>
             </DropdownStyles.Menu>
@@ -547,5 +554,47 @@ export const RemoveRowButton = (props) =>
             extra={`padding: 9px; &:before { margin: 0; }; min-width: unset; width: auto; flex: unset; ${props?.extra ?? ``}`}
         />
     );
+
+export const ErrorBox = {
+    Styles: {
+        Wrapper: styled(Frame)`
+            width: 100%;
+            padding: 18px 32px;
+            box-sizing: border-box;
+            background: #f6dfdf;
+            border: 1px solid ${({ theme }) => theme.red};
+            border-radius: 4px;
+            color: ${({ theme }) => theme.red};
+            margin-bottom: 25px;
+            font-size: 12px;
+            line-height: 16px;
+            margin-top: 24px;
+            align-items: flex-start;
+        `,
+        Sign: styled(Frame)`
+            width: 24px;
+            height: 24px;
+            background: url("${require(`../../assets/icons/error-outline.svg`).default}") no-repeat center center / contain;
+        `,
+        Title: styled(Frame)`
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 20px;
+            color: ${({ theme }) => theme.red};
+            margin-bottom: 2px;
+        `,
+    },
+    Component: ({ title, description }) => {
+        return (
+            <ErrorBox.Styles.Wrapper>
+                <RowWrapper>
+                    <ErrorBox.Styles.Title>{title}</ErrorBox.Styles.Title>
+                    <ErrorBox.Styles.Sign />
+                </RowWrapper>
+                {description}
+            </ErrorBox.Styles.Wrapper>
+        );
+    },
+};
 
 /*eslint-enable*/

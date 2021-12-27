@@ -6,8 +6,14 @@ import { Frame, Button, Input, Dropdown, H1, P, Link, Form } from "../ui-kit/sty
 import { Control } from "../ui-kit/control";
 import PopUpWrapper from "./pop-up-wrapper";
 
+import SchemasAPI from "../../api/schemas-api";
+import DatasourceAPI from "../../api/datasource-api";
+
+import ModalsHelper from "../../utils/modals-helper";
+
 import useFormControl from "../../hooks/useFormControl";
 import { eventDispatch } from "../../hooks/useEventListener";
+import useModal from "../../hooks/useModal";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -20,20 +26,15 @@ const schema = (yup) =>
     });
 
 const EditDataSourceModal = () => {
-    const { onSubmit, clearForm } = useFormControl({ name: FORMS.EDIT_DATA_SOURCE_MODAL, schema });
-    const handleSubmit = (data) => {
-        console.log(data);
-    };
-    const closeModal = () => {
-        clearForm();
-        eventDispatch(`CLOSE_${MODALS.EDIT_DATA_SOURCE_MODAL}_MODAL`);
+    const { onSubmit, clearForm, setValues } = useFormControl({ name: FORMS.EDIT_DATASOURCE_MODAL, schema });
+    const { close: closeModal } = useModal(MODALS.EDIT_DATASOURCE_MODAL, { onOpen: setValues, onClose: clearForm });
+    const handleSubmit = async (data) => {
+        await DatasourceAPI.updateDatasource(data);
+        closeModal();
     };
     return (
-        <PopUpWrapper name={MODALS.EDIT_DATA_SOURCE_MODAL} onClickOutside={closeModal}>
-            <Form
-                name={FORMS.EDIT_DATA_SOURCE_MODAL}
-                onSubmit={onSubmit(handleSubmit)}
-            >
+        <PopUpWrapper name={MODALS.EDIT_DATASOURCE_MODAL} onClickOutside={closeModal}>
+            <Form name={FORMS.EDIT_DATASOURCE_MODAL} onSubmit={onSubmit(handleSubmit)}>
                 <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Редактировать источник данных</H1>
                 <Control.Row>
                     <Control.Input name={`name`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />

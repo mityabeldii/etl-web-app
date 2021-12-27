@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import _ from "lodash";
 import * as yup from "yup";
 
-import { getStorage, putStorage, omitStorage, useStorageListener } from "./useStorage";
+import { getStorage, putStorage, omitStorage, useStorageListener, mergeStorage } from "./useStorage";
 
 const useFormControl = ({ name, schema }) => {
     // READ ONLY
@@ -20,6 +20,14 @@ const useFormControl = ({ name, schema }) => {
     const setValue = (path, value) => {
         if (!!name && !!path) {
             putStorage(`forms.${name}.values.${path}`, value);
+        }
+    };
+    const setValues = (values) => {
+        if (!_.isObject(values)) {
+            throw new Error(`[useFormControl] values must be an object`);
+        }
+        if (!!name) {
+            mergeStorage(`forms.${name}.values`, values);
         }
     };
     const removeValue = (value) => {
@@ -50,6 +58,7 @@ const useFormControl = ({ name, schema }) => {
             }
             handleSubmit(data);
         } catch (error) {
+            console.log(error)
             console.error(`Form validation error`, Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? []));
             setErrors(Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? []));
         }
@@ -59,6 +68,7 @@ const useFormControl = ({ name, schema }) => {
         data,
         getValue,
         setValue,
+        setValues,
         removeValue,
         onSubmit,
         setErrors,

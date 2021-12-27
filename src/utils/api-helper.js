@@ -65,12 +65,12 @@ export let handleError = (error) => {
 export const loadingCounterWrapper = async (action) => {
     putStorage(`loading_counter`, (window?.storage?.loading_counter ?? 0) + 1);
     try {
-        let response = await action();
+        const response = await action();
         return response;
     } catch (error) {
         throw error;
     } finally {
-        await sleep(100)
+        await sleep(100);
         putStorage(`loading_counter`, Math.max((window?.storage?.loading_counter ?? 0) - 1, 0));
     }
 };
@@ -81,26 +81,39 @@ export const POSTOptions = (name) => {
     const { currentPage = 0, perPage = 10 } = pagination;
     return {
         params: {
-            query: {
-                sort,
-                pagination: { page: currentPage, perPage: perPage },
-                filter,
-            },
+            limit: perPage,
+            offset: currentPage + 1,
+            ...filter,
         },
     };
 };
 
-export const GETOptions = (options = {}) => {
-    Object.keys(options?.filter ?? {})
-        .filter((i) => [`_from`, `_to`].map((j) => i.includes(j)).includes(true))
-        .forEach((i) => {
-            options.filter[i] = moment(options?.filter?.[i]).format(`YYYY-MM-DD HH:mm:ss`);
-        });
-    return {
-        params: {
-            setting: JSON.stringify(POSTOptions(options)),
+export const convertPaginatedResponse = (response) => {
+    const data = {
+        rows: _.map(response?.rows, `cells`)?.map?.((i) => Object.fromEntries(i?.map?.((i) => [i?.column, i?.value]))),
+        pagination: {
+            perPage: response?.rowCount,
+            currentPage: Math.max(response?.page - 1, 0),
+            totalCount: response?.totalRowCount,
         },
     };
+    return data;
+};
+
+export const convertPaginatedResponse2 = (response) => {
+    const data = {
+        rows: response?.data,
+        pagination: {
+            perPage: response?.count,
+            currentPage: Math.max(response?.page - 1, 0),
+            totalCount: response?.totalCount,
+        },
+    };
+    return data;
+};
+
+export const GETOptions = (options = {}) => {
+    return POSTOptions(options);
 };
 
 /*eslint-enable*/

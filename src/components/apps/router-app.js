@@ -1,67 +1,58 @@
 /*eslint-disable*/
-import React, { Suspense } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import styled from "styled-components";
+import { useKeycloak } from "@react-keycloak/web";
 
-import Menu from "../tools/menu";
-import { RowWrapper, Container, Frame } from "../ui-kit/styled-templates";
-
-import DatasourcesListPage from "../pages/datasources-list-page";
-import DatasourcePage from "../pages/datasource-page";
-import ETLProcessesListPage from "../pages/processes-list-page";
-import ProcessesConfigurationPage from "../pages/processes-configuration-page";
-import ProcessesHistory from "../pages/processes-history";
+import { Frame } from "../ui-kit/styled-templates";
+import UserApp from "./user-app";
+import GuestApp from "./guest-app";
 
 import Alerts from "../modals/alerts";
-import CreateDataSourceModal from "../modals/create-datasource-modal";
-import EditDataSourceModal from "../modals/edit-datasource-modal";
-import CreateProcessModal from "../modals/create-process-modal";
-import EditProcessAttributesModal from "../modals/edit-process-attributes-modal";
+import Modality from "../modals/modality";
+
+import { useStorageListener } from "../../hooks/useStorage";
 
 const RouterApp = () => {
+    const { initialized, keycloak } = useKeycloak();
+    const { authenticated, login, logout } = keycloak;
+    const { role, contextsLoaded } = useStorageListener((state) => ({
+        role: state?.user?.contexts
+            ?.map?.((i) => _.map(i?.roles, `name`))
+            ?.flat?.()
+            ?.includes?.(`admin_cpsi`)
+            ? `admin`
+            : `guest`,
+        contextsLoaded: !!state?.user?.contexts,
+    }));
+
+    useEffect(async () => {
+        if (initialized && !authenticated) {
+            try {
+                login();
+            } catch (error) {
+                logout();
+            }
+        }
+    }, [initialized, authenticated, login]);
+
+    if (!initialized || !contextsLoaded) {
+        return <Frame extra={`width: 100%; height: 100%; min-height: 100vh;`}>Loading...</Frame>;
+    }
+
     return (
         <>
             <Alerts />
-            <CreateDataSourceModal />
-            <EditDataSourceModal />
-            <CreateProcessModal />
-            <EditProcessAttributesModal />
-
-            <RowWrapper>
-                <Menu />
-                <Wrapper>
-                    <Container>
-                        <Switch>
-                            <Route exact path={`/datasources`} component={DatasourcesListPage} />
-                            <Route exact path={`/datasources/:selectedSourceId`} component={DatasourcePage} />
-                            <Route exact path={`/processes`} component={ETLProcessesListPage} />
-                            <Route exact path={`/processes/configuration/:process_id`} component={ProcessesConfigurationPage} />
-                            <Route exact path={`/history/processes`} component={ProcessesHistory} />
-                            <Route path={`/`}>
-                                <Redirect to={`/datasources`} />
-                            </Route>
-                        </Switch>
-                    </Container>
-                </Wrapper>
-            </RowWrapper>
+            <Modality />
+            {initialized &&
+                authenticated &&
+                ({
+                    admin: <UserApp />,
+                    guest: <GuestApp />,
+                }?.[role] ?? <GuestApp />)}
         </>
     );
 };
-
-const Wrapper = styled(Frame).attrs((props) => {
-    return { ...props, id: "scrollWrapper" };
-})`
-    width: 100%;
-    flex: 1;
-    min-height: 100vh;
-    justify-content: flex-start;
-    padding: 35px 0;
-    box-sizing: border-box;
-    flex: 1;
-    display: flex;
-    overflow: auto;
-    max-height: 100vh;
-`;
 
 export default RouterApp;
 /*eslint-enable*/

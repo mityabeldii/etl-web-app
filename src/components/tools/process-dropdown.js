@@ -10,6 +10,7 @@ import ProcessesAPI from "../../api/processes-api";
 import { eventDispatch } from "../../hooks/useEventListener";
 import { MODALS } from "../../constants/config";
 import { linkTo, objectToQS } from "../../utils/common-helper";
+import ModalsHelper from "../../utils/modals-helper";
 
 const ProcessDropdown = ({ cellState = {} }) => {
     const { row = {} } = cellState;
@@ -23,7 +24,7 @@ const ProcessDropdown = ({ cellState = {} }) => {
                             label: `Редактировать атрибуты`,
                             src: `processes-more-edit-attributes`,
                             onClick: ({ row }) => {
-                                eventDispatch(`OPEN_${MODALS.EDIT_PROCESS_ATTRIBUTES}_MODAL`, row);
+                                ModalsHelper.showModal(MODALS.EDIT_PROCESS_ATTRIBUTES, row);
                             },
                         },
                         {
@@ -56,7 +57,13 @@ const ProcessDropdown = ({ cellState = {} }) => {
                                 linkTo(`/history/processes${objectToQS({ id: row?.id })}`);
                             },
                         },
-                        { label: `История запусков задач`, src: `processes-more-tasks-history` },
+                        {
+                            label: `История запусков задач`,
+                            src: `processes-more-tasks-history`,
+                            onClick: () => {
+                                linkTo(`/history/tasks${objectToQS({ id: row?.id })}`);
+                            },
+                        },
                         {
                             label: `Ручной запуск`,
                             src: `processes-more-manual-start`,
@@ -80,14 +87,15 @@ const ProcessDropdown = ({ cellState = {} }) => {
                     })}
                 </>
             }
-            menuStyles={({ theme }) =>
-                css`
-                    padding: 0;
-                    background: ${theme.background.secondary};
-                    border: 1px solid #d1d1d1;
-                    overflow: visible;
-                `
-            }
+            menuProps={{
+                extra: ({ theme }) =>
+                    css`
+                        padding: 0;
+                        background: ${theme.background.secondary};
+                        border: 1px solid #d1d1d1;
+                        overflow: visible;
+                    `,
+            }}
             scrollWrapperStyles={({ theme }) =>
                 css`
                     > * {

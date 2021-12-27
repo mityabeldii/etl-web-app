@@ -39,7 +39,7 @@ const Header = () => {
                                 </Link>
                             </>
                         }
-                        menuStyles={`align-items: flex-start;`}
+                        menuProps={{ extra: `align-items: flex-start;` }}
                     />
                     <Link to={`/account-settings`}>
                         <Item>{userName}</Item>

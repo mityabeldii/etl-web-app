@@ -2,12 +2,20 @@
 import axios from "axios";
 import _ from "lodash";
 
-import { handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
+import {
+    convertPaginatedResponse,
+    convertPaginatedResponse2,
+    GETOptions,
+    handleError,
+    handleSuccess,
+    loadingCounterWrapper,
+    POSTOptions,
+} from "../utils/api-helper";
 import CaseHalper from "../utils/case-helper";
 
 import { API_URL, base_url, TABLES } from "../constants/config";
 import { getStorage, mergeStorage, putStorage } from "../hooks/useStorage";
-import { objectPut, downloadURI, sleep } from "../utils/common-helper";
+import { objectPut, downloadURI, sleep, objectToQS } from "../utils/common-helper";
 
 const DatasourceAPI = {
     async getDatasources() {
@@ -15,7 +23,7 @@ const DatasourceAPI = {
             try {
                 const response = (await axios.get(`${base_url}/api/v1/datasource`)).data;
                 putStorage(`tables.${TABLES.DATASOURCE_LIST}`, {
-                    rows: response,
+                    rows: _.orderBy(response, [`id`], [`asc`]),
                     pagination: response?._meta ?? {},
                 });
                 return response;
@@ -35,13 +43,26 @@ const DatasourceAPI = {
                             {
                                 ...data,
                                 url: `jdbc:postgresql://${data?.host}:${data?.port}/${data?.base}`,
-                                type: "SOURCE",
+                                type: data?.type ?? "SOURCE",
                             },
                             [`base`]
                         )
                     )
                 ).data;
                 await DatasourceAPI.getDatasources();
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+
+    async updateDatasource(data) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.put(`${base_url}/api/v1/datasource`, data)).data;
+                await DatasourceAPI.getDatasources();
+                handleSuccess({ message: `Источник с id ${data?.id} обновлен успещно` });
                 return response;
             } catch (error) {
                 throw handleError(error);
@@ -81,27 +102,10 @@ const DatasourceAPI = {
     async getDatasourceTablePreview(id, tableName) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`${base_url}/api/v1/query/${id}/${tableName}`)).data;
-                putStorage(
-                    `datasources.preview`,
-                    Object.values(
-                        Object.fromEntries(
-                            [{ id, [tableName]: response }, ...getStorage((state) => state?.datasources?.data ?? [])].map((i) => [i?.id, i])
-                        )
-                    )
-                );
-                return response;
-            } catch (error) {
-                throw handleError(error);
-            }
-        });
-    },
-
-    async getSchemas(datasourceId) {
-        return loadingCounterWrapper(async () => {
-            try {
-                const response = (await axios.get(`${base_url}/api/v1/schemes/${datasourceId}`)).data;
-                putStorage(`datasources.schemas.${datasourceId}`, response?.schemas);
+                const response = (await axios.get(`${base_url}/api/v1/query/${id}/${tableName}`, GETOptions(TABLES.DATASOURCE_TABLE_PREVIEW))).data;
+                const data = convertPaginatedResponse(response);
+                putStorage(`datasources.preview.${id}.${tableName}`, data);
+                putStorage(`tables.${TABLES.DATASOURCE_TABLE_PREVIEW}`, data);
                 return response;
             } catch (error) {
                 throw handleError(error);
@@ -125,7 +129,7 @@ const DatasourceAPI = {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`${base_url}/process-instances`)).data;
-                putStorage(`tables.${TABLES.PROCESSES_HISTORY}`, {
+                mergeStorage(`tables.${TABLES.PROCESSES_HISTORY}`, {
                     rows: response?.sort?.((a, b) => b?.processStartDate - a?.processStartDate) ?? [],
                     pagination: response?._meta ?? {},
                 });
@@ -135,11 +139,37 @@ const DatasourceAPI = {
             }
         });
     },
+
+    async getTasksHistory() {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.get(`${base_url}/api/v1/task-instances`, POSTOptions(`TASKS_HISTORY`))).data;
+                mergeStorage(`tables.${TABLES.TASKS_HISTORY}`, convertPaginatedResponse2(response));
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+
     adHocQuery({ datasourceId, schemaName, query }) {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.post(`${base_url}/api/v1/ad-hoc-query`, { datasourceId, schemaName, query })).data;
                 handleSuccess({ message: `Success` });
+                return response;
+            } catch (error) {
+                throw error;
+            }
+        });
+    },
+
+    deleteDatasource(id) {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.delete(`${base_url}/api/v1/datasource/${id}`)).data;
+                await DatasourceAPI.getDatasources();
+                handleSuccess({ message: `Источник c ID ${id} успешно удален` });
                 return response;
             } catch (error) {
                 throw error;

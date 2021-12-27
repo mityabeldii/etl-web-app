@@ -18,14 +18,25 @@ import { eventDispatch } from "../../hooks/useEventListener";
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
 import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
 import useQueryParams from "../../hooks/useQueryParams";
+import ModalsHelper from "../../utils/modals-helper";
 
 const ProcessesConfigurationPage = () => {
-    const { process_id } = useParams();
+    const { process_id: dirty_process_id } = useParams();
     const { pathname } = useLocation();
-    const { edit = false } = useQueryParams().params;
+    const {
+        params: { edit = false },
+    } = useQueryParams();
+
+    const process_id = dirty_process_id?.split?.(`&`)?.[0];
 
     const process = useStorageListener((state) => state?.processes ?? [])?.[process_id] ?? {};
     const { tasks = [] } = process;
+
+    const handlers = {
+        openCreateTaskModal: () => {
+            ModalsHelper.showModal(MODALS.CREATE_TASK, { mode: `create` });
+        },
+    };
 
     useEffect(async () => {
         ProcessesAPI.getProcessById(process_id);
@@ -34,10 +45,6 @@ const ProcessesConfigurationPage = () => {
     useEffect(() => {
         DatasourceAPI.getDatasources();
     }, []);
-
-    const handleOpenCreateTaskModal = () => {
-        eventDispatch(`OPEN_${MODALS.CREATE_TASK}_MODAL`, { mode: `create` });
-    };
 
     return useMemo(
         () => (
@@ -49,7 +56,7 @@ const ProcessesConfigurationPage = () => {
                             <ArrowBack />
                         </Link>
                         Конфигурация процесса <span>{process?.processName}</span>
-                        <ProcessIDWapper>ID: {process_id}</ProcessIDWapper>
+                        <ProcessIdWrapper>ID: {process_id}</ProcessIdWrapper>
                     </Heading>
                     {edit ? (
                         <Link to={`${pathname}${objectToQS({})}`}>
@@ -73,7 +80,7 @@ const ProcessesConfigurationPage = () => {
                 />
                 {edit && (
                     <RowWrapper extra={`margin-top: 16px; justify-content: flex-end;`}>
-                        <Button background={`orange`} onClick={handleOpenCreateTaskModal}>
+                        <Button background={`orange`} onClick={handlers.openCreateTaskModal}>
                             Добавить задачу
                         </Button>
                     </RowWrapper>
@@ -95,7 +102,7 @@ const ProcessesConfigurationPage = () => {
                 </ProcessSchema.Wrapper>
             </>
         ),
-        [process_id, JSON.stringify({ tasks, edit })]
+        [process_id, process?.processName, JSON.stringify({ tasks, edit })]
     );
 };
 
@@ -149,7 +156,7 @@ const ProcessSchema = {
     `,
 };
 
-const ProcessIDWapper = styled(Frame)`
+const ProcessIdWrapper = styled(Frame)`
     font-size: 14px;
     line-height: 20px;
     margin-left: 12px;

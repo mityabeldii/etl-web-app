@@ -97,13 +97,87 @@ const CommonHelper = {
         });
     },
 
-    objectGet: (obj, path) => {
-        return _.get(obj, path);
-    },
+    objectGet: (obj, path) => _.get(obj, path),
 
     objectCopy: (obj) => _.cloneDeep(obj),
 
     objectCompare: (o1, o2) => _.isEqual(o1, o2),
+
+    objectFlatten: (obj) => {
+        Object.keys(obj)
+            ?.filter?.((key) => typeof obj[key] === `object`)
+            .forEach?.((key) => {
+                Object.keys(obj?.[key] ?? {})?.forEach?.((innerKey) => {
+                    obj[`${key}.${innerKey}`] = obj[key][innerKey];
+                });
+                obj = _.omit(obj, key);
+            });
+        return Object.keys(obj)?.filter?.((key) => typeof obj[key] === `object`).length > 0 ? CommonHelper.objectFlatten(obj) : obj;
+    },
+
+    objectNested: (obj) => {
+        let newObj = {};
+        Object.keys(obj).forEach((key) => {
+            _.set(newObj, key, obj[key]);
+        });
+        return newObj;
+    },
+
+    objectDiff: (o1 = {}, o2 = {}) => {
+        const o1flatten = CommonHelper.objectFlatten(o1);
+        const o2flatten = CommonHelper.objectFlatten(o2);
+        return {
+            incoming: CommonHelper.objectNested(
+                Object.fromEntries(
+                    Object.keys(o2flatten)
+                        .filter((key) => !o1flatten?.hasOwnProperty?.(key) || o1flatten[key] !== o2flatten[key])
+                        .map((key) => [key, o2flatten[key]])
+                )
+            ),
+            outcoming: CommonHelper.objectNested(
+                Object.fromEntries(
+                    Object.keys(o1flatten)
+                        .filter((key) => !o2flatten?.hasOwnProperty?.(key) || o2flatten[key] !== o1flatten[key])
+                        .map((key) => [key, o1flatten[key]])
+                )
+            ),
+            changes: {
+                prev: CommonHelper.objectNested(
+                    Object.fromEntries(
+                        Object.keys(o1flatten)
+                            .filter((key) => o2flatten?.hasOwnProperty?.(key) && o1flatten?.[key] !== o2flatten?.[key])
+                            .map((key) => [key, o1flatten[key]])
+                    )
+                ),
+                next: CommonHelper.objectNested(
+                    Object.fromEntries(
+                        Object.keys(o1flatten)
+                            .filter((key) => o2flatten?.hasOwnProperty?.(key) && o1flatten?.[key] !== o2flatten?.[key])
+                            .map((key) => [key, o2flatten[key]])
+                    )
+                ),
+                fresh: CommonHelper.objectNested(
+                    Object.fromEntries(
+                        Object.keys(o2flatten)
+                            .filter((key) => !o1flatten?.hasOwnProperty?.(key))
+                            .map((key) => [key, o2flatten[key]])
+                    )
+                ),
+                revoked: CommonHelper.objectNested(
+                    Object.fromEntries(
+                        Object.keys(o1flatten)
+                            .filter((key) => !o2flatten?.hasOwnProperty?.(key))
+                            .map((key) => [key, o1flatten[key]])
+                    )
+                ),
+                flatten: Object.fromEntries(
+                    Object.keys(o1flatten)
+                        .filter((key) => o2flatten?.hasOwnProperty?.(key) && o1flatten?.[key] !== o2flatten?.[key])
+                        .map((key) => [key, { prev: o1flatten[key], next: o2flatten[key] }])
+                ),
+            },
+        };
+    },
 
     format: (value, pattern) => {
         let i = 0,
@@ -118,7 +192,7 @@ const CommonHelper = {
         return Object.fromEntries(Object.entries(parsedObject)?.map?.(([key, value], index) => [key, new URLSearchParams(search).get(key)]));
     },
 
-    objectToQS: (obj = {}) => `?` + new URLSearchParams(obj).toString(),
+    objectToQS: (obj = {}) => (_.isEmpty(obj) ? `` : `?`) + new URLSearchParams(obj).toString(),
 
     debounce: (f, ms = 150) => {
         let isCooldown = false;
@@ -167,11 +241,14 @@ export const {
     objectMerge,
     objectGet,
     objectCopy,
+    objectCompare,
+    objectFlatten,
+    objectNested,
+    objectDiff,
     format,
     linkTo,
     debounce,
     downloadURI,
-    objectCompare,
     getElementClassPath,
     getElementParrentsPath,
 } = CommonHelper;

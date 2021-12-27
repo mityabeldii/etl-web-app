@@ -64,7 +64,22 @@ const Table = (props) => {
     const setSort = (field, order) => {
         putStorage(`tables.${name}.sort`, [{ field, order }]);
     };
-    const frontendPagination = usePagination(rows);
+    const filterRows = (rows = []) =>
+        rows?.filter?.((i) => {
+            return (
+                useBackendProcessing ||
+                Object.keys(_.pickBy(filters, _.identity)).length === 0 ||
+                Object.entries(_.pickBy(filters, _.identity))
+                    .map(([key, value], index) => !value || `${_.get(i, key)}`?.toLowerCase?.()?.includes?.(`${value}`?.toLowerCase?.()))
+                    ?.reduce?.(
+                        ...{
+                            conjunction: [(a, b) => a && b, true],
+                            disjunction: [(a, b) => a || b, false],
+                        }?.[booleanOperation ?? `conjunction`]
+                    )
+            );
+        });
+    const frontendPagination = usePagination(filterRows(rows));
     const pagination = useBackendProcessing ? tableState?.pagination ?? {} : frontendPagination ?? {};
     const { currentPage = 0, perPage = paginationOptions?.[0] ?? 1, pagesCount = 1, totalCount = 1 } = pagination;
     const maxPageNumber = Math.ceil(totalCount / perPage);
@@ -77,7 +92,7 @@ const Table = (props) => {
             putStorage(`tables.${name}.pagination`, { currentPage, perPage }, { silent: true });
         }
         if (useBackendProcessing) {
-            const newData = await fetchFunction();
+            const newData = await fetchFunction({ perPage, currentPage: currentPage + 1 });
         }
     }, [JSON.stringify({ debouncedParams, sort, name, currentPage, perPage, dependencies })]);
 
@@ -174,40 +189,27 @@ const Table = (props) => {
                         );
                     })}
                 </STr> */}
-                {(!useBackendProcessing && withPagination ? frontendPagination.visibleItems ?? [] : rows.length === 0 && propRows ? propRows : rows)
-                    ?.filter?.((i) => {
-                        return (
-                            useBackendProcessing ||
-                            Object.keys(_.pickBy(filters, _.identity)).length === 0 ||
-                            Object.entries(_.pickBy(filters, _.identity))
-                                .map(([key, value], index) => !value || `${_.get(i, key)}`?.toLowerCase?.()?.includes?.(value?.toLowerCase?.()))
-                                ?.reduce?.(
-                                    ...{
-                                        conjunction: [(a, b) => a && b, true],
-                                        disjunction: [(a, b) => a || b, false],
-                                    }?.[booleanOperation ?? `conjunction`]
-                                )
-                        );
-                    })
-                    ?.map?.((row, row_index) => (
-                        <STr key={row_index} extra={name === TABLES.PROCESSES_LIST && `align-items: flex-start;`}>
-                            {selectable && (
-                                <STd extra={`flex: unset; width: 40px;`}>
-                                    <Checkbox
-                                        disabled={!selectedRows.includes(row?.[idColumnName]) && selectedRows.length === selectionLimit}
-                                        checked={selectedRows.includes(row?.[idColumnName])}
-                                        onChange={(e) => {
-                                            setSelectedRows(togglePush(selectedRows, row?.[idColumnName]));
-                                        }}
-                                    />
-                                </STd>
-                            )}
-                            {columns.map((column, column_index) => {
-                                const cellState = { row, column, value: row?.[column?.name] };
-                                return <TableCell key={column_index} cellState={cellState} />;
-                            })}
-                        </STr>
-                    ))}
+                {filterRows(
+                    !useBackendProcessing && withPagination ? frontendPagination.visibleItems ?? [] : rows.length === 0 && propRows ? propRows : rows
+                )?.map?.((row, row_index) => (
+                    <STr key={row_index} extra={name === TABLES.PROCESSES_LIST && `align-items: flex-start;`}>
+                        {selectable && (
+                            <STd extra={`flex: unset; width: 40px;`}>
+                                <Checkbox
+                                    disabled={!selectedRows.includes(row?.[idColumnName]) && selectedRows.length === selectionLimit}
+                                    checked={selectedRows.includes(row?.[idColumnName])}
+                                    onChange={(e) => {
+                                        setSelectedRows(togglePush(selectedRows, row?.[idColumnName]));
+                                    }}
+                                />
+                            </STd>
+                        )}
+                        {columns.map((column, column_index) => {
+                            const cellState = { row, column, value: row?.[column?.name] };
+                            return <TableCell key={column_index} cellState={cellState} />;
+                        })}
+                    </STr>
+                ))}
             </STable>
             {withPagination && (
                 <PaginationWrapper extra={paginationStyles}>
@@ -216,7 +218,7 @@ const Table = (props) => {
                         {new Array(6)
                             .fill(0)
                             .map((item, index) => currentPage - 3 + index)
-                            .filter((i) => i >= 0 && i >= currentPage - 1 && i < maxPageNumber)
+                            .filter((i) => i >= 0 && i >= currentPage - 2 && i < maxPageNumber)
                             .slice(0, 3)
                             .map((item, index) => (
                                 <PageNumberWrapper
@@ -550,6 +552,10 @@ const STr = styled(Frame)`
     box-sizing: border-box;
     border-bottom: 1px solid #dadada;
     align-items: flex-start;
+
+    > * {
+        word-break: break-all;
+    }
 
     ${({ extra }) => extra}
 `;

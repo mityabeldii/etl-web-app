@@ -9,6 +9,7 @@ import { Control } from "../../ui-kit/control";
 import { FORMS, TABLES, UPDATE_TYPES, OPERATORS } from "../../../constants/config";
 
 import DatasourceAPI from "../../../api/datasource-api";
+import SchemasAPI from "../../../api/schemas-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { getStorage, useStorageListener } from "../../../hooks/useStorage";
@@ -34,10 +35,17 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
     useEffect(() => {
         const targetId = _.get(data, `operatorConfigData.target.targetId`);
         if (targetId) {
-            DatasourceAPI.getSchemas(targetId);
+            SchemasAPI.getSchemas(targetId);
             DatasourceAPI.getDatasourceTables(targetId);
         }
     }, [_.get(data, `operatorConfigData.target.targetId`)]);
+    useEffect(() => {
+        const targetId = _.get(data, `operatorConfigData.target.targetId`);
+        const targetTableName = _.get(data, `operatorConfigData.target.targetTableName`);
+        if (targetId && targetId) {
+            DatasourceAPI.getTableColumns(targetId, targetTableName);
+        }
+    }, [_.get(data, `operatorConfigData.target.targetId`), _.get(data, `operatorConfigData.target.targetTableName`)]);
     return (
         <>
             <Br />
@@ -81,7 +89,7 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                                 (i, j) => `operatorConfigData.target.mappingStructure.${j}.targetFieldName`
                             ) ?? []),
                         ]);
-                        DatasourceAPI.getSchemas(e.target.value);
+                        SchemasAPI.getSchemas(e.target.value);
                         DatasourceAPI.getDatasourceTables(e.target.value);
                     }}
                 />
@@ -98,9 +106,6 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                     label={`Имя таблицы в целевой БД`}
                     options={params?.target?.tables?.map?.((item) => ({ label: item, value: item }))}
                     readOnly={!params?.target?.tables?.length}
-                    onChange={(e) => {
-                        DatasourceAPI.getTableColumns(_.get(data, `operatorConfigData.target.targetId`), e.target.value);
-                    }}
                 />
             </Control.Row>
             <Br />
@@ -157,6 +162,7 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
             })}
             {mode !== `view` && (
                 <Button
+                    background={`orange`}
                     onClick={() => {
                         setValue(`operatorConfigData.target.mappingStructure`, [
                             ...(_.get(data, `operatorConfigData.target.mappingStructure`) ?? []),
@@ -175,26 +181,34 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                 <Control.Select
                     name={`operatorConfigData.updateSettings.updateType`}
                     label={`Тип обновления`}
-                    options={Object.entries(UPDATE_TYPES).map(([value, label], index) => ({ label, value }))}
+                    options={Object.entries(_.pick(UPDATE_TYPES, [`REPLACE`, `UPSERT`, `INSERT`])).map(([value, label], index) => ({ label, value }))}
                     extra={`flex: 0.5; margin-right: 16px !important;`}
                 />
             </Control.Row>
-            {_.get(data, `operatorConfigData.updateSettings.updateType`) !== `full` && (
-                <Control.Row>
-                    <Control.Select
-                        name={`operatorConfigData.updateSettings.lastUpdatedField`}
-                        label={`Поле последнего обновления`}
-                        options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
-                        readOnly={!params?.target?.columns?.length}
-                    />
-                    <Control.Select
-                        name={`operatorConfigData.updateSettings.primaryKey`}
-                        label={`Первичный ключ`}
-                        options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
-                        readOnly={!params?.target?.columns?.length}
-                    />
-                </Control.Row>
-            )}
+            {
+                {
+                    REPLACE: null,
+                    UPSERT: (
+                        <>
+                            <Control.Row>
+                                <Control.Select
+                                    name={`operatorConfigData.updateSettings.primaryKey`}
+                                    label={`Первичный ключ таблицы-источника`}
+                                    extra={`flex: 0.5; margin-right: 16px !important;`}
+                                    options={
+                                        TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                                            value: i,
+                                            label: i,
+                                            muted: i === _.get(data, `operatorConfigData.updateSettings.primaryKey`),
+                                        })) ?? []
+                                    }
+                                />
+                            </Control.Row>
+                        </>
+                    ),
+                    INSERT: null,
+                }?.[_.get(data, `operatorConfigData.updateSettings.updateType`)]
+            }
         </>
     );
 };

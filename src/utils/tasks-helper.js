@@ -13,7 +13,7 @@ const TasksHelper = {
         const task = tasks?.find?.((i) => i?.id === taskId) ?? {};
         const structure = _.get(task, `operatorConfigData.storageStructure`);
         const { operator } = task;
-        return (operator === OPERATORS.JOIN ? Object.values(structure ?? {})?.flat?.() : structure)?.map?.(({ storageFieldName: i }) => i) ?? [];
+        return ([OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(operator) ? Object.values(structure ?? {})?.flat?.() : structure)?.map?.(({ storageFieldName: i }) => i) ?? [];
     },
     getSourcesNames: (task) => {
         const { process_id } = useParams();

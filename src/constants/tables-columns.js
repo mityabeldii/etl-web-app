@@ -10,6 +10,8 @@ import ProcessesAPI from "../api/processes-api";
 import { putStorage, getStorage, mergeStorage } from "../hooks/useStorage";
 import { eventDispatch } from "../hooks/useEventListener";
 import TasksHelper from "../utils/tasks-helper";
+import ModalsHelper from "../utils/modals-helper";
+import DatasourceAPI from "../api/datasource-api";
 
 const DatasourceList = {
     useBackendProcessing: false,
@@ -41,8 +43,8 @@ const DatasourceList = {
                 extra: `box-shadow: unset; padding: 8px; min-width: unset;`,
                 leftIconStyles: `margin-right: 0;`,
                 onClick: (row) => {
-                    putStorage(`forms.${FORMS.EDIT_DATA_SOURCE_MODAL}.values`, row);
-                    eventDispatch(`OPEN_${MODALS.EDIT_DATA_SOURCE_MODAL}_MODAL`);
+                    putStorage(`forms.${FORMS.EDIT_DATASOURCE_MODAL}.values`, row);
+                    ModalsHelper.showModal(MODALS.EDIT_DATASOURCE_MODAL);
                 },
             },
         },
@@ -55,6 +57,23 @@ const DatasourceList = {
                 leftIcon: `delete-outline`,
                 extra: `box-shadow: unset; padding: 8px; min-width: unset;`,
                 leftIconStyles: `margin-right: 0;`,
+                onClick: (row) => {
+                    ModalsHelper.showModal(MODALS.MODALITY, {
+                        title: `Удаление источника данных`,
+                        description: `Вы действительно хотите удалить источник данных ${row?.name}?`,
+                        confirmButton: {
+                            children: `Удалить`,
+                            background: `red`,
+                            onClick: async () => {
+                                DatasourceAPI.deleteDatasource(row?.id);
+                            },
+                        },
+                        cancelButton: {
+                            background: `grey`,
+                            children: `Отмена`,
+                        },
+                    });
+                },
             },
         },
     ],
@@ -115,7 +134,7 @@ const ETLProcessesConfigurationTable = {
             name: `operator`,
             label: `Имя оператора`,
             onCellClick: ({ row }) => {
-                eventDispatch(`OPEN_${MODALS.CREATE_TASK}_MODAL`, { mode: `view` });
+                ModalsHelper.showModal(MODALS.CREATE_TASK, { mode: `view` });
                 putStorage(`forms.${FORMS.CREATE_TASK}.values`, row);
             },
             cell: { type: `operator` },
@@ -140,7 +159,7 @@ const ETLProcessesConfigurationTable = {
                 extra: `justify-content: flex-end;`,
             },
             onCellClick: ({ row }) => {
-                eventDispatch(`OPEN_${MODALS.CREATE_TASK}_MODAL`, { mode: `edit` });
+                ModalsHelper.showModal(MODALS.CREATE_TASK, { mode: `edit` });
                 putStorage(`forms.${FORMS.CREATE_TASK}.values`, row);
             },
         },
@@ -164,28 +183,67 @@ const ETLProcessesConfigurationTable = {
 
 const ProcessesHistoryTable = {
     useBackendProcessing: false,
-    withPagination: false,
+    withPagination: true,
     booleanOperation: `disjunction`,
     columns: [
         {
-            name: `processId`,
+            name: `processName`,
             label: `Процесс`,
             extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
-            transform: ({ row }) => `**${row?.processName}**\n\n${row?.processId}`,
+            transform: ({ row }) => `**${row?.processName}**`,
         },
-        { name: `processRunId`, label: `ID запуска процесса`, extra: `flex: 2;` },
+        { name: `processRunId`, label: `ID запуска`, extra: `flex: 2;` },
+        { name: `processId`, label: `ID процесса`, extra: `flex: 2;` },
         {
             name: `startAndStop`,
-            label: `Старт и завершение`,
-            extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
+            label: `Старт/Завершение`,
+            extra: `flex: 2; > * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
             transform: ({ row }) =>
                 `${row?.processStartDate ? moment(row?.processStartDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
                     row?.processEndDate ? moment(row?.processEndDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
                 }`,
         },
         { name: `state`, label: `Статус`, extra: `flex: unset; width: 200px;`, cell: { type: `processstatus` } },
-        { name: ``, label: ``, extra: `flex: unset; width: 100px;`, cell: { type: `eventlogbutton` } },
-        { name: ``, label: ``, extra: `flex: unset; width: 20px;`, cell: { type: `icon`, src: `arrow-right-grey` } },
+        // { name: ``, label: ``, extra: `flex: unset; width: 100px;`, cell: { type: `eventlogbutton` } },
+    ],
+};
+
+const TasksHistoryTable = {
+    useBackendProcessing: true,
+    withPagination: true,
+    booleanOperation: `disjunction`,
+    columns: [
+        {
+            name: `taskName`,
+            label: `Задача`,
+        },
+        {
+            name: `id`,
+            label: `ID запуска задачи`,
+        },
+        {
+            name: `processId`,
+            label: `ID процесса`,
+        },
+        // {
+        //     name: `processName`,
+        //     label: `Процесс`,
+        //     extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
+        //     transform: ({ row }) => `**${row?.processName}**`,
+        // },
+        // { name: `processRunId`, label: `ID запуска`, extra: `flex: 2;` },
+        // { name: `processId`, label: `ID процесса`, extra: `flex: 2;` },
+        {
+            name: `startAndStop`,
+            label: `Старт/Завершение`,
+            extra: `flex: 2; > * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
+            transform: ({ row }) =>
+                `${row?.startDate ? moment(row?.startDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
+                    row?.endDate ? moment(row?.endDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
+                }`,
+        },
+        { name: `state`, label: `Статус`, extra: `flex: unset; width: 200px;`, cell: { type: `processstatus` } },
+        // { name: ``, label: ``, extra: `flex: unset; width: 100px;`, cell: { type: `eventlogbutton` } },
     ],
 };
 
@@ -196,6 +254,7 @@ const tablesColumns = {
     [TABLES.PROCESSES_LIST]: ProcessesList,
     [TABLES.TASKS_TABLE]: ETLProcessesConfigurationTable,
     [TABLES.PROCESSES_HISTORY]: ProcessesHistoryTable,
+    [TABLES.TASKS_HISTORY]: TasksHistoryTable,
 };
 
 export default tablesColumns;
