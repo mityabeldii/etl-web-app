@@ -32,16 +32,16 @@ const UserApp = () => {
                 <Wrapper>
                     <Container>
                         <Switch>
-                            <Route exact path={`/datasources`} component={DatasourcesListPage} />
-                            <Route exact path={`/datasources/:selectedSourceId`} component={DatasourcePage} />
-                            <Route exact path={`/processes`} component={ETLProcessesListPage} />
-                            <Route exact path={`/processes/configuration/:process_id`} component={ProcessesConfigurationPage} />
-                            <Route exact path={`/history/processes`} component={ProcessesHistory} />
-                            <Route exact path={`/history/tasks`} component={TasksHistory} />
-                            <Route exact path={`/storage/intermediate`} component={IntermidiateStoragePage} />
-                            <Route exact path={`/bi`} component={() => <></>} />
+                            <Route exact path={[`/datasources`, `/datasources:keycloack`]} component={DatasourcesListPage} />
+                            <Route exact path={[`/datasources/:selectedSourceId`, `/datasources/:selectedSourceId:keycloack`]} component={DatasourcePage} />
+                            <Route exact path={[`/processes`, `/processes:keycloack`]} component={ETLProcessesListPage} />
+                            <Route exact path={[`/processes/configuration/:process_id`, `/processes/configuration/:process_id:keycloack`]} component={ProcessesConfigurationPage} />
+                            <Route exact path={[`/history/processes`, `/history/processes:keycloack`]} component={ProcessesHistory} />
+                            <Route exact path={[`/history/tasks`, `/history/tasks:keycloack`]} component={TasksHistory} />
+                            <Route exact path={[`/storage/intermediate`, `/storage/intermediate:keycloack`]} component={IntermidiateStoragePage} />
+                            <Route exact path={[`/bi`, `/bi:keycloack`]} component={() => <></>} />
                             <Route path={`/`}>
-                                <Redirect to={`/datasources`} />
+                                <Redirect to={`/processes`} />
                             </Route>
                         </Switch>
                     </Container>

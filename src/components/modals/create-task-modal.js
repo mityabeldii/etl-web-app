@@ -39,33 +39,31 @@ const CrateTaskModal = () => {
     const { tasks = [] } = process;
     useEffect(DatasourceAPI.getDatasources, []);
 
-    // console.log(data);
-
-    useModal(MODALS.CREATE_TASK, {
+    const { close: closeModal } = useModal(MODALS.CREATE_TASK, {
         onOpen: (e) => {
             const { mode } = e;
             setMode(mode);
             setReadOnly(mode === `view`);
         },
+        onClose: clearForm,
     });
 
-    const closeModal = () => {
-        ModalsHelper.hideModal(MODALS.CREATE_TASK);
-    };
-    const handleSubmit = async (data) => {
-        try {
-            if (mode === `edit`) {
-                await ProcessesAPI.updateTask(process_id, data);
-            }
-            if (mode === `create`) {
-                await ProcessesAPI.createTask(process_id, { ...data, processId: process_id });
-            }
-            closeModal();
-        } catch (error) {}
+    const handlers = {
+        submit: async (data) => {
+            try {
+                if (mode === `edit`) {
+                    await ProcessesAPI.updateTask(process_id, data);
+                }
+                if (mode === `create`) {
+                    await ProcessesAPI.createTask(process_id, { ...data, processId: process_id });
+                }
+                closeModal();
+            } catch (error) {}
+        },
     };
     return (
         <PopUpWrapper name={MODALS.CREATE_TASK} onClickOutside={clearForm}>
-            <Form name={FORMS.CREATE_TASK} onSubmit={onSubmit(handleSubmit)}>
+            <Form name={FORMS.CREATE_TASK} onSubmit={onSubmit(handlers.submit)}>
                 <Control.Row>
                     <H1 extra={`margin-bottom: 20px;`}>
                         {
@@ -98,7 +96,7 @@ const CrateTaskModal = () => {
                         placeholder={`Выберите оператор для задачи`}
                         options={Object.keys(OPERATORS).map((item) => ({ label: item, value: item }))}
                         extra={`flex: 0.5; margin-right: 16px !important;`}
-                        required
+                        idRequired
                     />
                 </Control.Row>
                 {

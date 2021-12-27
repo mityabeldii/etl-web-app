@@ -39,6 +39,13 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
             DatasourceAPI.getDatasourceTables(targetId);
         }
     }, [_.get(data, `operatorConfigData.target.targetId`)]);
+    useEffect(() => {
+        const targetId = _.get(data, `operatorConfigData.target.targetId`);
+        const targetTableName = _.get(data, `operatorConfigData.target.targetTableName`);
+        if (targetId && targetId) {
+            DatasourceAPI.getTableColumns(targetId, targetTableName);
+        }
+    }, [_.get(data, `operatorConfigData.target.targetId`), _.get(data, `operatorConfigData.target.targetTableName`)]);
     return (
         <>
             <Br />
@@ -99,9 +106,6 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                     label={`Имя таблицы в целевой БД`}
                     options={params?.target?.tables?.map?.((item) => ({ label: item, value: item }))}
                     readOnly={!params?.target?.tables?.length}
-                    onChange={(e) => {
-                        DatasourceAPI.getTableColumns(_.get(data, `operatorConfigData.target.targetId`), e.target.value);
-                    }}
                 />
             </Control.Row>
             <Br />

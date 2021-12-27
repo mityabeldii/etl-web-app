@@ -17,8 +17,8 @@ import DatasourceAdHocQueryModal from "../modals/datasource-ad-hoc-query-modal";
 import ModalsHelper from "../../utils/modals-helper";
 
 const DatasourcePage = () => {
-    const { pathname } = useLocation();
-    const { selectedSourceId } = useParams();
+    const { selectedSourceId: dirtySelectedSourceId } = useParams();
+    const selectedSourceId = dirtySelectedSourceId?.split?.(`&`)?.[0];
     const selectedSource = useStorageListener(
         (state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows?.find?.((i) => i?.id == selectedSourceId) ?? {}
     );
