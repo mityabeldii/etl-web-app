@@ -51,7 +51,7 @@ const Menu = () => {
             </Link>
             {menuSections?.map?.((section, index) => (
                 <Fragment key={index}>
-                    <MenuSection {...section} to={section?.link} as={section.link ? Link : sections?.href ? A : Frame} />
+                    <MenuSection {...section} to={section?.link} as={section.link ? Link : section?.href ? A : Frame} />
                     {section?.items?.map?.((item, index) => (
                         <MenuItem key={item?.link} to={item?.link} selected={pathname?.startsWith?.(item?.link)}>
                             {item?.label}
