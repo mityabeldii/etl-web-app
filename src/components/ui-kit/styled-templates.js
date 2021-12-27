@@ -166,7 +166,6 @@ export const Checkbox = styled.input.attrs((props) => {
 
 // export const Switch = (props) => {
 //     const { name = `checkbox`, extra = `` } = props;
-//     console.log(props);
 //     return (
 //         <SwitchWrapper extra={extra}>
 //             <SwitchBox id={name} type={`checkbox`} {...props} />

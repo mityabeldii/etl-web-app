@@ -106,6 +106,7 @@ const DatasourcePage = () => {
                         name={TABLES.DATASOURCE_TABLE_PREVIEW}
                         columns={Object.keys(preview?.[0] ?? {})?.map?.((i) => ({ name: i, label: i }))}
                         fetchFunction={fetchPreviewFunction}
+                        useBackendProcessing={true}
                     />
                 </Frame>
             </RowWrapper>

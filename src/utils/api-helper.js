@@ -93,7 +93,7 @@ export const convertPaginatedResponse = (response) => {
         rows: _.map(response?.rows, `cells`)?.map?.((i) => Object.fromEntries(i?.map?.((i) => [i?.column, i?.value]))),
         pagination: {
             perPage: response?.rowCount,
-            currentPage: response?.page,
+            currentPage: Math.max(response?.page - 1, 0),
             totalCount: response?.totalRowCount,
         },
     };

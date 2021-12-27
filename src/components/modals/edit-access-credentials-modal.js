@@ -36,7 +36,6 @@ const EditAccessCredentialsModal = () => {
     };
     useModal(MODALS.EDIT_ACCESS_CREDENTIALS, {
         onOpen: (d) => {
-            console.log(d);
             putStorage(`forms.${FORMS.EDIT_ACCESS_CREDENTIALS}.values`, d);
         },
     });
