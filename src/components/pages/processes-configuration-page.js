@@ -56,7 +56,7 @@ const ProcessesConfigurationPage = () => {
                             <ArrowBack />
                         </Link>
                         Конфигурация процесса <span>{process?.processName}</span>
-                        <process_idWapper>ID: {process_id}</process_idWapper>
+                        <ProcessIdWrapper>ID: {process_id}</ProcessIdWrapper>
                     </Heading>
                     {edit ? (
                         <Link to={`${pathname}${objectToQS({})}`}>
@@ -102,7 +102,7 @@ const ProcessesConfigurationPage = () => {
                 </ProcessSchema.Wrapper>
             </>
         ),
-        [process_id, JSON.stringify({ tasks, edit })]
+        [process_id, process?.processName, JSON.stringify({ tasks, edit })]
     );
 };
 
@@ -156,7 +156,7 @@ const ProcessSchema = {
     `,
 };
 
-const process_idWapper = styled(Frame)`
+const ProcessIdWrapper = styled(Frame)`
     font-size: 14px;
     line-height: 20px;
     margin-left: 12px;

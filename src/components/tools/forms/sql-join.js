@@ -83,7 +83,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     Имя поля в основном источнике
                 </Control.Label>
                 <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
-                    Имя поля во вспомогательном хранилище
+                    Имя поля в источнике для соединения
                 </Control.Label>
             </Control.Row>
             {_.get(data, `operatorConfigData.joinSettings.conditions`)?.map?.((item, index) => (
@@ -150,7 +150,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     Имя поля в основном источнике
                 </Control.Label>
                 <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
-                    Имя поля в источнике для соединения
+                    Имя поля во вспомогательном хранилище
                 </Control.Label>
             </Control.Row>
             {_.get(data, `operatorConfigData.storageStructure.leftSourceFields`)?.map?.((item, index) => (
