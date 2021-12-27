@@ -31,7 +31,7 @@ const menuSections = [
     {
         label: `Отчеты и дашборды`,
         icon: `menu-reports`,
-        link: `/bi`,
+        href: `https://dev.sciencenet.ru/bi`,
         items: [],
     },
 ];
@@ -51,7 +51,7 @@ const Menu = () => {
             </Link>
             {menuSections?.map?.((section, index) => (
                 <Fragment key={index}>
-                    <MenuSection {...section} to={section?.link} as={section.link ? Link : Frame} />
+                    <MenuSection {...section} to={section?.link} as={section.link ? Link : sections?.href ? A : Frame} />
                     {section?.items?.map?.((item, index) => (
                         <MenuItem key={item?.link} to={item?.link} selected={pathname?.startsWith?.(item?.link)}>
                             {item?.label}
@@ -65,6 +65,8 @@ const Menu = () => {
         </Wrapper>
     );
 };
+
+const A = styled.a``;
 
 const MenuItem = styled(Link)`
     width: 100%;
