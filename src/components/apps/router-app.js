@@ -15,7 +15,7 @@ import { useStorageListener } from "../../hooks/useStorage";
 
 const RouterApp = () => {
     const { initialized, keycloak } = useKeycloak();
-    const { authenticated, login } = keycloak;
+    const { authenticated, login, logout } = keycloak;
     const { role, contextsLoaded } = useStorageListener((state) => ({
         role: state?.user?.contexts
             ?.map?.((i) => _.map(i?.roles, `name`))
@@ -26,9 +26,13 @@ const RouterApp = () => {
         contextsLoaded: !!state?.user?.contexts,
     }));
 
-    useEffect(() => {
+    useEffect(async () => {
         if (initialized && !authenticated) {
-            login();
+            try {
+                login();
+            } catch (error) {
+                logout();
+            }
         }
     }, [initialized, authenticated, login]);
 
@@ -46,7 +50,6 @@ const RouterApp = () => {
                     admin: <UserApp />,
                     guest: <GuestApp />,
                 }?.[role] ?? <GuestApp />)}
-            )
         </>
     );
 };

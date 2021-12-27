@@ -2,7 +2,7 @@
 import axios from "axios";
 import _ from "lodash";
 
-import { convertPaginatedResponse, GETOptions, handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
+import { convertPaginatedResponse, convertPaginatedResponse2, GETOptions, handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
 import CaseHalper from "../utils/case-helper";
 
 import { API_URL, base_url, TABLES } from "../constants/config";
@@ -121,7 +121,7 @@ const DatasourceAPI = {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`${base_url}/process-instances`)).data;
-                putStorage(`tables.${TABLES.PROCESSES_HISTORY}`, {
+                mergeStorage(`tables.${TABLES.PROCESSES_HISTORY}`, {
                     rows: response?.sort?.((a, b) => b?.processStartDate - a?.processStartDate) ?? [],
                     pagination: response?._meta ?? {},
                 });
@@ -132,14 +132,11 @@ const DatasourceAPI = {
         });
     },
 
-    async getTasksHistory(options) {
+    async getTasksHistory() {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`${base_url}/api/v1/task-instances${objectToQS(options)}`)).data;
-                putStorage(`tables.${TABLES.TASKS_HISTORY}`, {
-                    rows: response ?? [],
-                    pagination: response?._meta ?? {},
-                });
+                const response = (await axios.get(`${base_url}/api/v1/task-instances`, POSTOptions(`TASKS_HISTORY`))).data;
+                mergeStorage(`tables.${TABLES.TASKS_HISTORY}`, convertPaginatedResponse2(response));
                 return response;
             } catch (error) {
                 throw handleError(error);

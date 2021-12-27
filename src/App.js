@@ -28,10 +28,15 @@ const eventLogger = (event, error) => {
     // console.log("onKeycloakEvent", event, error);
 };
 
-const tokenLogger = (tokens) => {
+const tokenLogger = async (tokens) => {
     // console.log("onKeycloakTokens", tokens);
-    UserAPI.getContexts(tokens?.token);
-
+    if (tokens.token) {
+        try {
+            await UserAPI.getContexts(tokens?.token);
+        } catch (error) {
+            keycloak.logout();
+        }
+    }
 };
 
 const App = () => {

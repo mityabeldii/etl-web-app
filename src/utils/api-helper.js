@@ -82,7 +82,8 @@ export const POSTOptions = (name) => {
     return {
         params: {
             limit: perPage,
-            offset: currentPage,
+            offset: currentPage + 1,
+            ...filter,
         },
     };
 };
@@ -94,6 +95,18 @@ export const convertPaginatedResponse = (response) => {
             perPage: response?.rowCount,
             currentPage: response?.page,
             totalCount: response?.totalRowCount,
+        },
+    };
+    return data;
+};
+
+export const convertPaginatedResponse2 = (response) => {
+    const data = {
+        rows: response?.data,
+        pagination: {
+            perPage: response?.count,
+            currentPage: Math.max(response?.page - 1, 0),
+            totalCount: response?.totalCount,
         },
     };
     return data;

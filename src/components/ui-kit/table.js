@@ -223,12 +223,12 @@ const Table = (props) => {
                             .map((item, index) => (
                                 <PageNumberWrapper
                                     key={index}
-                                    selected={currentPage === item + 1}
+                                    selected={currentPage === item}
                                     onClick={() => {
                                         if (useBackendProcessing) {
-                                            putStorage(`tables.${name}.pagination.currentPage`, item + 1);
+                                            putStorage(`tables.${name}.pagination.currentPage`, item);
                                         } else {
-                                            frontendPagination.handlePageNavigation(item + 1);
+                                            frontendPagination.handlePageNavigation(item);
                                         }
                                     }}
                                 >

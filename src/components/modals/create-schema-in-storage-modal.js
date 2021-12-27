@@ -35,8 +35,8 @@ const CreateScheaInStorageModal = () => {
             setError(null);
             await SchemasAPI.createSchema(data);
             closeModal();
-        } catch ({ message }) {
-            setError(message);
+        } catch (error) {
+            setError(error?.response?.data?.message);
         }
     };
     return (

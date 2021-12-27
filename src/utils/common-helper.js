@@ -192,7 +192,7 @@ const CommonHelper = {
         return Object.fromEntries(Object.entries(parsedObject)?.map?.(([key, value], index) => [key, new URLSearchParams(search).get(key)]));
     },
 
-    objectToQS: (obj = {}) => `?` + new URLSearchParams(obj).toString(),
+    objectToQS: (obj = {}) => (_.isEmpty(obj) ? `` : `?`) + new URLSearchParams(obj).toString(),
 
     debounce: (f, ms = 150) => {
         let isCooldown = false;

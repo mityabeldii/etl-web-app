@@ -50,10 +50,10 @@ const EditProcessAttributesModal = () => {
                 <Control.Row>
                     <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя процесса`} isRequired />
                 </Control.Row>
-                <Control.Row>
+                {/* <Control.Row>
                     <Control.Input name={`time_of_creation`} label={`Время создания`} />
                     <Control.Input name={`last_editing_time`} label={`Время последнего редактирования:`} />
-                </Control.Row>
+                </Control.Row> */}
                 <Control.Row>
                     <Control.Input name={`id`} label={`ID`} readOnly />
                 </Control.Row>
@@ -77,13 +77,13 @@ const EditProcessAttributesModal = () => {
                         isRequired
                     />
                 </Control.Row>
-                <Control.Row>
+                {/* <Control.Row>
                     <Control.Input name={`last_launch_time`} label={`Время последнего запуска`} readOnly />
                     <Control.Input name={`next_launch_status`} label={`Статус последнего запуска`} readOnly />
                 </Control.Row>
                 <Control.Row>
                     <Control.Input name={`next_launch_time`} label={`Время следующего запуска`} readOnly />
-                </Control.Row>
+                </Control.Row> */}
                 <RowWrapper extra={`justify-content: flex-end;`}>
                     <Button
                         background={`grey`}

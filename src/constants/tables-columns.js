@@ -71,9 +71,9 @@ const DatasourceList = {
                         cancelButton: {
                             background: `grey`,
                             children: `Отмена`,
-                        }
+                        },
                     });
-                }
+                },
             },
         },
     ],
@@ -198,9 +198,49 @@ const ProcessesHistoryTable = {
             name: `startAndStop`,
             label: `Старт/Завершение`,
             extra: `flex: 2; > * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
-            transform: ({ row }) => `${row?.processStartDate ? moment(row?.processStartDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
-                row?.processEndDate ? moment(row?.processEndDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
-            }`,
+            transform: ({ row }) =>
+                `${row?.processStartDate ? moment(row?.processStartDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
+                    row?.processEndDate ? moment(row?.processEndDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
+                }`,
+        },
+        { name: `state`, label: `Статус`, extra: `flex: unset; width: 200px;`, cell: { type: `processstatus` } },
+        // { name: ``, label: ``, extra: `flex: unset; width: 100px;`, cell: { type: `eventlogbutton` } },
+    ],
+};
+
+const TasksHistoryTable = {
+    useBackendProcessing: true,
+    withPagination: true,
+    booleanOperation: `disjunction`,
+    columns: [
+        {
+            name: `taskName`,
+            label: `Задача`,
+        },
+        {
+            name: `id`,
+            label: `ID запуска задачи`,
+        },
+        {
+            name: `processId`,
+            label: `ID процесса`,
+        },
+        // {
+        //     name: `processName`,
+        //     label: `Процесс`,
+        //     extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
+        //     transform: ({ row }) => `**${row?.processName}**`,
+        // },
+        // { name: `processRunId`, label: `ID запуска`, extra: `flex: 2;` },
+        // { name: `processId`, label: `ID процесса`, extra: `flex: 2;` },
+        {
+            name: `startAndStop`,
+            label: `Старт/Завершение`,
+            extra: `flex: 2; > * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
+            transform: ({ row }) =>
+                `${row?.processStartDate ? moment(row?.processStartDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
+                    row?.processEndDate ? moment(row?.processEndDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
+                }`,
         },
         { name: `state`, label: `Статус`, extra: `flex: unset; width: 200px;`, cell: { type: `processstatus` } },
         // { name: ``, label: ``, extra: `flex: unset; width: 100px;`, cell: { type: `eventlogbutton` } },
@@ -214,7 +254,7 @@ const tablesColumns = {
     [TABLES.PROCESSES_LIST]: ProcessesList,
     [TABLES.TASKS_TABLE]: ETLProcessesConfigurationTable,
     [TABLES.PROCESSES_HISTORY]: ProcessesHistoryTable,
-    [TABLES.TASKS_HISTORY]: ProcessesHistoryTable,
+    [TABLES.TASKS_HISTORY]: TasksHistoryTable,
 };
 
 export default tablesColumns;

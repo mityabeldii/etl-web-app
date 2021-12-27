@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 const usePagination = (items = [], options = {}) => {
-    const { zeroShift = 1 } = options;
+    const { zeroShift = 0 } = options;
     const [perPage, setPerPage] = useState(options?.perPage ?? 10);
     const [currentPage, setCurrentPage] = useState(0);
     const pagesCount = Math.ceil(items?.length / perPage);
