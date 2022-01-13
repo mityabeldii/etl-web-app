@@ -10,13 +10,13 @@ import { Button, Frame, RowWrapper } from "../ui-kit/styled-templates";
 
 const menuSections = [
     { label: `Источники данных`, icon: `menu-data-source`, items: [{ label: `Список источников данных`, link: `/datasources` }] },
-    // {
-    //     label: `Структура хранилища`,
-    //     icon: `menu-storage-structure`,
-    //     items: [
-    //         { label: `Хранилище`, link: `/storage/intermediate${objectToQS({ type: `STAGING` })}` },
-    //     ],
-    // },
+    {
+        label: `Структура хранилища`,
+        icon: `menu-storage-structure`,
+        items: [
+            { label: `Хранилище`, link: `/storage/intermediate${objectToQS({ type: `STAGING` })}` },
+        ],
+    },
     { label: `ETL-процессы`, icon: `menu-etl-processes`, items: [{ label: `Список ETL-процессов`, link: `/processes` }] },
     {
         label: `Мониторинг ETL-процессов`,
