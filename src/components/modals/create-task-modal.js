@@ -38,7 +38,13 @@ const CrateTaskModal = () => {
                 .number()
                 .typeError(`Это поле должно быть числом`)
                 .integer(`Это поле должно быть целым числом`)
-                .notOneOf(_.map(tasks?.filter?.(i => i?.id !== data?.id), `taskQueue`), `Процесс с таким порядковым номером уже существует`)
+                .notOneOf(
+                    _.map(
+                        tasks?.filter?.((i) => i?.id !== data?.id),
+                        `taskQueue`
+                    ),
+                    `Процесс с таким порядковым номером уже существует`
+                )
                 .required(`Это поле обязательно`),
         });
 
