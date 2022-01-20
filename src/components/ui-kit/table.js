@@ -268,7 +268,7 @@ const Table = (props) => {
 };
 
 const smartStringify = (value) => {
-    return !!value ? (typeof value !== `string` ? JSON.stringify(value) : value) : `-`;
+    return !!value || !!`${value}` ? (typeof value !== `string` ? JSON.stringify(value) : value) : `-`;
 };
 
 const TableCell = ({ cellState }) => {

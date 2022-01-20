@@ -23,20 +23,26 @@ import useFormControl from "../../hooks/useFormControl";
 import useModal from "../../hooks/useModal";
 import ModalsHelper from "../../utils/modals-helper";
 
-const schema = (yup) =>
-    yup.object().shape({
-        taskName: yup.string().required(`Это поле обязательно`),
-        operator: yup.string().required(`Это поле обязательно`),
-        taskQueue: yup.number().required(`Это поле обязательно`),
-    });
-
 const CrateTaskModal = () => {
     const [mode, setMode] = useState(`view`);
-    const { data, onSubmit, clearForm, setReadOnly } = useFormControl({ name: FORMS.CREATE_TASK, schema });
 
     const { process_id } = useParams();
     const process = useStorageListener((state) => state?.processes ?? [])?.[process_id] ?? {};
     const { tasks = [] } = process;
+
+    const schema = (yup, data) =>
+        yup.object().shape({
+            taskName: yup.string().max(40, `Не более 40 символов`).required(`Это поле обязательно`),
+            operator: yup.string().required(`Это поле обязательно`),
+            taskQueue: yup
+                .number()
+                .typeError(`Это поле должно быть числом`)
+                .integer(`Это поле должно быть целым числом`)
+                .notOneOf(_.map(tasks?.filter?.(i => i?.id !== data?.id), `taskQueue`), `Процесс с таким порядковым номером уже существует`)
+                .required(`Это поле обязательно`),
+        });
+
+    const { data, onSubmit, clearForm, setReadOnly } = useFormControl({ name: FORMS.CREATE_TASK, schema });
     useEffect(DatasourceAPI.getDatasources, []);
 
     const { close: closeModal } = useModal(MODALS.CREATE_TASK, {
@@ -84,10 +90,10 @@ const CrateTaskModal = () => {
                     </H1>
                 </Control.Row>
                 <Control.Row>
-                    <Control.Input name={`taskName`} label={`Имя`} placeholder={`Имя задачи`} isRequired />
+                    <Control.Input name={`taskName`} label={`Имя`} placeholder={`Имя задачи`} isRequired maxLength={40} />
                 </Control.Row>
                 <Control.Row>
-                    <Control.Textarea name={`taskDescription`} label={`Описание`} placeholder={`Краткое описание процесса`} />
+                    <Control.Textarea name={`taskDescription`} label={`Описание`} placeholder={`Краткое описание процесса`} maxLength={255} />
                 </Control.Row>
                 <Control.Row>
                     <Control.Select
@@ -96,7 +102,7 @@ const CrateTaskModal = () => {
                         placeholder={`Выберите оператор для задачи`}
                         options={Object.keys(OPERATORS).map((item) => ({ label: item, value: item }))}
                         extra={`flex: 0.5; margin-right: 16px !important;`}
-                        idRequired
+                        isRequired
                     />
                 </Control.Row>
                 {
@@ -109,12 +115,7 @@ const CrateTaskModal = () => {
                     }?.[data?.operator]
                 }
                 <Control.Row>
-                    <Control.Input
-                        name={`taskQueue`}
-                        label={`Порядок запуска`}
-                        placeholder={``}
-                        isRequired
-                    />
+                    <Control.Input name={`taskQueue`} label={`Порядок запуска`} placeholder={``} isRequired />
                 </Control.Row>
                 {mode !== `view` && (
                     <Control.Row>

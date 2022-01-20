@@ -53,7 +53,7 @@ const useFormControl = ({ name, schema }) => {
             e?.preventDefault?.();
             const data = getStorage((state) => _.get(state, `forms.${name}.values`) ?? {});
             if (schema) {
-                await schema(yup).validate(data, { abortEarly: false });
+                await schema(yup, data).validate(data, { abortEarly: false });
                 setErrors({});
             }
             handleSubmit(data);

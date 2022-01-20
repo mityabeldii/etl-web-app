@@ -11,7 +11,7 @@ import Select from "./select";
 import { getElementParrentsPath } from "../../utils/common-helper";
 import caseHelper from "../../utils/case-helper";
 
-import { getStorage, putStorage, useStorageListener } from "../../hooks/useStorage";
+import { getStorage, putStorage, omitStorage, useStorageListener } from "../../hooks/useStorage";
 import useFormControl from "../../hooks/useFormControl";
 
 const useFormName = () => {
@@ -41,6 +41,7 @@ export const Control = {
         const { readOnly } = useFormControl({ name: formName });
         const value = useStorageListener((state) => _.get(state, `forms.${formName}.values.${name}`));
         const error = useStorageListener((state) => _.get(state, `forms.${formName}.errors.${name}`));
+        const warning = useStorageListener((state) => _.get(state, `forms.${formName}.warnings.${name}`));
         const onChange = (e) => {
             if (!!formName && !!name) {
                 putStorage(`forms.${formName}.values.${name}`, e.target.value);
@@ -54,6 +55,14 @@ export const Control = {
                         ? cloneElement(child, {
                               value: child?.props?.value ?? getStorage((state) => _.get(state, `forms.${formName}.values.${name}`)) ?? ``,
                               onChange: (e) => {
+                                  if (e.target.value?.length >= child?.props?.maxLength - 5) {
+                                      putStorage(
+                                          `forms.${formName}.warnings.${name}.message`,
+                                          `Не более ${child?.props?.maxLength} символов (${e.target.value?.length})`
+                                      );
+                                  } else {
+                                      omitStorage(`forms.${formName}.warnings.${name}`);
+                                  }
                                   child?.props?.onChange?.(e);
                                   onChange(e);
                               },
@@ -62,7 +71,10 @@ export const Control = {
                           })
                         : child;
                 })}
-                <Control.Error>{error?.message}</Control.Error>
+                <Frame extra={`flex-direction: row; align-items: flex-start; margin-top: 5px;`}>
+                    <Control.Error extra={`margin: 0;`} >{error?.message}</Control.Error>
+                    <Control.Warning extra={`margin: 0 0 0 5px;`}>{warning?.message}</Control.Warning>
+                </Frame>
             </Frame>
         );
     },
@@ -129,6 +141,8 @@ export const Control = {
                     color: ${theme.red};
                 }
             `}
+
+        ${({ extra }) => extra}
     `,
     Error: styled(Frame)`
         color: ${(props) => props.theme.red};
@@ -138,6 +152,19 @@ export const Control = {
         height: 20px;
         margin-top: 5px;
         width: auto !important;
+
+        ${({ extra }) => extra}
+    `,
+    Warning: styled(Frame)`
+        color: ${(props) => props.theme.yellow};
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 20px;
+        height: 20px;
+        margin-top: 5px;
+        width: auto !important;
+
+        ${({ extra }) => extra}
     `,
 };
 /*eslint-enable*/

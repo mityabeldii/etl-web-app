@@ -43,7 +43,6 @@ const PopUpWrapper = (props) => {
         document.getElementsByTagName(`body`)[0].style.overflowY = isOpened ? `hidden` : `auto`;
     }, [isOpened]);
 
-
     if (!shouldMount) {
         return null;
     }
@@ -149,7 +148,7 @@ const OpenProjectTab = styled(Frame)`
     background: ${({ theme }) => theme.background.primary};
     box-sizing: border-box;
     width: 100%;
-    max-width: 760px;
+    max-width: 800px;
     position: relative;
 
     transform: translate(0, ${({ isOpened }) => (isOpened ? `0` : `50px`)});
