@@ -11,14 +11,19 @@ jobs:
             # Checkout
             - name: Checkout
               uses: actions/checkout@v2
+            # Install dependencies
             - name: Install dependencies
               run: npm install
+            # Install global command env-cmd
             - name: Install global command env-cmd
               run: npm install -g env-cmd
+            # Install global command surge
             - name: Install global command surge
               run: npm install --global surge
+            # Build
             - name: Build
               run: npm run build
+            # Surge deployment
             - name: Surge deployment
               run: surge ./build/ ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_TOKEN }}
             # Login to Docker Hub
