@@ -62,8 +62,8 @@ const SQLExtract = () => {
                             `operatorConfigData.source.sourceTableFields`,
                         ]);
                     }}
+                    extra={`flex: 0.5; margin-right: 16px !important;`}
                 />
-                <Control.Checkbox label={`Указать SQL-запрос`} name={`operatorConfigData.source.sqlQuery`} isRequired />
             </Control.Row>
             <Control.Row>
                 <Control.Select

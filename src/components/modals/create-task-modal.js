@@ -109,12 +109,11 @@ const CrateTaskModal = () => {
                     }?.[data?.operator]
                 }
                 <Control.Row>
-                    <Control.Input name={`taskQueue`} label={`Порядок запуска`} placeholder={``} isRequired />
-                    <Control.Select
-                        multiselect={true}
-                        name={`downstreamTaskIds`}
-                        label={`Следующие задачи`}
-                        options={tasks.map(({ taskName, id }) => ({ label: taskName, value: id }))}
+                    <Control.Input
+                        name={`taskQueue`}
+                        label={`Порядок запуска`}
+                        placeholder={``}
+                        isRequired
                     />
                 </Control.Row>
                 {mode !== `view` && (
