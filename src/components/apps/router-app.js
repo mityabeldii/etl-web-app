@@ -37,7 +37,7 @@ const RouterApp = () => {
     }, [initialized, authenticated, login]);
 
     if (!initialized || !contextsLoaded) {
-        return <Frame extra={`width: 100%; height: 100%; min-height: 100vh;`}>Loading...</Frame>;
+        return <Frame extra={`width: 100%; height: 100%; min-height: 100vh;`}>Загрузка...</Frame>;
     }
 
     return (

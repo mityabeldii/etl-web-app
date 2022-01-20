@@ -10,7 +10,7 @@ const LoadingModal = (props) => {
     const visible = useStorageListener(state => state?.loading_counter > 0);
     return (
         <Wrapper visible={visible} >
-            Loading...
+            Загрузка...
         </Wrapper>
     )
 }
