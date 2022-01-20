@@ -22,7 +22,7 @@ jobs:
             - name: Build
               run: npm run build
             - name: Deploying to surge
-            - run: surge ./ ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_TOKEN }}
+            - run: surge ./build/ ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_TOKEN }}
 
             # Login to Docker Hub
             # - name: Login to Docker Hub
