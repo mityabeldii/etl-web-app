@@ -554,7 +554,7 @@ const STr = styled(Frame)`
     align-items: flex-start;
 
     > * {
-        word-break: break-all;
+        word-break: break-word;
     }
 
     ${({ extra }) => extra}
