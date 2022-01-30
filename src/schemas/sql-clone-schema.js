@@ -6,13 +6,13 @@ const sqlCloneSchema = (yup, data) => ({
         .shape({
             source: yup
                 .object()
-                .transform((d) => d ?? {})
+                .default({})
                 .shape({
                     sourceId: yup.string().required(`Это поле обязательно`),
                 }),
             target: yup
                 .object()
-                .transform((d) => d ?? {})
+                .default({})
                 .shape({
                     targetId: yup.string().required(`Это поле обязательно`),
                 }),

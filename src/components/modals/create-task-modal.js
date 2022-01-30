@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useLocation, useParams } from "react-router-dom";
 import _ from "lodash";
-import * as yup from "yup";
 
 import { Frame, Button, H1, H2, Br, Form, RemoveRowButton, MappingArrow } from "../ui-kit/styled-templates";
 import { Control } from "../ui-kit/control";
@@ -24,8 +23,6 @@ import { useStorageListener } from "../../hooks/useStorage";
 import useFormControl from "../../hooks/useFormControl";
 import useModal from "../../hooks/useModal";
 
-const { createTask: schema } = Schemas;
-
 const CrateTaskModal = () => {
     const [mode, setMode] = useState(`view`);
 
@@ -33,7 +30,7 @@ const CrateTaskModal = () => {
     const process = useStorageListener((state) => state?.processes ?? [])?.[process_id] ?? {};
     const { tasks = [] } = process;
 
-    const { data, onSubmit, clearForm, setReadOnly } = useFormControl({ name: FORMS.CREATE_TASK, schema });
+    const { data, onSubmit, clearForm, setReadOnly } = useFormControl({ name: FORMS.CREATE_TASK, schema: Schemas.createTask({ tasks }) });
     useEffect(DatasourceAPI.getDatasources, []);
 
     const { close: closeModal } = useModal(MODALS.CREATE_TASK, {

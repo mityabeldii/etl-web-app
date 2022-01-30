@@ -229,6 +229,8 @@ const CommonHelper = {
         goToParent(element);
         return path;
     },
+
+    stringImposition: (s1, s2) => s1?.trim?.()?.toLowerCase?.()?.includes?.(s2?.trim?.()?.toLowerCase?.() ?? ``) ?? falses,
 };
 
 export default CommonHelper;
@@ -251,6 +253,7 @@ export const {
     downloadURI,
     getElementClassPath,
     getElementParrentsPath,
+    stringImposition,
 } = CommonHelper;
 
 export const isna = (item) => [undefined, null, ``].includes(item);

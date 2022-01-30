@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import _ from "lodash";
 import * as yup from "yup";
 
+import { objectNested } from "../utils/common-helper";
+
 import { getStorage, putStorage, omitStorage, useStorageListener, mergeStorage } from "./useStorage";
 import { eventDispatch } from "./useEventListener";
 
@@ -61,7 +63,7 @@ const useFormControl = ({ name, schema }) => {
         } catch (error) {
             console.log(error);
             console.error(`Form validation error`, Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? []));
-            setErrors(Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? []));
+            setErrors(objectNested(Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? [])));
             error?.inner?.forEach(({ path, message }) => eventDispatch(`THROW_ERROR`, `${path}: ${message}`));
         }
     };

@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import _ from "lodash";
 
@@ -7,7 +7,7 @@ import Input from "./input";
 import { Dropdown, Frame } from "./styled-templates";
 
 import { convertHex } from "../../utils/colors-helper";
-import { createId, togglePush } from "../../utils/common-helper";
+import { createId, stringImposition, togglePush } from "../../utils/common-helper";
 
 import { eventDispatch } from "../../hooks/useEventListener";
 
@@ -22,8 +22,28 @@ const Select = (props) => {
         placeholder = `Выберите из списка`,
         readOnly = false,
         toggleComponent: ToggleComponent,
+        allowSearch = false,
     } = props;
     const [dropdownId, setDropdownId] = useState(createId());
+    const [search, setSearch] = useState(``);
+    const selectedLabel = multiselect
+        ? options
+              //   .filter((i) => value?.includes(i?.value))
+              .filter((i) => value?.find?.((j) => _.isEqual(j, i.value)))
+              .map((i) => i?.label)
+              ?.join?.(`, `)
+        : options?.find?.((i) => i?.value === value)?.label ?? ``;
+    const readOnlyInput = readOnly || !(allowSearch && !multiselect);
+    useEffect(() => {
+        if (allowSearch && !_.isEmpty(selectedLabel)) {
+            setSearch(selectedLabel);
+        }
+    }, [selectedLabel]);
+    useEffect(() => {
+        if (search !== selectedLabel) {
+            onChange({ target: { name, value: undefined } });
+        }
+    }, [search]);
     return (
         <Dropdown
             id={dropdownId}
@@ -52,16 +72,9 @@ const Select = (props) => {
                     <ToggleComponent options={options} label={value} />
                 ) : (
                     <Input
-                        value={
-                            multiselect
-                                ? options
-                                      //   .filter((i) => value?.includes(i?.value))
-                                      .filter((i) => value?.find?.((j) => _.isEqual(j, i.value)))
-                                      .map((i) => i?.label)
-                                      ?.join?.(`, `)
-                                : options?.find?.((i) => i?.value === value)?.label ?? ``
-                        }
-                        readOnly
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        readOnly={readOnlyInput}
                         extra={css`
                             width: 100%;
                             /* background: ${({ theme }) => theme.background.secondary}; */
@@ -74,6 +87,12 @@ const Select = (props) => {
                                 color: ${({ theme }) => theme.text.primary};
                                 cursor: pointer;
                             `}
+                            ${({ theme }) =>
+                                !readOnlyInput &&
+                                search !== `` &&
+                                css`
+                                    border: 1px solid ${selectedLabel === search ? theme.green : theme.yellow};
+                                `}
                         `}
                         rightIcon={`select-arrow`}
                         placeholder={placeholder}
@@ -82,41 +101,58 @@ const Select = (props) => {
             }
             menu={
                 <>
-                    {options.map((option, index, self) => {
-                        const selected = _.isEqual(value, option.value);
-                        const muted = option?.muted && option.value !== value;
-                        return (
-                            <Option
-                                key={index}
-                                muted={muted}
-                                onClick={() => {
-                                    if (muted) {
-                                        return;
-                                    }
-                                    let newValue = value;
-                                    if (multiselect) {
-                                        if (!Array.isArray(newValue)) {
-                                            newValue = [];
+                    {options?.length === 0 && <EmptyPlaceholder />}
+                    {options
+                        ?.filter?.((i) => stringImposition(i?.label, search))
+                        ?.map?.((option, index, self) => {
+                            const selected = _.isEqual(value, option.value);
+                            const muted = option?.muted && option.value !== value;
+                            return (
+                                <Option
+                                    key={index}
+                                    muted={muted}
+                                    onClick={() => {
+                                        if (muted) {
+                                            return;
                                         }
-                                        onChange({ target: { value: togglePush(newValue, option.value) } });
-                                    } else {
-                                        onChange({ target: { value: selected ? undefined : option.value } });
-                                        eventDispatch(`CLOSE_DROPDOWN`, dropdownId);
-                                    }
-                                }}
-                            >
-                                {option.label}
-                                {(_.isEqual(value, option.value) ||
-                                    (!self?.map?.((i) => _.isEqual(i?.value, option.value))?.find?.((i) => !!i) && value?.includes?.(option.value)) ||
-                                    value?.find?.((j) => _.isEqual(j, option?.value))) && <Check />}
-                            </Option>
-                        );
-                    })}
+                                        let newValue = value;
+                                        if (multiselect) {
+                                            if (!Array.isArray(newValue)) {
+                                                newValue = [];
+                                            }
+                                            onChange({ target: { value: togglePush(newValue, option.value) } });
+                                        } else {
+                                            onChange({ target: { value: selected ? undefined : option.value } });
+                                            eventDispatch(`CLOSE_DROPDOWN`, dropdownId);
+                                        }
+                                        if (selected) {
+                                            setSearch(``);
+                                        }
+                                    }}
+                                >
+                                    {option.label}
+                                    {(_.isEqual(value, option.value) ||
+                                        (!self?.map?.((i) => _.isEqual(i?.value, option.value))?.find?.((i) => !!i) &&
+                                            value?.includes?.(option.value)) ||
+                                        value?.find?.((j) => _.isEqual(j, option?.value))) && <Check />}
+                                </Option>
+                            );
+                        })}
                 </>
             }
         />
     );
 };
+
+const EmptyPlaceholder = styled(Frame)`
+    width: 100%;
+    padding: 8px;
+    align-items: flex-start;
+    &:after {
+        content: "Данные отсутствуют";
+        color: ${({ theme }) => theme.grey};
+    }
+`;
 
 const Check = styled(Frame)`
     width: 15px;

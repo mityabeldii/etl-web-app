@@ -78,6 +78,7 @@ const SQLClone = () => {
                         name={`operatorConfigData.source.sourceId`}
                         label={`Источник данных`}
                         options={datasources?.map?.(({ id, name }) => ({ label: name, value: id }))}
+                        allowSearch
                         isRequired
                         onChange={(e) => {
                             removeValue([
