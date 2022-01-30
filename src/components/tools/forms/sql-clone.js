@@ -78,8 +78,6 @@ const SQLClone = () => {
                         name={`operatorConfigData.source.sourceId`}
                         label={`Источник данных`}
                         options={datasources?.map?.(({ id, name }) => ({ label: name, value: id }))}
-                        allowSearch
-                        isRequired
                         onChange={(e) => {
                             removeValue([
                                 `operatorConfigData.source.sourceSchemaName`,
@@ -88,6 +86,8 @@ const SQLClone = () => {
                             ]);
                         }}
                         extra={`flex: 0.5; margin-right: 16px !important;`}
+                        isRequired
+                        allowSearch
                     />
                 </Control.Row>
                 <Control.Row>
@@ -124,6 +124,8 @@ const SQLClone = () => {
                             );
                         }}
                         readOnly={!params?.source?.columns?.length}
+                        isRequired
+                        allowSearch
                     />
                 </Control.Row>
             </>
@@ -136,9 +138,8 @@ const SQLClone = () => {
                 <Control.Row>
                     <Control.Select
                         name={`operatorConfigData.target.targetId`}
-                        label={`Целевая БД`}
+                        label={`Получатель данных`}
                         options={datasources?.map?.(({ id, name }) => ({ label: name, value: id }))}
-                        isRequired
                         extra={`flex: 0.5; margin-right: 16px !important;`}
                         onChange={(e) => {
                             removeValue([
@@ -147,36 +148,42 @@ const SQLClone = () => {
                                 `operatorConfigData.target.mappingStructure`,
                             ]);
                         }}
+                        isRequired
+                        allowSearch
                     />
                 </Control.Row>
                 <Control.Row>
                     <Control.Select
                         name={`operatorConfigData.target.targetSchemaName`}
-                        label={`Имя схемы в промежуточном хранилище`}
+                        label={`Имя схемы в получателе данных`}
                         options={params?.target?.schemas?.map?.((item) => ({ label: item, value: item }))}
                         readOnly={!params?.target?.schemas?.length}
+                        isRequired
+                        allowSearch
                     />
                     <Control.Select
                         name={`operatorConfigData.target.targetTableName`}
-                        label={`Имя таблицы в промежуточном хранилище`}
+                        label={`Имя таблицы в получателе данных`}
                         options={params?.target?.tables?.map?.((item) => ({ label: item, value: item }))}
                         readOnly={!params?.target?.tables?.length}
                         // onChange={(e) => {
                         //     DatasourceAPI.getTableColumns(data?.operatorConfigData?.target?.targetId, e.target.value);
                         // }}
+                        isRequired
+                        allowSearch
                     />
                 </Control.Row>
             </>
         ),
-        [`Маппинг полей`]: (
+        [`Соответствие полей`]: (
             <>
                 <Control.Row>
-                    <H2 extra={`margin-bottom: 20px;`}>Маппинг полей</H2>
+                    <H2 extra={`margin-bottom: 20px;`}>Соответствие полей</H2>
                 </Control.Row>
                 <Control.Row>
                     <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start;`}>Поле в источнике</Control.Label>
                     <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; margin-left: 32px;`}>
-                        Поле на в промежуточном хранилище
+                        Поле в получателе данных
                     </Control.Label>
                 </Control.Row>
                 {_.get(data, `operatorConfigData.source.sourceTableFields`)?.map?.(({ sourceFieldName: item }, index) => {
@@ -198,6 +205,8 @@ const SQLClone = () => {
                                         ?.includes(item),
                                 }))}
                                 readOnly={!params?.target?.columns?.length}
+                                isRequired
+                                allowSearch
                             />
                         </Control.Row>
                     );
@@ -217,6 +226,8 @@ const SQLClone = () => {
                             ([value, label], index) => ({ label, value })
                         )}
                         extra={`flex: 0.5; margin-right: 16px !important;`}
+                        isRequired
+                        allowSearch
                     />
                 </Control.Row>
                 {
@@ -227,24 +238,30 @@ const SQLClone = () => {
                                 <Control.Row>
                                     <Control.Select
                                         name={`operatorConfigData.updateSettings.lastUpdatedFieldSource`}
-                                        label={`Поле последнего обновления источника`}
+                                        label={`Поле последнего обновления в таблице источника`}
                                         options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
                                         readOnly={!params?.source?.columns?.length}
+                                        isRequired
+                                        allowSearch
                                     />
                                     <Control.Select
                                         name={`operatorConfigData.updateSettings.lastUpdatedFieldTarget`}
-                                        label={`Поле последнего обновления целевой таблицы`}
+                                        label={`Поле последнего обновления в таблице получателя`}
                                         options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
                                         readOnly={!params?.target?.columns?.length}
+                                        isRequired
+                                        allowSearch
                                     />
                                 </Control.Row>
                                 <Control.Row>
                                     <Control.Select
                                         name={`operatorConfigData.updateSettings.primaryKey`}
-                                        label={`Первичный ключ таблицы-источника`}
+                                        label={`Поле первичного ключа в таблице источника`}
                                         extra={`flex: 0.5; margin-right: 16px !important;`}
                                         options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
                                         readOnly={!params?.source?.columns?.length}
+                                        isRequired
+                                        allowSearch
                                     />
                                 </Control.Row>
                             </>
@@ -254,15 +271,19 @@ const SQLClone = () => {
                                 <Control.Row>
                                     <Control.Select
                                         name={`operatorConfigData.updateSettings.lastCreatedFieldSource`}
-                                        label={`Поле создания записи таблицы-источника`}
+                                        label={`Поле создания записи в таблице источника`}
                                         options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
                                         readOnly={!params?.source?.columns?.length}
+                                        isRequired
+                                        allowSearch
                                     />
                                     <Control.Select
                                         name={`operatorConfigData.updateSettings.lastCreatedFieldTarget`}
-                                        label={`Поле создания записи целевой таблицы`}
+                                        label={`Поле создания записи в таблице получателя`}
                                         options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
                                         readOnly={!params?.target?.columns?.length}
+                                        isRequired
+                                        allowSearch
                                     />
                                 </Control.Row>
                             </>
@@ -272,15 +293,19 @@ const SQLClone = () => {
                                 <Control.Row>
                                     <Control.Select
                                         name={`operatorConfigData.updateSettings.lastUpdatedFieldSource`}
-                                        label={`Поле последнего обновления источника`}
+                                        label={`Поле последнего обновления в таблице источника`}
                                         options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
                                         readOnly={!params?.source?.columns?.length}
+                                        isRequired
+                                        allowSearch
                                     />
                                     <Control.Select
                                         name={`operatorConfigData.updateSettings.lastUpdatedFieldTarget`}
-                                        label={`Поле последнего обновления целевой таблицы`}
+                                        label={`Поле последнего обновления в таблице получателя`}
                                         options={params?.target?.columns?.map?.((item) => ({ label: item, value: item }))}
                                         readOnly={!params?.target?.columns?.length}
+                                        isRequired
+                                        allowSearch
                                     />
                                 </Control.Row>
                             </>

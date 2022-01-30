@@ -101,7 +101,7 @@ const Select = (props) => {
             }
             menu={
                 <>
-                    {options?.length === 0 && <EmptyPlaceholder />}
+                    {options?.filter?.((i) => stringImposition(i?.label, search))?.length === 0 && <EmptyPlaceholder />}
                     {options
                         ?.filter?.((i) => stringImposition(i?.label, search))
                         ?.map?.((option, index, self) => {
