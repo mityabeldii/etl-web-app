@@ -96,6 +96,8 @@ const SQLClone = () => {
                         label={`Имя схемы в источнике`}
                         options={params?.source?.schemas?.map?.((item) => ({ label: item, value: item }))}
                         readOnly={!params?.source?.schemas?.length}
+                        isRequired
+                        allowSearch
                     />
                     <Control.Select
                         name={`operatorConfigData.source.sourceTableName`}
@@ -105,6 +107,8 @@ const SQLClone = () => {
                         // onChange={(e) => {
                         //     DatasourceAPI.getTableColumns(data?.operatorConfigData?.source?.sourceId, e.target.value);
                         // }}
+                        isRequired
+                        allowSearch
                     />
                 </Control.Row>
                 <Control.Row>
