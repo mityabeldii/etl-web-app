@@ -35,7 +35,7 @@ const Select = (props) => {
         : options?.find?.((i) => i?.value === value)?.label ?? ``;
     const readOnlyInput = readOnly || !(allowSearch && !multiselect);
     useEffect(() => {
-        if (allowSearch && !_.isEmpty(selectedLabel)) {
+        if ((allowSearch && !_.isEmpty(selectedLabel)) || multiselect) {
             setSearch(selectedLabel);
         }
     }, [selectedLabel]);
@@ -101,9 +101,9 @@ const Select = (props) => {
             }
             menu={
                 <>
-                    {options?.filter?.((i) => stringImposition(i?.label, search))?.length === 0 && <EmptyPlaceholder />}
+                    {options?.filter?.((i) => stringImposition(i?.label, search) || multiselect)?.length === 0 && <EmptyPlaceholder />}
                     {options
-                        ?.filter?.((i) => stringImposition(i?.label, search))
+                        ?.filter?.((i) => stringImposition(i?.label, search) || multiselect)
                         ?.map?.((option, index, self) => {
                             const selected = _.isEqual(value, option.value);
                             const muted = option?.muted && option.value !== value;

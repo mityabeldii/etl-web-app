@@ -113,11 +113,13 @@ const SQLClone = () => {
                 </Control.Row>
                 <Control.Row>
                     <Control.Select
+                        name={`operatorConfigData.source.sourceTableFields`}
                         label={`Поля для извлечения`}
                         multiselect
                         options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
                         value={_.get(data, `operatorConfigData.source.sourceTableFields`)?.map?.((item) => item?.sourceFieldName)}
                         onChange={(e) => {
+                            console.log(e)
                             setValue(
                                 `operatorConfigData.source.sourceTableFields`,
                                 e.target.value.map((i) => ({ sourceFieldName: i }))

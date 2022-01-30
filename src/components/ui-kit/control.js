@@ -64,7 +64,9 @@ export const Control = {
                                       omitStorage(`forms.${formName}.warnings.${name}`);
                                   }
                                   child?.props?.onChange?.(e);
-                                  onChange(e);
+                                  if (!child?.props?.onChange) {
+                                    onChange(e);
+                                  }
                               },
                               readOnly: readOnly || child?.props?.readOnly,
                               extra: `width: 100%; flex: 1;` + (child?.props.extra ?? ``),

@@ -11,6 +11,15 @@ const sqlCloneSchema = (yup, data) => ({
                     sourceId: yup.string().required(`Это поле обязательно`),
                     sourceSchemaName: yup.string().required(`Это поле обязательно`),
                     sourceTableName: yup.string().required(`Это поле обязательно`),
+                    sourceTableFields: yup
+                        .array()
+                        .min(1, `Это поле обязательно`)
+                        .of(
+                            yup.object().shape({
+                                sourceFieldName: yup.string().required(`Это поле обязательно`),
+                            })
+                        )
+                        .required(`Это поле обязательно`),
                 }),
             target: yup
                 .object()
