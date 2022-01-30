@@ -72,7 +72,7 @@ const Select = (props) => {
                     <ToggleComponent options={options} label={value} />
                 ) : (
                     <Input
-                        value={search}
+                        value={allowSearch ? search : selectedLabel}
                         onChange={(e) => setSearch(e.target.value)}
                         readOnly={readOnlyInput}
                         extra={css`
