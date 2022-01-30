@@ -16,12 +16,15 @@ import ProcessesAPI from "../../api/processes-api";
 import DatasourceAPI from "../../api/datasource-api";
 
 import { MODALS, FORMS, OPERATORS, TABLES, UPDATE_TYPES, JOIN_TYPE, LOGIC_OPERATOR } from "../../constants/config";
+import ModalsHelper from "../../utils/modals-helper";
+import Schemas from "../../schemas";
 
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import { useStorageListener } from "../../hooks/useStorage";
 import useFormControl from "../../hooks/useFormControl";
 import useModal from "../../hooks/useModal";
-import ModalsHelper from "../../utils/modals-helper";
+
+const { createTask: schema } = Schemas;
 
 const CrateTaskModal = () => {
     const [mode, setMode] = useState(`view`);
@@ -29,24 +32,6 @@ const CrateTaskModal = () => {
     const { process_id } = useParams();
     const process = useStorageListener((state) => state?.processes ?? [])?.[process_id] ?? {};
     const { tasks = [] } = process;
-
-    const schema = (yup, data) =>
-        yup.object().shape({
-            taskName: yup.string().max(40, `Не более 40 символов`).required(`Это поле обязательно`),
-            operator: yup.string().required(`Это поле обязательно`),
-            taskQueue: yup
-                .number()
-                .typeError(`Это поле должно быть числом`)
-                .integer(`Это поле должно быть целым числом`)
-                .notOneOf(
-                    _.map(
-                        tasks?.filter?.((i) => i?.id !== data?.id),
-                        `taskQueue`
-                    ),
-                    `Процесс с таким порядковым номером уже существует`
-                )
-                .required(`Это поле обязательно`),
-        });
 
     const { data, onSubmit, clearForm, setReadOnly } = useFormControl({ name: FORMS.CREATE_TASK, schema });
     useEffect(DatasourceAPI.getDatasources, []);

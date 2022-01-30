@@ -435,7 +435,7 @@ export const Dropdown = (props) => {
     const uniqueId = useRef(createId());
     const [direction, setDirection] = useState(`down`);
     useOnClickOutside(menuRef, (e) => {
-        const isCurrentDropdown = e.path.map((i) => i.className?.includes?.(uniqueId.current)).filter((i) => i).length === 0;
+        const isCurrentDropdown = e?.path?.map?.((i) => i.className?.includes?.(uniqueId.current)).filter((i) => i).length === 0;
         if (isCurrentDropdown) {
             setOpened(false);
         }

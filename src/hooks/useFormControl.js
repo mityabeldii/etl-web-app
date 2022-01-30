@@ -4,6 +4,7 @@ import _ from "lodash";
 import * as yup from "yup";
 
 import { getStorage, putStorage, omitStorage, useStorageListener, mergeStorage } from "./useStorage";
+import { eventDispatch } from "./useEventListener";
 
 const useFormControl = ({ name, schema }) => {
     // READ ONLY
@@ -58,9 +59,10 @@ const useFormControl = ({ name, schema }) => {
             }
             handleSubmit(data);
         } catch (error) {
-            console.log(error)
+            console.log(error);
             console.error(`Form validation error`, Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? []));
             setErrors(Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? []));
+            error?.inner?.forEach(({ path, message }) => eventDispatch(`THROW_ERROR`, `${path}: ${message}`));
         }
     };
 

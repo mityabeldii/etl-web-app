@@ -291,17 +291,18 @@ const SQLClone = () => {
             <Control.Row>
                 <H1 extra={`margin-bottom: 24px;`}>Конфигурация оператора</H1>
             </Control.Row>
-            <RowWrapper extra={`margin-bottom: 5px; justify-content: flex-start;`} >
+            <RowWrapper extra={`margin-bottom: 5px; justify-content: flex-start;`}>
                 {_.keys(tabs)?.map?.((i, index) => (
                     <Tab key={index} selected={i === selectedTab} onClick={() => setSelectedTab(i)}>
                         {i}
                     </Tab>
                 ))}
             </RowWrapper>
-            <Frame extra={`max-height: 250px; width: 100%; flex: 1; display: flex; overflow: auto; justify-content: flex-start;`}>
+            {/* <Frame extra={`max-height: 250px; width: 100%; flex: 1; display: block; overflow: auto; justify-content: flex-start;`}>
                 <Frame extra={`width: 100%; display: flex; min-height: min-content;`}>{tabs?.[selectedTab]}</Frame>
-            </Frame>
-            <Br/>
+            </Frame> */}
+            {tabs?.[selectedTab]}
+            <Br />
         </>
     );
 };
@@ -313,7 +314,7 @@ const Tab = styled(Frame)`
         background: ${({ theme }) => theme.gray};
     }
     border-bottom: 3px solid transparent;
-    opacity: ${({ selected }) => selected ? 1 : 0.5};
+    opacity: ${({ selected }) => (selected ? 1 : 0.5)};
     ${({ theme, selected }) => selected && `border-bottom: 3px solid ${theme.orange};`}
 `;
 
