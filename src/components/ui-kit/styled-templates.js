@@ -380,7 +380,7 @@ const DropdownStyles = {
         flex: 1;
         overflow: auto;
         width: inherit;
-        max-height: 200px;
+        /* max-height: 200px; */
 
         position: absolute;
         ${({ direction, toggleSize }) =>
@@ -412,7 +412,7 @@ const DropdownStyles = {
         display: flex;
         flex-direction: column;
         min-height: min-content;
-        max-height: 200px;
+        /* max-height: 200px; */
 
         ${({ extra }) => extra}
     `,

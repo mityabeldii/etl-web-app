@@ -64,8 +64,10 @@ const Select = (props) => {
                     /* width: calc(100% - 20px); */
                     width: 100%;
                     min-width: max-content;
+                    max-height: 200px;
                 `,
             }}
+            scrollWrapperStyles={`max-height: 200px;`}
             callable={!readOnly}
             toggle={
                 ToggleComponent ? (
