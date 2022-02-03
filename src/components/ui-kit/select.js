@@ -115,9 +115,11 @@ const Select = (props) => {
             }
             menu={
                 <>
-                    {options?.filter?.((i) => stringImposition(i?.label, search) || selectedLabel === search)?.length === 0 && <EmptyPlaceholder />}
+                    {options?.filter?.((i) => !allowSearch || stringImposition(i?.label, search) || selectedLabel === search)?.length === 0 && (
+                        <EmptyPlaceholder />
+                    )}
                     {options
-                        ?.filter?.((i) => stringImposition(i?.label, search) || selectedLabel === search)
+                        ?.filter?.((i) => !allowSearch || stringImposition(i?.label, search) || selectedLabel === search)
                         ?.map?.((option, index, self) => {
                             const selected = _.isEqual(value, option.value);
                             const muted = option?.muted && option.value !== value;

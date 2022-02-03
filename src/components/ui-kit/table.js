@@ -256,7 +256,7 @@ const Table = (props) => {
                                 if (useBackendProcessing) {
                                     putStorage(`tables.${name}.pagination.perPage`, e.target.value);
                                 } else {
-                                    frontendPagination.handlePerPageChange(e.target.value);
+                                    frontendPagination.handlePerPageChange(e.target.value ?? perPage ?? 10);
                                 }
                             }}
                         />
