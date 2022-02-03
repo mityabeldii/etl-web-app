@@ -13,7 +13,12 @@ const TasksHelper = {
         const task = tasks?.find?.((i) => i?.id === taskId) ?? {};
         const structure = _.get(task, `operatorConfigData.storageStructure`);
         const { operator } = task;
-        return ([OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(operator) ? Object.values(structure ?? {})?.flat?.() : structure)?.map?.(({ storageFieldName: i }) => i) ?? [];
+        return (
+            ([OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(operator)
+                ? Object.values(structure ?? {})?.flat?.()
+                : structure
+            )?.map?.(({ storageFieldName: i }) => i) ?? []
+        );
     },
     getSourcesNames: (task) => {
         const { process_id } = useParams();
@@ -30,6 +35,14 @@ const TasksHelper = {
             ),
         ]?.filter?.((i) => i);
         return sources?.join?.(`, `);
+    },
+    syncMappingStructure: (sourceFields, mappingStructure) => {
+        return [
+            ...(mappingStructure?.filter?.((i) => sourceFields?.includes?.(i?.sourceFieldName)) ?? []),
+            ...(sourceFields
+                ?.filter?.((sourceFieldName) => !_.find(mappingStructure, { sourceFieldName }))
+                ?.map?.((sourceFieldName) => ({ sourceFieldName })) ?? []),
+        ];
     },
 };
 

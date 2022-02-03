@@ -7,12 +7,17 @@ import { Br, Frame, H1, H2, MappingArrow, RowWrapper } from "../../ui-kit/styled
 import { Control } from "../../ui-kit/control";
 
 import { FORMS, TABLES, UPDATE_TYPES } from "../../../constants/config";
+import TasksHelper from "../../../utils/tasks-helper";
 
 import DatasourceAPI from "../../../api/datasource-api";
 import SchemasAPI from "../../../api/schemas-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { useStorageListener } from "../../../hooks/useStorage";
+
+const useDeepEffect = (effect, dependencies) => {
+    useEffect(effect, [JSON.stringify(dependencies)]);
+};
 
 const SQLClone = () => {
     const { data, removeValue, setValue } = useFormControl({ name: FORMS.CREATE_TASK });
@@ -37,7 +42,7 @@ const SQLClone = () => {
                 ) ?? [],
         },
     }));
-    useEffect(() => {
+    useDeepEffect(() => {
         if (!!_.get(data, `operatorConfigData.source.sourceId`) && !!_.get(data, `operatorConfigData.source.sourceTableName`)) {
             DatasourceAPI.getTableColumns(
                 _.get(data, `operatorConfigData.source.sourceId`),
@@ -45,7 +50,7 @@ const SQLClone = () => {
             );
         }
     }, [_.get(data, `operatorConfigData.source.sourceId`), _.get(data, `operatorConfigData.source.sourceTableName`)]);
-    useEffect(() => {
+    useDeepEffect(() => {
         if (!!_.get(data, `operatorConfigData.target.targetId`) && !!_.get(data, `operatorConfigData.target.targetTableName`)) {
             DatasourceAPI.getTableColumns(
                 _.get(data, `operatorConfigData.target.targetId`),
@@ -53,20 +58,28 @@ const SQLClone = () => {
             );
         }
     }, [_.get(data, `operatorConfigData.target.targetId`), _.get(data, `operatorConfigData.target.targetTableName`)]);
-    useEffect(() => {
+    useDeepEffect(() => {
         const sourceId = _.get(data, `operatorConfigData.source.sourceId`);
         if (sourceId) {
             SchemasAPI.getSchemas(sourceId);
             DatasourceAPI.getDatasourceTables(sourceId);
         }
     }, [_.get(data, `operatorConfigData.source.sourceId`)]);
-    useEffect(() => {
+    useDeepEffect(() => {
         const targetId = _.get(data, `operatorConfigData.target.targetId`);
         if (targetId) {
             SchemasAPI.getSchemas(targetId);
             DatasourceAPI.getDatasourceTables(targetId);
         }
     }, [_.get(data, `operatorConfigData.target.targetId`)]);
+    useDeepEffect(() => {
+        const mappingStructure = _.get(data, `operatorConfigData.target.mappingStructure`);
+        mappingStructure?.forEach(({ sourceFieldName, targetFieldName }, index) => {
+            if (!targetFieldName && params?.target?.columns?.includes?.(sourceFieldName)) {
+                setValue(`operatorConfigData.target.mappingStructure.${index}.targetFieldName`, sourceFieldName);
+            }
+        });
+    }, [_.get(data, `operatorConfigData.target.mappingStructure`), params?.target?.columns]);
     const tabs = {
         [`Источник данных`]: (
             <>
@@ -119,6 +132,11 @@ const SQLClone = () => {
                         options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
                         value={_.get(data, `operatorConfigData.source.sourceTableFields`)?.map?.((item) => item?.sourceFieldName)}
                         onChange={(e) => {
+                            const newMappingStructure = TasksHelper.syncMappingStructure(
+                                e.target.value,
+                                _.get(data, `operatorConfigData.target.mappingStructure`)
+                            );
+                            setValue(`operatorConfigData.target.mappingStructure`, newMappingStructure);
                             e.target.value = e.target.value?.map?.((i) => ({ sourceFieldName: i })) ?? [];
                             return e;
                         }}
@@ -144,7 +162,7 @@ const SQLClone = () => {
                             removeValue([
                                 `operatorConfigData.target.targetSchemaName`,
                                 `operatorConfigData.target.targetTableName`,
-                                `operatorConfigData.target.mappingStructure`,
+                                // `operatorConfigData.target.mappingStructure`,
                             ]);
                         }}
                         isRequired
@@ -181,11 +199,11 @@ const SQLClone = () => {
                 </Control.Row>
                 <Control.Row>
                     <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start;`}>Поле в источнике</Control.Label>
-                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; margin-left: 32px;`}>
+                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; margin-left: 32px;`} required>
                         Поле в получателе данных
                     </Control.Label>
                 </Control.Row>
-                {_.get(data, `operatorConfigData.source.sourceTableFields`)?.map?.(({ sourceFieldName: item }, index) => {
+                {_.get(data, `operatorConfigData.target.mappingStructure`)?.map?.(({ sourceFieldName: item }, index) => {
                     return (
                         <Control.Row key={index} extra={`align-items: flex-start;`}>
                             <Control.Input extra={`flex: 1;`} value={item} readOnly />
@@ -204,7 +222,7 @@ const SQLClone = () => {
                                         ?.includes(item),
                                 }))}
                                 readOnly={!params?.target?.columns?.length}
-                                isRequired
+                                // isRequired
                                 allowSearch
                             />
                         </Control.Row>

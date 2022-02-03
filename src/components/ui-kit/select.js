@@ -38,7 +38,7 @@ const Select = (props) => {
             onChange({ target: { name, value: undefined } });
         }
     }, [search]);
-    useEffect(() => allowSearch && setSearch(``), [name]);
+    useEffect(() => allowSearch && setSearch(selectedLabel), [name]);
     return (
         <Dropdown
             id={dropdownId}
