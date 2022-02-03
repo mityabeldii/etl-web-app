@@ -63,10 +63,8 @@ export const Control = {
                                   } else {
                                       omitStorage(`forms.${formName}.warnings.${name}`);
                                   }
-                                  child?.props?.onChange?.(e);
-                                  if (!child?.props?.onChange) {
-                                    onChange(e);
-                                  }
+                                  const newE = child?.props?.onChange?.(e);
+                                  onChange(newE ?? e);
                               },
                               readOnly: readOnly || child?.props?.readOnly,
                               extra: `width: 100%; flex: 1;` + (child?.props.extra ?? ``),
@@ -74,7 +72,7 @@ export const Control = {
                         : child;
                 })}
                 <Frame extra={`flex-direction: row; align-items: flex-start; margin-top: 5px;`}>
-                    <Control.Error extra={`margin: 0;`} >{error?.message}</Control.Error>
+                    <Control.Error extra={`margin: 0;`}>{error?.message}</Control.Error>
                     <Control.Warning extra={`margin: 0 0 0 5px;`}>{warning?.message}</Control.Warning>
                 </Frame>
             </Frame>

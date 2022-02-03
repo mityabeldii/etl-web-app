@@ -426,6 +426,7 @@ export const Dropdown = (props) => {
         scrollWrapperStyles = ``,
         id,
         closeOnChildrenClick = true,
+        closeOnToggleClick = true,
         callable = true,
         toggleProps = {},
         menuProps = {},
@@ -466,7 +467,7 @@ export const Dropdown = (props) => {
         }
     };
     const handleToggleClick = (event) => {
-        if (!callable) return;
+        if (!callable || (!closeOnToggleClick && opened)) return;
         setOpened(!opened);
         setDirection(window?.outerHeight - event?.screenY - toggleRef?.current?.clientHeight > menuRef?.current?.clientHeight ? `down` : `up`);
     };

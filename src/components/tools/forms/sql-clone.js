@@ -119,11 +119,8 @@ const SQLClone = () => {
                         options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
                         value={_.get(data, `operatorConfigData.source.sourceTableFields`)?.map?.((item) => item?.sourceFieldName)}
                         onChange={(e) => {
-                            console.log(e)
-                            setValue(
-                                `operatorConfigData.source.sourceTableFields`,
-                                e.target.value.map((i) => ({ sourceFieldName: i }))
-                            );
+                            e.target.value = e.target.value?.map?.((i) => ({ sourceFieldName: i })) ?? [];
+                            return e;
                         }}
                         readOnly={!params?.source?.columns?.length}
                         isRequired

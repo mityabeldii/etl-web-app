@@ -26,28 +26,31 @@ const Select = (props) => {
     } = props;
     const [dropdownId, setDropdownId] = useState(createId());
     const [search, setSearch] = useState(``);
-    const selectedLabel = multiselect
-        ? options
-              //   .filter((i) => value?.includes(i?.value))
-              .filter((i) => value?.find?.((j) => _.isEqual(j, i.value)))
-              .map((i) => i?.label)
-              ?.join?.(`, `)
-        : options?.find?.((i) => i?.value === value)?.label ?? ``;
-    const readOnlyInput = readOnly || !(allowSearch && !multiselect);
+    // const selectedLabel = multiselect
+    //     ? options
+    //           //   .filter((i) => value?.includes(i?.value))
+    //           .filter((i) => value?.find?.((j) => _.isEqual(j, i.value)))
+    //           .map((i) => i?.label)
+    //           ?.join?.(`, `)
+    //     : options?.find?.((i) => i?.value === value)?.label ?? ``;
+    const selectedLabel = multiselect ? `` : options?.find?.((i) => i?.value === value)?.label ?? ``;
+    const readOnlyInput = readOnly || !allowSearch;
     useEffect(() => {
         if ((allowSearch && !_.isEmpty(selectedLabel)) || multiselect) {
             setSearch(selectedLabel);
         }
     }, [selectedLabel]);
     useEffect(() => {
-        if (search !== selectedLabel) {
+        if (search !== selectedLabel && !multiselect) {
             onChange({ target: { name, value: undefined } });
         }
     }, [search]);
     return (
         <Dropdown
             id={dropdownId}
+            callable={!multiselect}
             wrapperStyles={extra}
+            closeOnToggleClick={false}
             toggleProps={{
                 extra: css`
                     width: 100%;
@@ -76,7 +79,22 @@ const Select = (props) => {
                     <Input
                         value={allowSearch ? search : selectedLabel}
                         onChange={(e) => setSearch(e.target.value)}
+                        className={`${dropdownId}-click-ignored`}
                         readOnly={readOnlyInput}
+                        leftContent={
+                            <>
+                                {multiselect &&
+                                    value?.map?.((_value, index) => (
+                                        <SelectedOption key={index}>
+                                            {_.find(options, { value: _value })?.label}
+                                            <Cros onClick={() => onChange({ target: { value: togglePush(value, _value) } })} />
+                                        </SelectedOption>
+                                    ))}
+                            </>
+                        }
+                        inputExtra={css`
+                            min-width: 100px;
+                        `}
                         extra={css`
                             width: 100%;
                             /* background: ${({ theme }) => theme.background.secondary}; */
@@ -103,9 +121,9 @@ const Select = (props) => {
             }
             menu={
                 <>
-                    {options?.filter?.((i) => stringImposition(i?.label, search) || multiselect)?.length === 0 && <EmptyPlaceholder />}
+                    {options?.filter?.((i) => stringImposition(i?.label, search) || selectedLabel === search)?.length === 0 && <EmptyPlaceholder />}
                     {options
-                        ?.filter?.((i) => stringImposition(i?.label, search) || multiselect)
+                        ?.filter?.((i) => stringImposition(i?.label, search) || selectedLabel === search)
                         ?.map?.((option, index, self) => {
                             const selected = _.isEqual(value, option.value);
                             const muted = option?.muted && option.value !== value;
@@ -123,6 +141,8 @@ const Select = (props) => {
                                                 newValue = [];
                                             }
                                             onChange({ target: { value: togglePush(newValue, option.value) } });
+                                            setSearch(``);
+                                            document.querySelector(`input[name="${name}"]`)?.focus?.();
                                         } else {
                                             onChange({ target: { value: selected ? undefined : option.value } });
                                             eventDispatch(`CLOSE_DROPDOWN`, dropdownId);
@@ -145,6 +165,25 @@ const Select = (props) => {
         />
     );
 };
+
+const Cros = styled(Frame)`
+    width: 16px;
+    height: 16px;
+    background: url("${require(`../../assets/icons/cross-white.svg`).default}") no-repeat center center / contain;
+    margin-left: 10px;
+`;
+
+const SelectedOption = styled(Frame)`
+    padding: 4px 12px;
+    background: ${({ theme }) => theme.blue};
+    border-radius: 4px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
+    margin: 8px 2px 8px 8px;
+    flex-direction: row;
+`;
 
 const EmptyPlaceholder = styled(Frame)`
     width: 100%;
