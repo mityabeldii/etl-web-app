@@ -38,7 +38,8 @@ const sqlCloneSchema = (yup, data) => ({
                         sourceFieldName: yup.string().required(`Это поле обязательно`),
                         targetFieldName: yup.string().required(`Это поле обязательно`),
                     })
-                ),
+                )
+                .required(`Это поле обязательно`),
             updateSettings: yup
                 .object()
                 .default({})

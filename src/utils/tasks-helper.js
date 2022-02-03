@@ -39,9 +39,7 @@ const TasksHelper = {
     syncMappingStructure: (sourceFields, mappingStructure) => {
         return [
             ...(mappingStructure?.filter?.((i) => sourceFields?.includes?.(i?.sourceFieldName)) ?? []),
-            ...(sourceFields
-                ?.filter?.((sourceFieldName) => !_.find(mappingStructure, { sourceFieldName }))
-                ?.map?.((sourceFieldName) => ({ sourceFieldName })) ?? []),
+            ...(sourceFields?.filter?.((sourceFieldName) => !_.find(mappingStructure, { sourceFieldName })) ?? []),
         ];
     },
 };

@@ -25,21 +25,25 @@ const SQLClone = () => {
     const params = useStorageListener((state) => ({
         source: {
             schemas: _.get(state, `datasources.schemas.${data?.operatorConfigData?.source?.sourceId}`) ?? [],
-            tables: _.get(state, `datasources.tables.${data?.operatorConfigData?.source?.sourceId}`) ?? [],
+            tables: _.map(
+                state?.datasources?.tables?.[data?.operatorConfigData?.source?.sourceId]?.[data?.operatorConfigData?.source?.sourceSchemaName],
+                "tableName"
+            ),
             columns:
-                _.get(
-                    state,
-                    `datasources.columns.${data?.operatorConfigData?.source?.sourceId}.${data?.operatorConfigData?.source?.sourceTableName}`
-                ) ?? [],
+                state?.datasources?.tables?.[data?.operatorConfigData?.source?.sourceId]?.[data?.operatorConfigData?.source?.sourceSchemaName]
+                    ?.find?.((i) => i?.tableName === data?.operatorConfigData?.source?.sourceTableName)
+                    ?.fields?.map?.((i) => i?.fieldName) ?? [],
         },
         target: {
             schemas: _.get(state, `datasources.schemas.${data?.operatorConfigData?.target?.targetId}`) ?? [],
-            tables: _.get(state, `datasources.tables.${data?.operatorConfigData?.target?.targetId}`) ?? [],
+            tables: _.map(
+                state?.datasources?.tables?.[data?.operatorConfigData?.target?.targetId]?.[data?.operatorConfigData?.target?.targetSchemaName],
+                "tableName"
+            ),
             columns:
-                _.get(
-                    state,
-                    `datasources.columns.${data?.operatorConfigData?.target?.targetId}.${data?.operatorConfigData?.target?.targetTableName}`
-                ) ?? [],
+                state?.datasources?.tables?.[data?.operatorConfigData?.target?.targetId]?.[data?.operatorConfigData?.target?.targetSchemaName]
+                    ?.find?.((i) => i?.tableName === data?.operatorConfigData?.target?.targetTableName)
+                    ?.fields?.map?.((i) => i?.fieldName) ?? [],
         },
     }));
     useDeepEffect(() => {
@@ -62,16 +66,28 @@ const SQLClone = () => {
         const sourceId = _.get(data, `operatorConfigData.source.sourceId`);
         if (sourceId) {
             SchemasAPI.getSchemas(sourceId);
-            DatasourceAPI.getDatasourceTables(sourceId);
         }
     }, [_.get(data, `operatorConfigData.source.sourceId`)]);
+    useDeepEffect(() => {
+        const sourceId = _.get(data, `operatorConfigData.source.sourceId`);
+        const sourceSchemaName = _.get(data, `operatorConfigData.source.sourceSchemaName`);
+        if (sourceId && sourceSchemaName) {
+            DatasourceAPI.getDatasourceTables(sourceId, sourceSchemaName);
+        }
+    }, [_.get(data, `operatorConfigData.source.sourceId`), _.get(data, `operatorConfigData.source.sourceSchemaName`)]);
     useDeepEffect(() => {
         const targetId = _.get(data, `operatorConfigData.target.targetId`);
         if (targetId) {
             SchemasAPI.getSchemas(targetId);
-            DatasourceAPI.getDatasourceTables(targetId);
         }
     }, [_.get(data, `operatorConfigData.target.targetId`)]);
+    useDeepEffect(() => {
+        const targetId = _.get(data, `operatorConfigData.target.targetId`);
+        const targetSchemaName = _.get(data, `operatorConfigData.target.targetSchemaName`);
+        if (targetId && targetSchemaName) {
+            DatasourceAPI.getDatasourceTables(targetId, targetSchemaName);
+        }
+    }, [_.get(data, `operatorConfigData.target.targetId`), _.get(data, `operatorConfigData.target.targetSchemaName`)]);
     useDeepEffect(() => {
         const mappingStructure = _.get(data, `operatorConfigData.target.mappingStructure`);
         mappingStructure?.forEach(({ sourceFieldName, targetFieldName }, index) => {
@@ -80,6 +96,13 @@ const SQLClone = () => {
             }
         });
     }, [_.get(data, `operatorConfigData.target.mappingStructure`), params?.target?.columns]);
+    useDeepEffect(() => {
+        const newMappingStructure = TasksHelper.syncMappingStructure(
+            _.get(data, `operatorConfigData.source.sourceTableFields`),
+            _.get(data, `operatorConfigData.target.mappingStructure`)
+        );
+        setValue(`operatorConfigData.target.mappingStructure`, newMappingStructure);
+    }, [_.get(data, `operatorConfigData.source.sourceTableFields`)]);
     const tabs = {
         [`Источник данных`]: (
             <>
@@ -111,6 +134,9 @@ const SQLClone = () => {
                         readOnly={!params?.source?.schemas?.length}
                         isRequired
                         allowSearch
+                        onChange={(e) => {
+                            removeValue([`operatorConfigData.source.sourceTableName`, `operatorConfigData.source.sourceTableFields`]);
+                        }}
                     />
                     <Control.Select
                         name={`operatorConfigData.source.sourceTableName`}
@@ -122,6 +148,9 @@ const SQLClone = () => {
                         // }}
                         isRequired
                         allowSearch
+                        onChange={(e) => {
+                            removeValue([`operatorConfigData.source.sourceTableFields`]);
+                        }}
                     />
                 </Control.Row>
                 <Control.Row>
@@ -132,11 +161,6 @@ const SQLClone = () => {
                         options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
                         value={_.get(data, `operatorConfigData.source.sourceTableFields`)?.map?.((item) => item?.sourceFieldName)}
                         onChange={(e) => {
-                            const newMappingStructure = TasksHelper.syncMappingStructure(
-                                e.target.value,
-                                _.get(data, `operatorConfigData.target.mappingStructure`)
-                            );
-                            setValue(`operatorConfigData.target.mappingStructure`, newMappingStructure);
                             e.target.value = e.target.value?.map?.((i) => ({ sourceFieldName: i })) ?? [];
                             return e;
                         }}

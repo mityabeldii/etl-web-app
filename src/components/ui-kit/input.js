@@ -61,14 +61,6 @@ const Span = styled.span`
 
     box-sizing: border-box;
 
-    ${({ readOnly }) =>
-        readOnly &&
-        css`
-            cursor: default;
-            background: #ebebeb;
-            color: #67686d;
-        `}
-
     ${({ rightIcon }) => rightIcon && `padding-right: 30px;`}
 
     ${({ extra }) => extra}
@@ -101,6 +93,14 @@ export const StyledInput = styled.input`
     :-ms-input-placeholder {
         color: ${({ theme }) => theme.text.secondary};
     }
+
+    ${({ readOnly }) =>
+        readOnly &&
+        css`
+            cursor: default;
+            background: #ebebeb;
+            color: #67686d;
+        `}
 
     ${({ inputExtra }) => inputExtra}
 `;

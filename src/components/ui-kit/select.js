@@ -29,7 +29,7 @@ const Select = (props) => {
     const selectedLabel = multiselect ? `` : options?.find?.((i) => i?.value === value)?.label ?? ``;
     const readOnlyInput = readOnly || !allowSearch;
     useEffect(() => {
-        if ((allowSearch && !_.isEmpty(selectedLabel)) || multiselect) {
+        if (allowSearch || multiselect) {
             setSearch(selectedLabel);
         }
     }, [selectedLabel]);
