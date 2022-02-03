@@ -6,6 +6,8 @@ import { eventDispatch } from "../hooks/useEventListener";
 import { getStorage, putStorage } from "../hooks/useStorage";
 import { objectPut, sleep } from "./common-helper";
 
+import { base_url } from "../constants/config";
+
 export const getToken = () => {
     const token = localStorage.getItem(`auth_token_etl`);
     return token;
@@ -14,9 +16,10 @@ export const getToken = () => {
 export const setUpInterceptors = () => {
     axios.interceptors.request.use(
         async (config) => {
+            config.baseURL = base_url;
             const token = getToken();
             if (!!token) {
-                config.headers["Authorization"] = `Bearer ${token}`;
+                // config.headers["Authorization"] = `Bearer ${token}`;
             }
             return config;
         },

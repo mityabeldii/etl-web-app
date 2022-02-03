@@ -13,7 +13,7 @@ const ProcessesAPI = {
     async getProcesses() {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`${base_url}/process`)).data;
+                const response = (await axios.get(`/process`)).data;
                 putStorage(`tables.${TABLES.PROCESSES_LIST}`, {
                     rows: [...response]?.sort?.((a, b) => a.id - b.id),
                     pagination: response?._meta ?? {},
@@ -27,7 +27,7 @@ const ProcessesAPI = {
     async createProcess(data) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.post(`${base_url}/process`, _.omit(data, [`id`]))).data;
+                const response = (await axios.post(`/process`, _.omit(data, [`id`]))).data;
                 await ProcessesAPI.getProcesses();
                 return response;
             } catch (error) {
@@ -38,7 +38,7 @@ const ProcessesAPI = {
     async updateProcess(data) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.put(`${base_url}/process/${data?.id}`, data)).data;
+                const response = (await axios.put(`/process/${data?.id}`, data)).data;
                 await ProcessesAPI.getProcesses();
                 return response;
             } catch (error) {
@@ -49,7 +49,7 @@ const ProcessesAPI = {
     async deleteProcess(id) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.delete(`${base_url}/process/${id}`)).data;
+                const response = (await axios.delete(`/process/${id}`)).data;
                 await ProcessesAPI.getProcesses();
                 return response;
             } catch (error) {
@@ -60,7 +60,7 @@ const ProcessesAPI = {
     async getProcessById(id) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`${base_url}/process/${id}`)).data;
+                const response = (await axios.get(`/process/${id}`)).data;
                 mergeStorage(`processes.${id}`, response);
                 return response;
             } catch (error) {
@@ -71,7 +71,7 @@ const ProcessesAPI = {
     async getProcessTasks(processId) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`${base_url}/process/${processId}/tasks`)).data;
+                const response = (await axios.get(`/process/${processId}/tasks`)).data;
                 putStorage(`processes.${processId}.tasks`, response?.sort?.((a, b) => a?.taskQueue - b?.taskQueue) ?? []);
                 return response;
             } catch (error) {
@@ -82,7 +82,7 @@ const ProcessesAPI = {
     async createTask(processId, data) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.post(`${base_url}/process/${processId}/tasks`, _.omit(data, [`id`]))).data;
+                const response = (await axios.post(`/process/${processId}/tasks`, _.omit(data, [`id`]))).data;
                 await ProcessesAPI.getProcessTasks(processId);
                 return response;
             } catch (error) {
@@ -93,7 +93,7 @@ const ProcessesAPI = {
     async updateTask(processId, data) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.put(`${base_url}/process/${processId}/tasks/${data?.id}`, _.omit(data, [`id`]))).data;
+                const response = (await axios.put(`/process/${processId}/tasks/${data?.id}`, _.omit(data, [`id`]))).data;
                 await ProcessesAPI.getProcessTasks(processId);
                 return response;
             } catch (error) {
@@ -104,7 +104,7 @@ const ProcessesAPI = {
     async deleteTask(processId, taskId) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.delete(`${base_url}/process/${processId}/tasks/${taskId}`)).data;
+                const response = (await axios.delete(`/process/${processId}/tasks/${taskId}`)).data;
                 await ProcessesAPI.getProcessTasks(processId);
                 return response;
             } catch (error) {
@@ -116,7 +116,7 @@ const ProcessesAPI = {
         handleSuccess({ message: `Процесс с id ${processId} запущен` });
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.post(`${base_url}/process/${processId}/process-runs`)).data;
+                const response = (await axios.post(`/process/${processId}/process-runs`)).data;
                 await ProcessesAPI.getProcessTasks(processId);
                 // handleSuccess([response]);
                 return response;

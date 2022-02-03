@@ -13,7 +13,7 @@ const SchemasAPI = {
     async getSchemas(datasourceId) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`${base_url}/api/v1/schemes/${datasourceId}`)).data;
+                const response = (await axios.get(`/api/v1/schemes/${datasourceId}`)).data;
                 putStorage(`datasources.schemas.${datasourceId}`, response?.schemas);
                 return response;
             } catch (error) {
@@ -25,7 +25,7 @@ const SchemasAPI = {
     createSchema({ datasourceId, schemaName }) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.post(`${base_url}/api/v1/schemes`, { datasourceId, schemaName })).data;
+                const response = (await axios.post(`/api/v1/schemes`, { datasourceId, schemaName })).data;
                 await SchemasAPI.getSchemas(datasourceId);
                 handleSuccess({ message: `Схема ${schemaName} успешно создана` });
                 return response;
@@ -39,7 +39,7 @@ const SchemasAPI = {
     updateSchema({ datasourceId, oldSchemaName, newSchemaName }) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.put(`${base_url}/api/v1/schemes`, { datasourceId, oldSchemaName, newSchemaName })).data;
+                const response = (await axios.put(`/api/v1/schemes`, { datasourceId, oldSchemaName, newSchemaName })).data;
                 await SchemasAPI.getSchemas(datasourceId);
                 handleSuccess({ message: `Схема ${oldSchemaName} успешно переименована в ${newSchemaName}` });
                 return response;
@@ -53,7 +53,7 @@ const SchemasAPI = {
     deleteSchema(datasourceId, schemaName) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.delete(`${base_url}/api/v1/schemes`, { data: { datasourceId, schemaName, deleteType: `RESTRICT` } }))
+                const response = (await axios.delete(`/api/v1/schemes`, { data: { datasourceId, schemaName, deleteType: `RESTRICT` } }))
                     .data;
                 await SchemasAPI.getSchemas(datasourceId);
                 handleSuccess({ message: `Схема ${schemaName} успешно удалена` });

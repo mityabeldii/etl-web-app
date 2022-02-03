@@ -14,7 +14,7 @@ import { putStorage, StorageProvider } from "./hooks/useStorage";
 import axios from "axios";
 import UserAPI from "./api/user-api";
 
-// setUpInterceptors();
+setUpInterceptors();
 
 moment.tz.setDefault("Europe/Moscow");
 
@@ -31,11 +31,14 @@ const eventLogger = (event, error) => {
 const tokenLogger = async (tokens) => {
     // console.log("onKeycloakTokens", tokens);
     if (tokens.token) {
+        localStorage.setItem("auth_token_etl", tokens.token);
         try {
             await UserAPI.getContexts(tokens?.token);
         } catch (error) {
             keycloak.logout();
         }
+    } else {
+        localStorage.removeItem("auth_token_etl");
     }
 };
 
