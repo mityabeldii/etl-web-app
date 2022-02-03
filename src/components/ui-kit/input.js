@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import _ from "lodash";
 
 const Input = (props) => {
-    const { type = `text`, extra = ``, leftIcon, leftIconStyles = ``, rightIcon = {}, leftContent = null } = props;
+    const { type = `text`, extra = ``, leftIcon, leftIconStyles = ``, rightIcon = {}, leftContent = null, name, value } = props;
     const [passwordVisible, setPasswordVisible] = useState(false);
     return (
         <Span type={type} extra={extra}>

@@ -26,13 +26,6 @@ const Select = (props) => {
     } = props;
     const [dropdownId, setDropdownId] = useState(createId());
     const [search, setSearch] = useState(``);
-    // const selectedLabel = multiselect
-    //     ? options
-    //           //   .filter((i) => value?.includes(i?.value))
-    //           .filter((i) => value?.find?.((j) => _.isEqual(j, i.value)))
-    //           .map((i) => i?.label)
-    //           ?.join?.(`, `)
-    //     : options?.find?.((i) => i?.value === value)?.label ?? ``;
     const selectedLabel = multiselect ? `` : options?.find?.((i) => i?.value === value)?.label ?? ``;
     const readOnlyInput = readOnly || !allowSearch;
     useEffect(() => {
@@ -45,6 +38,7 @@ const Select = (props) => {
             onChange({ target: { name, value: undefined } });
         }
     }, [search]);
+    useEffect(() => allowSearch && setSearch(``), [name]);
     return (
         <Dropdown
             id={dropdownId}
@@ -77,9 +71,9 @@ const Select = (props) => {
                     <ToggleComponent options={options} label={value} />
                 ) : (
                     <Input
+                        name={name}
                         value={allowSearch ? search : selectedLabel}
                         onChange={(e) => setSearch(e.target.value)}
-                        className={`${dropdownId}-click-ignored`}
                         readOnly={readOnlyInput}
                         leftContent={
                             <>
