@@ -230,7 +230,7 @@ const CommonHelper = {
         return path;
     },
 
-    stringImposition: (s1, s2) => s1?.trim?.()?.toLowerCase?.()?.includes?.(s2?.trim?.()?.toLowerCase?.() ?? ``) ?? falses,
+    stringImposition: (s1, s2) => s1?.trim?.()?.toLowerCase?.()?.includes?.(s2?.trim?.()?.toLowerCase?.() ?? ``) ?? false,
 };
 
 export default CommonHelper;
