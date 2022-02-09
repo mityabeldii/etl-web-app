@@ -235,6 +235,7 @@ const IntermidiateStoragePage = () => {
                                 onChange={handlers.changeSchema}
                                 extra={`width: 100%;`}
                                 emptyOptionLabel={`Схемы отсутствуют`}
+                                allowSearch
                             />
                             {!!selectedSchema && (
                                 <>
