@@ -14,7 +14,8 @@ const menuSections = [
         label: `Структура хранилища`,
         icon: `menu-storage-structure`,
         items: [
-            { label: `Хранилище`, link: `/storage/intermediate${objectToQS({ type: `STAGING` })}` },
+            { label: `Хранилище данных`, link: `/storage/intermediate${objectToQS({ type: `STAGING` })}` },
+            { label: `Промежуточное хранилище`, link: `/storage/intermediate${objectToQS({ type: `DWH` })}` },
         ],
     },
     { label: `ETL-процессы`, icon: `menu-etl-processes`, items: [{ label: `Список ETL-процессов`, link: `/processes` }] },

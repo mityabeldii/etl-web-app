@@ -151,13 +151,13 @@ const IntermidiateStoragePage = () => {
 
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Frame extra={`flex-direction: row;`}>
-                    <Heading>Структура хранилища </Heading>
-                    <Select
+                    <Heading>{{ STAGING: `Хранилище данных`, DWH: `Промежуточное хранилище` }?.[selectedDatasourceType]}</Heading>
+                    {/* <Select
                         value={selectedDatasourceType}
                         onChange={handlers.setSelectedDatasourceType}
                         options={datasourcesNames?.map?.((i) => ({ label: i, value: i }))}
                         toggleComponent={(d) => <ToggleComponent>{d?.label}</ToggleComponent>}
-                    />
+                    /> */}
                 </Frame>
                 {!selectedDatasource && (
                     <Button leftIcon={`plus-in-circle-white`} background={`orange`} onClick={handlers.openCreateDatasourceModal}>

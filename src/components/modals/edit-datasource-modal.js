@@ -14,6 +14,7 @@ import ModalsHelper from "../../utils/modals-helper";
 import useFormControl from "../../hooks/useFormControl";
 import { eventDispatch } from "../../hooks/useEventListener";
 import useModal from "../../hooks/useModal";
+import { useLocation } from "react-router-dom";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -28,6 +29,7 @@ const schema = (yup) =>
 const EditDataSourceModal = () => {
     const { onSubmit, clearForm, setValues } = useFormControl({ name: FORMS.EDIT_DATASOURCE_MODAL, schema });
     const { close: closeModal } = useModal(MODALS.EDIT_DATASOURCE_MODAL, { onOpen: setValues, onClose: clearForm });
+    const { pathname } = useLocation();
     const handleSubmit = async (data) => {
         await DatasourceAPI.updateDatasource(data);
         closeModal();
@@ -45,9 +47,11 @@ const EditDataSourceModal = () => {
                     <Control.Input name={`port`} label={`Порт`} placeholder={`Номер программного порта`} isRequired />
                     <Control.Input name={`url`} label={`База`} placeholder={`Название базы данных`} isRequired />
                 </Control.Row>
-                <Control.Row>
-                    <Control.Input name={`schema`} label={`Cхемы`} placeholder={`Название схемы`} extra={`margin-right: calc(50% + 8px);`} />
-                </Control.Row>
+                {!pathname?.startsWith?.(`/storage`) && (
+                    <Control.Row>
+                        <Control.Input name={`schema`} label={`Cхемы`} placeholder={`Название схемы`} extra={`margin-right: calc(50% + 8px);`} />
+                    </Control.Row>
+                )}
                 <Control.Row>
                     <Control.Input name={`user`} label={`Пользователь`} placeholder={`Имя пользователя источника`} isRequired />
                     <Control.Password name={`password`} label={`Пароль`} placeholder={`Пароль пользователя источника`} isRequired />
