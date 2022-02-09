@@ -58,9 +58,10 @@ const DatasourceAPI = {
     },
 
     async updateDatasource(data) {
+        const dataWithNewUrl = { ...data, url: `jdbc:postgresql://${data?.host}:${data?.port}/${data?.url}` };
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.put(`/api/v1/datasource`, data)).data;
+                const response = (await axios.put(`/api/v1/datasource`, dataWithNewUrl)).data;
                 await DatasourceAPI.getDatasources();
                 handleSuccess({ message: `Источник с id ${data?.id} обновлен успещно` });
                 return response;
