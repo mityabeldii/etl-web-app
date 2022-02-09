@@ -63,7 +63,7 @@ const IntermidiateStoragePage = () => {
     );
     const { tables } = structure;
     const selectedTable = _.find(tables, { name: selectedTableName });
-    const selectedSchema = useStorageListener(state => state?.pages?.[`INTERMIDIATE_STRAGE`]?.selectedSchema ?? ``);
+    const selectedSchema = useStorageListener((state) => state?.pages?.[`INTERMIDIATE_STRAGE`]?.selectedSchema ?? ``);
     const setSelectedSchema = (newSchema) => putStorage(`pages.INTERMIDIATE_STRAGE.selectedSchema`, newSchema);
 
     const handlers = {
@@ -79,22 +79,40 @@ const IntermidiateStoragePage = () => {
         openRenameSchemaModal: () => {
             ModalsHelper.showModal(MODALS.EDIT_SCHEMA_NAME, { datasourceId: selectedDatasource?.id, name: selectedSchema });
         },
-        openDeleteSchemeModal: () => {
-            ModalsHelper.showModal(MODALS.MODALITY, {
-                title: `Удаление схемы, содержащей данные`,
-                description: `Схема, которую вы хотите удалить, содержит данные. Удаление схемы приведет к их утрате.`,
-                cancelButton: {
-                    background: `#DADADA`,
-                    children: `Отмена`,
-                },
-                confirmButton: {
-                    background: `red`,
-                    children: `Удалить`,
-                    onClick: async () => {
-                        await SchemasAPI.deleteSchema(selectedDatasource?.id, selectedSchema);
+        openDeleteSchemeModal: async () => {
+            const { tables } = await DatasourceAPI.getDatasourceTableStructure(selectedDatasource?.id);
+            if (tables?.length > 0) {
+                ModalsHelper.showModal(MODALS.MODALITY, {
+                    title: `Удаление схемы, содержащей данные`,
+                    description: `Схема, которую вы хотите удалить, содержит данные. Удаление схемы приведет к их потере.`,
+                    cancelButton: {
+                        background: `#DADADA`,
+                        children: `Отмена`,
                     },
-                },
-            });
+                    confirmButton: {
+                        background: `red`,
+                        children: `Удалить`,
+                        onClick: async () => {
+                            await SchemasAPI.deleteSchema(selectedDatasource?.id, selectedSchema);
+                        },
+                    },
+                });
+            } else {
+                ModalsHelper.showModal(MODALS.MODALITY, {
+                    title: `Вы действительно хотите удалить схему?`,
+                    cancelButton: {
+                        background: `#DADADA`,
+                        children: `Отмена`,
+                    },
+                    confirmButton: {
+                        background: `red`,
+                        children: `Удалить`,
+                        onClick: async () => {
+                            await SchemasAPI.deleteSchema(selectedDatasource?.id, selectedSchema);
+                        },
+                    },
+                });
+            }
         },
         openCreateTableInSchemaModal: () => {
             ModalsHelper.showModal(MODALS.CREATE_TABLE_IN_SCHEMA, { datasourceId: selectedDatasource?.id, schema: selectedSchema });
