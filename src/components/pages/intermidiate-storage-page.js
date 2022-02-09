@@ -140,15 +140,15 @@ const IntermidiateStoragePage = () => {
     useEffect(() => {
         if (selectedDatasource?.id) {
             DatasourceAPI.getDatasourceTableStructure(selectedDatasource?.id);
-            // SchemasAPI.getSchemas(selectedDatasource?.id);
+            SchemasAPI.getSchemas(selectedDatasource?.id);
         }
     }, [selectedDatasource?.id]);
 
-    // useEffect(() => {
-    //     if (!selectedSchema) {
-    //         setSelectedSchema(schemas?.includes?.(`public`) ? `public` : schemas?.[0]);
-    //     }
-    // }, [schemas]);
+    useEffect(() => {
+        if (!selectedSchema) {
+            setSelectedSchema(schemas?.includes?.(`public`) ? `public` : schemas?.[0]);
+        }
+    }, [schemas]);
 
     return (
         <>
