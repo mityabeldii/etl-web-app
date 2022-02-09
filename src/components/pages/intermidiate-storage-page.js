@@ -217,7 +217,7 @@ const IntermidiateStoragePage = () => {
                         </Card>
                     </Form>
                     <RowWrapper extra={`margin-top: 35px; align-items: flex-start;`}>
-                        <Frame extra={`width: 190px; align-items: flex-start;`}>
+                        <Frame extra={`width: 230px; align-items: flex-start;`}>
                             <H2 extra={`margin-bottom: 16px; height: 38px;`}>Схема</H2>
                             <Select
                                 options={schemas?.map?.((i) => ({ label: i, value: i }))}

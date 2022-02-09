@@ -38,7 +38,7 @@ const UserApp = () => {
                             <Route exact path={[`/processes/configuration/:process_id`, `/processes/configuration/:process_id:keycloack`]} component={ProcessesConfigurationPage} />
                             <Route exact path={[`/history/processes`, `/history/processes:keycloack`]} component={ProcessesHistory} />
                             <Route exact path={[`/history/tasks`, `/history/tasks:keycloack`]} component={TasksHistory} />
-                            <Route exact path={[`/storage/intermediate`, `/storage/intermediate:keycloack`]} component={IntermidiateStoragePage} />
+                            <Route exact path={[`/storage`, `/storage:keycloack`]} component={IntermidiateStoragePage} />
                             <Route exact path={[`/bi`, `/bi:keycloack`]} component={() => <></>} />
                             <Route path={`/`}>
                                 <Redirect to={`/processes`} />
