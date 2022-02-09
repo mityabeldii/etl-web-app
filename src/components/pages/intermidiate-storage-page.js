@@ -8,6 +8,7 @@ import { Frame, Button, H1, H2, RowWrapper, Input, Form, Dropdown } from "../ui-
 import Select from "../ui-kit/select";
 import Table from "../ui-kit/table";
 import { Control } from "../ui-kit/control";
+import Tooltip from "../ui-kit/tooltip";
 
 import EditAccessCredentialsModal from "../modals/edit-access-credentials-modal";
 import CreateScheaInStorageModal from "../modals/create-schema-in-storage-modal";
@@ -240,19 +241,23 @@ const IntermidiateStoragePage = () => {
                             {!!selectedSchema && (
                                 <>
                                     <RowWrapper extra={`margin-top: 4px;`}>
-                                        <Button
-                                            extra={`width: 100%; flex: 1; min-width: unset; padding: 4px; margin-right: 4px;`}
-                                            onClick={handlers.openRenameSchemaModal}
-                                        >
-                                            <Icon src={`edit-white`} />
-                                        </Button>
-                                        <Button
-                                            extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
-                                            background={`red`}
-                                            onClick={handlers.openDeleteSchemeModal}
-                                        >
-                                            <Icon src={`cross-white`} />
-                                        </Button>
+                                        <Tooltip label={`Редактировать`} wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}>
+                                            <Button
+                                                extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
+                                                onClick={handlers.openRenameSchemaModal}
+                                            >
+                                                <Icon src={`edit-white`} />
+                                            </Button>
+                                        </Tooltip>
+                                        <Tooltip label={`Удалить`} wrapperProps={{ extra: `width: 100%;` }}>
+                                            <Button
+                                                extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
+                                                background={`red`}
+                                                onClick={handlers.openDeleteSchemeModal}
+                                            >
+                                                <Icon src={`cross-white`} />
+                                            </Button>
+                                        </Tooltip>
                                     </RowWrapper>
                                 </>
                             )}
@@ -277,19 +282,23 @@ const IntermidiateStoragePage = () => {
                                     </Button>
                                     {selectedTable?.name === table?.name && (
                                         <RowWrapper extra={`margin-top: 4px;`}>
-                                            <Button
-                                                extra={`width: 100%; flex: 1; min-width: unset; padding: 4px; margin-right: 4px;`}
-                                                onClick={handlers.openEditTableNameModal}
-                                            >
-                                                <Icon src={`edit-white`} />
-                                            </Button>
-                                            <Button
-                                                extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
-                                                background={`red`}
-                                                onClick={handlers.openDeleteTableModal}
-                                            >
-                                                <Icon src={`cross-white`} />
-                                            </Button>
+                                            <Tooltip label={`Редактировать`} wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}>
+                                                <Button
+                                                    extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
+                                                    onClick={handlers.openEditTableNameModal}
+                                                >
+                                                    <Icon src={`edit-white`} />
+                                                </Button>
+                                            </Tooltip>
+                                            <Tooltip label={`Удалить`} wrapperProps={{ extra: `width: 100%;` }}>
+                                                <Button
+                                                    extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
+                                                    background={`red`}
+                                                    onClick={handlers.openDeleteTableModal}
+                                                >
+                                                    <Icon src={`cross-white`} />
+                                                </Button>
+                                            </Tooltip>
                                         </RowWrapper>
                                     )}
                                 </Fragment>

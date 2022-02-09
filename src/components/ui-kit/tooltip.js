@@ -6,11 +6,11 @@ import Markdown from "markdown-to-jsx";
 import { Frame } from "../ui-kit/styled-templates";
 
 const Tooltip = (props = {}) => {
-    const { children, label = ``, side = `top` } = props;
+    const { children, label = ``, side = `top`, wrapperProps = {}, tooltipProps = {} } = props;
     return (
-        <TooltipCard side={side}>
+        <TooltipCard side={side} {...wrapperProps}>
             <TooltipText>{children}</TooltipText>
-            <TooltipBox side={side}>
+            <TooltipBox side={side} {...tooltipProps}>
                 <Markdown>{label ?? ``}</Markdown>
             </TooltipBox>
         </TooltipCard>
@@ -91,6 +91,8 @@ const TooltipBox = styled(Frame)`
                 `,
             }?.[side])}
     }
+
+    ${({ extra }) => extra}
 `;
 
 const TooltipCard = styled.div`
@@ -122,6 +124,8 @@ const TooltipCard = styled.div`
                 `,
             }?.[side])}
     }
+
+    ${({ extra }) => extra}
 `;
 
 export default Tooltip;
