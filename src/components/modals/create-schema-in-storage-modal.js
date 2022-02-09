@@ -44,7 +44,7 @@ const CreateScheaInStorageModal = () => {
             <Form name={FORMS.CREATE_SCHEMA_IN_STORAGE} onSubmit={onSubmit(handleSubmit)}>
                 <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Добавить схему в хранилище</H1>
                 <Control.Row>
-                    <Control.Input name={`schemaName`} label={`Имя`} placeholder={`Наименование схемы`} isRequired />
+                    <Control.Input name={`schemaName`} label={`Имя`} placeholder={`Наименование схемы (латиница, цифры и «_»)`} isRequired maxLength={25} pattern="[^a-zA-Z0-9_]" />
                 </Control.Row>
                 <Control.Row>
                     <Button background={`grey`} variant={`outlined`} extra={`margin-left: calc(50% + 8px);`} type={`cancel`} onClick={closeModal}>
