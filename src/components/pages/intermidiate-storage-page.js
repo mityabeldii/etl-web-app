@@ -55,18 +55,14 @@ const IntermidiateStoragePage = () => {
     const datasourcesNames = [`STAGING`, `DWH`];
     const selectedDatasource = _.find(datasources, { type: selectedDatasourceType });
     const structure = useStorageListener((state) => _.find(_.get(state, `datasources.structures`), { id: selectedDatasource?.id })?.data ?? {});
-    const schemas = useStorageListener((state) => _.get(state, `datasources.schemas[${selectedDatasource?.id}]`) ?? []);
+    const schemas = useStorageListener(
+        (state) =>
+            _.get(state, `datasources.schemas[${selectedDatasource?.id}]`)?.filter?.((i) => ![`information_schema`, `pg_catalog`]?.includes?.(i)) ??
+            []
+    );
     const { tables } = structure;
     const selectedTable = _.find(tables, { name: selectedTableName });
     const [selectedSchema, setSelectedSchema] = useState();
-
-    useEffect(DatasourceAPI.getDatasources, []);
-    useEffect(() => {
-        if (selectedDatasource?.id) {
-            DatasourceAPI.getDatasourceTableStructure(selectedDatasource?.id);
-            SchemasAPI.getSchemas(selectedDatasource?.id);
-        }
-    }, [selectedDatasource?.id]);
 
     const handlers = {
         openCreateDatasourceModal: () => {
@@ -139,6 +135,20 @@ const IntermidiateStoragePage = () => {
     };
 
     useEffect(handlers.fetchPreviewFunction, [selectedDatasource?.id, selectedDatasource?.schema, selectedTableName]);
+
+    useEffect(DatasourceAPI.getDatasources, []);
+    useEffect(() => {
+        if (selectedDatasource?.id) {
+            DatasourceAPI.getDatasourceTableStructure(selectedDatasource?.id);
+            // SchemasAPI.getSchemas(selectedDatasource?.id);
+        }
+    }, [selectedDatasource?.id]);
+
+    // useEffect(() => {
+    //     if (!selectedSchema) {
+    //         setSelectedSchema(schemas?.includes?.(`public`) ? `public` : schemas?.[0]);
+    //     }
+    // }, [schemas]);
 
     return (
         <>
@@ -217,12 +227,14 @@ const IntermidiateStoragePage = () => {
                         </Card>
                     </Form>
                     <RowWrapper extra={`margin-top: 35px; align-items: flex-start;`}>
-                        <Frame extra={`width: 230px; align-items: flex-start;`}>
+                        <Frame extra={`width: 270px; align-items: flex-start;`}>
                             <H2 extra={`margin-bottom: 16px; height: 38px;`}>Схема</H2>
                             <Select
                                 options={schemas?.map?.((i) => ({ label: i, value: i }))}
                                 value={selectedSchema}
                                 onChange={handlers.changeSchema}
+                                extra={`width: 100%;`}
+                                emptyOptionLabel={`Схемы отсутствуют`}
                             />
                             {!!selectedSchema && (
                                 <>

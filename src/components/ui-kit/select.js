@@ -23,6 +23,7 @@ const Select = (props) => {
         readOnly = false,
         toggleComponent: ToggleComponent,
         allowSearch = false,
+        emptyOptionLabel = `Данные отсутствуют`,
     } = props;
     const [dropdownId, setDropdownId] = useState(createId());
     const [search, setSearch] = useState(``);
@@ -116,7 +117,7 @@ const Select = (props) => {
             menu={
                 <>
                     {options?.filter?.((i) => !allowSearch || stringImposition(i?.label, search) || selectedLabel === search)?.length === 0 && (
-                        <EmptyPlaceholder />
+                        <EmptyPlaceholder>{emptyOptionLabel}</EmptyPlaceholder>
                     )}
                     {options
                         ?.filter?.((i) => !allowSearch || stringImposition(i?.label, search) || selectedLabel === search)
@@ -185,10 +186,8 @@ const EmptyPlaceholder = styled(Frame)`
     width: 100%;
     padding: 8px;
     align-items: flex-start;
-    &:after {
-        content: "Данные отсутствуют";
-        color: ${({ theme }) => theme.grey};
-    }
+    color: ${({ theme }) => theme.grey};
+    cursor: default;
 `;
 
 const Check = styled(Frame)`

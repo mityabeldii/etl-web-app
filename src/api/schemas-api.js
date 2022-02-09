@@ -17,7 +17,7 @@ const SchemasAPI = {
                 putStorage(`datasources.schemas.${datasourceId}`, response?.schemas);
                 return response;
             } catch (error) {
-                throw handleError(error);
+                throw handleError(`Ошибка соединения к базе`);
             }
         });
     },
@@ -53,8 +53,7 @@ const SchemasAPI = {
     deleteSchema(datasourceId, schemaName) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.delete(`/api/v1/schemes`, { data: { datasourceId, schemaName, deleteType: `RESTRICT` } }))
-                    .data;
+                const response = (await axios.delete(`/api/v1/schemes`, { data: { datasourceId, schemaName, deleteType: `RESTRICT` } })).data;
                 await SchemasAPI.getSchemas(datasourceId);
                 handleSuccess({ message: `Схема ${schemaName} успешно удалена` });
                 return response;
