@@ -241,13 +241,13 @@ const IntermidiateStoragePage = () => {
                                 <>
                                     <RowWrapper extra={`margin-top: 4px;`}>
                                         <Button
-                                            extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`}
+                                            extra={`width: 100%; flex: 1; min-width: unset; padding: 4px; margin-right: 4px;`}
                                             onClick={handlers.openRenameSchemaModal}
                                         >
                                             <Icon src={`edit-white`} />
                                         </Button>
                                         <Button
-                                            extra={`width: 100%; flex: 1; min-width: unset;`}
+                                            extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
                                             background={`red`}
                                             onClick={handlers.openDeleteSchemeModal}
                                         >
@@ -278,13 +278,13 @@ const IntermidiateStoragePage = () => {
                                     {selectedTable?.name === table?.name && (
                                         <RowWrapper extra={`margin-top: 4px;`}>
                                             <Button
-                                                extra={`width: 100%; flex: 1; min-width: unset; margin-right: 4px;`}
+                                                extra={`width: 100%; flex: 1; min-width: unset; padding: 4px; margin-right: 4px;`}
                                                 onClick={handlers.openEditTableNameModal}
                                             >
                                                 <Icon src={`edit-white`} />
                                             </Button>
                                             <Button
-                                                extra={`width: 100%; flex: 1; min-width: unset;`}
+                                                extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
                                                 background={`red`}
                                                 onClick={handlers.openDeleteTableModal}
                                             >
