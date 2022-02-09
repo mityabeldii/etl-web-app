@@ -27,7 +27,7 @@ import { copyToClipboard } from "../../utils/common-helper";
 import ModalsHelper from "../../utils/modals-helper";
 
 import { eventDispatch } from "../../hooks/useEventListener";
-import { putStorage, useStorageListener } from "../../hooks/useStorage";
+import { putStorage, useStorageListener, useStorageValue } from "../../hooks/useStorage";
 import useQueryParams from "../../hooks/useQueryParams";
 
 const StructureTable = ({ rows }) => {
@@ -63,7 +63,8 @@ const IntermidiateStoragePage = () => {
     );
     const { tables } = structure;
     const selectedTable = _.find(tables, { name: selectedTableName });
-    const [selectedSchema, setSelectedSchema] = useState();
+    const selectedSchema = useStorageListener(state => state?.pages?.[`INTERMIDIATE_STRAGE`]?.selectedSchema ?? ``);
+    const setSelectedSchema = (newSchema) => putStorage(`pages.INTERMIDIATE_STRAGE.selectedSchema`, newSchema);
 
     const handlers = {
         openCreateDatasourceModal: () => {

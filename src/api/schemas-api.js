@@ -41,6 +41,7 @@ const SchemasAPI = {
             try {
                 const response = (await axios.put(`/api/v1/schemes`, { datasourceId, oldSchemaName, newSchemaName })).data;
                 await SchemasAPI.getSchemas(datasourceId);
+                putStorage(`pages.INTERMIDIATE_STRAGE.selectedSchema`, response?.schemaName);
                 handleSuccess({ message: `Схема ${oldSchemaName} успешно переименована в ${newSchemaName}` });
                 return response;
             } catch (error) {

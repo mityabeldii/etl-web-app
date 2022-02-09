@@ -4,19 +4,19 @@ import styled, { css } from "styled-components";
 import _ from "lodash";
 
 const Input = (props) => {
-    const { type = `text`, extra = ``, leftIcon, leftIconStyles = ``, rightIcon = {}, leftContent = null, name, value } = props;
+    const { type = `text`, extra = ``, leftIcon, leftIconStyles = ``, rightIcon = {}, leftContent = null, onChange, regex } = props;
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const onChange = (e) => {
-        if (props.pattern) {
-            e.target.value = e.target.value.replace(new RegExp(props.pattern, "g"), ``);
+    const _onChange = (e) => {
+        if (regex) {
+            e.target.value = e.target.value.replace(new RegExp(regex, "g"), ``);
         }
-        props.onChange(e);
+        onChange(e);
     };
     return (
         <Span type={type} extra={extra}>
             {leftIcon && <Icon src={leftIcon} extra={`right: unset; left: 5px;` + leftIconStyles} />}
             {leftContent}
-            <StyledInput {..._.omit(props, `extra`)} type={type === `password` && passwordVisible ? `text` : type} onChange={onChange} />
+            <StyledInput {..._.omit(props, `extra`)} type={type === `password` && passwordVisible ? `text` : type} onChange={_onChange} />
             {type === `password` ? (
                 <Eye opened={passwordVisible} onClick={() => setPasswordVisible(!passwordVisible)} />
             ) : rightIcon?.src ? (
