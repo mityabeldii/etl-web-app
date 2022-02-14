@@ -8,7 +8,7 @@ import Table from "../ui-kit/table";
 
 import { MODALS, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
-import ModalsHelper from '../../utils/modals-helper'
+import ModalsHelper from "../../utils/modals-helper";
 
 import ProcessesAPI from "../../api/processes-api";
 
@@ -21,10 +21,11 @@ const ProcessesListPage = () => {
     const openCreateProcessModal = () => {
         ModalsHelper.showModal(MODALS.CREATE_PROCESS_MODAL);
     };
+    const rowsCount = useStorageListener(state => state?.tables?.PROCESSES_LIST?.rows?.length ?? 0)
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
-                <Heading>ETL-процессы</Heading>
+                <Heading>ETL-процессы ({rowsCount})</Heading>
                 <Button leftIcon={`plus-in-circle-white`} background={`orange`} onClick={openCreateProcessModal}>
                     Добавить процесс
                 </Button>

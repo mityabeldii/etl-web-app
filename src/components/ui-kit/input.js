@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import _ from "lodash";
 
 const Input = (props) => {
-    const { type = `text`, extra = ``, leftIcon, leftIconStyles = ``, rightIcon = {}, leftContent = null, onChange, regex } = props;
+    const { type = `text`, extra = ``, leftIcon, leftIconStyles = ``, rightIcon = {}, leftContent = null, onChange, regex, readOnly } = props;
     const [passwordVisible, setPasswordVisible] = useState(false);
     const _onChange = (e) => {
         if (regex) {
@@ -13,7 +13,7 @@ const Input = (props) => {
         onChange(e);
     };
     return (
-        <Span type={type} extra={extra}>
+        <Span type={type} extra={extra} readOnly={readOnly}>
             {leftIcon && <Icon src={leftIcon} extra={`right: unset; left: 5px;` + leftIconStyles} />}
             {leftContent}
             <StyledInput {..._.omit(props, `extra`)} type={type === `password` && passwordVisible ? `text` : type} onChange={_onChange} />
@@ -67,6 +67,13 @@ const Span = styled.span`
 
     box-sizing: border-box;
 
+    ${({ readOnly }) =>
+        readOnly &&
+        css`
+            cursor: default;
+            background: #ebebeb;
+        `}
+
     ${({ rightIcon }) => rightIcon && `padding-right: 30px;`}
 
     ${({ extra }) => extra}
@@ -104,7 +111,6 @@ export const StyledInput = styled.input`
         readOnly &&
         css`
             cursor: default;
-            background: #ebebeb;
             color: #67686d;
         `}
 

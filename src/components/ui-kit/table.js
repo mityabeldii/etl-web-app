@@ -268,7 +268,7 @@ const Table = (props) => {
 };
 
 const smartStringify = (value) => {
-    return !!value || !!`${value}` ? (typeof value !== `string` ? JSON.stringify(value) : value) : `-`;
+    return !!value && !!`${value}` ? (typeof value !== `string` ? JSON.stringify(value) : value) : `-`;
 };
 
 const TableCell = ({ cellState }) => {
@@ -300,16 +300,23 @@ const TableCell = ({ cellState }) => {
                 ),
                 process_name: (
                     <Frame
-                        extra={`flex-direction: row; * { line-height: 19px !important; margin: 0; }; > * { > * { &:first-child { margin-bottom: 8px; }; }; };`}
+                        extra={`flex-direction: column; align-items: flex-start; * { line-height: 19px !important; margin: 0; }; > * { > * { &:first-child { margin-bottom: 8px; }; }; };`}
                     >
-                        <Markdown>{`**${row?.processName ?? ``}**\n\n${row?.processDescription ?? ``}`}</Markdown>
+                        {/* <Markdown>{`**${row?.processName ?? ``}**\n\n${row?.processDescription ?? ``}`}</Markdown> */}
+                        <Frame extra={`margin-bottom: 8px; font-weight: bold;`}>{row?.processName ?? `-`}</Frame>
+                        <Frame>
+                            <Tooltip label={row?.processDescription ?? `-`}>
+                                {row?.processDescription?.slice?.(0, 25)}
+                                {row?.processDescription?.length > 25 && `...`}
+                            </Tooltip>
+                        </Frame>
                         {row?.in_progress && <Tooltip label={`Процесс запущен`} children={<SpinningArrows />} />}
                     </Frame>
                 ),
                 crontab: (
                     <Frame extra={`flex-direction: row;`}>
                         <Markdown>{transformedValue ?? `-`}</Markdown>
-                        <Tooltip label={`В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n2021-01-11 14:15`} children={<Info />} />
+                        {/* <Tooltip label={`В 14:15 1 числа каждого месяца\n\n**Следующий запуск:**\n\n2021-01-11 14:15`} children={<Info />} /> */}
                     </Frame>
                 ),
                 statistics: (
