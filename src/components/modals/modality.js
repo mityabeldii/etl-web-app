@@ -34,7 +34,7 @@ const Modality = () => {
                     {...data?.cancelButton}
                     extra={(data?.cancelButton?.extra ?? ``) + `margin-right: 12px;`}
                     onClick={closeModal}
-                    type={`cancel`}
+                    formNoValidate
                 />
                 <Button
                     {...data?.confirmButton}

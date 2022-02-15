@@ -57,7 +57,7 @@ const EditDataSourceModal = () => {
                     <Control.Password name={`password`} label={`Пароль`} placeholder={`Пароль пользователя источника`} isRequired />
                 </Control.Row>
                 <Control.Row>
-                    <Button background={`grey`} variant={`outlined`} extra={`margin-left: calc(50% + 8px);`} type={`cancel`} onClick={closeModal}>
+                    <Button background={`grey`} variant={`outlined`} extra={`margin-left: calc(50% + 8px);`} formNoValidate onClick={closeModal}>
                         Отменить
                     </Button>
                     <Button background={`green`} type={`submit`}>

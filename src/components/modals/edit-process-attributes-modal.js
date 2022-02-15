@@ -89,7 +89,7 @@ const EditProcessAttributesModal = () => {
                         background={`grey`}
                         variant={`outlined`}
                         extra={`width: 100%; flex: 1; margin-left: calc(50% + 8px);`}
-                        type={`cancel`}
+                        formNoValidate
                         onClick={closeModal}
                     >
                         Отменить
