@@ -14,12 +14,11 @@ import { putStorage, StorageProvider } from "./hooks/useStorage";
 import axios from "axios";
 import UserAPI from "./api/user-api";
 
+moment.tz.setDefault("Europe/Moscow");
 setUpInterceptors();
 
-moment.tz.setDefault("Europe/Moscow");
-
 const keycloak = Keycloak({
-    url: "https://dev.sciencenet.ru/auth",
+    url: `${process.env.REACT_APP_KEYCLOAK_URL}/auth`,
     realm: "cpi",
     clientId: "open_portal",
 });
@@ -29,16 +28,14 @@ const eventLogger = (event, error) => {
 };
 
 const tokenLogger = async (tokens) => {
-    // console.log("onKeycloakTokens", tokens);
-    if (tokens.token) {
-        localStorage.setItem("auth_token_etl", tokens.token);
-        try {
+    try {
+        if (tokens.token) {
+            localStorage.setItem("auth_token_etl", tokens.token);
             await UserAPI.getContexts(tokens?.token);
-        } catch (error) {
-            keycloak.logout();
         }
-    } else {
+    } catch (error) {
         localStorage.removeItem("auth_token_etl");
+        keycloak.logout();
     }
 };
 

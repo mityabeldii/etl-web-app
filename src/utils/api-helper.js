@@ -19,7 +19,7 @@ export const setUpInterceptors = () => {
             config.baseURL = base_url;
             const token = getToken();
             if (!!token) {
-                // config.headers["Authorization"] = `Bearer ${token}`;
+                config.headers["Authorization"] = `Bearer ${token}`;
             }
             return config;
         },

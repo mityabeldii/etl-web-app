@@ -11,7 +11,7 @@ const UserAPI = {
         return loadingCounterWrapper(async () => {
             try {
                 const { contexts } = (
-                    await axios.get(`https://dev.sciencenet.ru/platform-security/settings/users/current-user`, {
+                    await axios.get(`${process.env.REACT_APP_CURRENT_USER_URL}/platform-security/settings/users/current-user`, {
                         headers: { Authorization: `Bearer ${token}` },
                     })
                 ).data;
