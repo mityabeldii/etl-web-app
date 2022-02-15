@@ -31,7 +31,12 @@ const DatasourceList = {
         { name: `description`, extra: `flex: 2;`, label: `Описание` },
         { name: `host`, extra: `flex: 2;`, label: `Хост` },
         { name: `port`, extra: `flex: 1;`, label: `Порт` },
-        { name: `url`, extra: `flex: 5;`, label: `База` },
+        {
+            name: `url`,
+            extra: `flex: 5;`,
+            label: `База`,
+            transform: ({ row }) => row?.url?.split?.(`/`)?.at?.(-1),
+        },
         { name: `schema`, extra: `flex: 2;`, label: `Схема` },
         {
             name: `editbutton`,
