@@ -264,6 +264,7 @@ const IntermidiateStoragePage = () => {
                                             <Button
                                                 extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
                                                 onClick={handlers.openRenameSchemaModal}
+                                                disabled={!selectedSchema}
                                             >
                                                 <Icon src={`edit-white`} />
                                             </Button>
@@ -273,6 +274,7 @@ const IntermidiateStoragePage = () => {
                                                 extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
                                                 background={`red`}
                                                 onClick={handlers.openDeleteSchemeModal}
+                                                disabled={!selectedSchema}
                                             >
                                                 <Icon src={`cross-white`} />
                                             </Button>
