@@ -194,18 +194,18 @@ const ETLProcessesConfigurationTable = {
 };
 
 const ProcessesHistoryTable = {
-    useBackendProcessing: false,
+    useBackendProcessing: true,
     withPagination: true,
     booleanOperation: `disjunction`,
     columns: [
         {
             name: `processName`,
             label: `Процесс`,
-            extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
+            extra: `flex: 2; > * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
             transform: ({ row }) => `**${row?.processName}**`,
         },
-        { name: `processRunId`, label: `ID запуска`, extra: `flex: 2;` },
-        { name: `processId`, label: `ID процесса`, extra: `flex: 2;` },
+        { name: `id`, label: `ID запуска`, extra: `flex: 1;` },
+        { name: `processId`, label: `ID процесса`, extra: `flex: 1;` },
         {
             name: `startAndStop`,
             label: `Старт/Завершение`,

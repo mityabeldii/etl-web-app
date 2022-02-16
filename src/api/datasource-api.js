@@ -130,7 +130,7 @@ const DatasourceAPI = {
     async getProcessesHistory() {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`/process-instances`)).data;
+                const response = (await axios.get(`/process-instances`, GETOptions(`PROCESSES_HISTORY`))).data;
                 mergeStorage(`tables.${TABLES.PROCESSES_HISTORY}`, {
                     rows: response?.sort?.((a, b) => b?.processStartDate - a?.processStartDate) ?? [],
                     pagination: response?._meta ?? {},

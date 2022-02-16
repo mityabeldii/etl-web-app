@@ -57,7 +57,7 @@ const Table = (props) => {
     const setSelectedRows = (newValue = []) => {
         putStorage(`tables.${name}.selectedRows`, newValue.slice(0, selectionLimit));
     };
-    const filters = useBackendProcessing ? tableState?.filters ?? {} : propsFilters ?? {};
+    const { filters } = tableState;
     const setFilter = (filter, newValue) => {
         putStorage(`tables.${name}.filters.${filter}`, newValue);
     };
@@ -102,6 +102,7 @@ const Table = (props) => {
             const newData = await fetchFunction();
         }
     }, []);
+    useEffect(() => useBackendProcessing && putStorage(`tables.${name}.filters`, propsFilters), [propsFilters, useBackendProcessing]);
 
     return (
         <TableWrapper>
@@ -355,7 +356,7 @@ const TableCell = ({ cellState }) => {
             extra={(column?.extra ?? ``) + (column?.cell?.extra ?? ``)}
             clickable={column?.onCellClick}
             onClick={() => {
-                 column?.onCellClick?.(cellState);
+                column?.onCellClick?.(cellState);
             }}
         >
             {column?.tooltip ? (
