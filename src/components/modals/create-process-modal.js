@@ -35,7 +35,7 @@ const CreateProcessModal = () => {
             <Form name={FORMS.CREATE_PROCESS_MODAL} onSubmit={onSubmit(handleSubmit)}>
                 <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Добавить ETL-процесс</H1>
                 <Control.Row>
-                    <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя процесса`} isRequired />
+                    <Control.Input name={`processName`} label={`Имя`} placeholder={`Имя процесса`} isRequired maxLength={40} />
                 </Control.Row>
                 <Control.Row>
                     <Control.Textarea
@@ -43,6 +43,7 @@ const CreateProcessModal = () => {
                         label={`Описание`}
                         placeholder={`Краткое описание процесса`}
                         controlStyles={`flex: 1;`}
+                        maxLength={200}
                     />
                 </Control.Row>
                 <Control.Row>

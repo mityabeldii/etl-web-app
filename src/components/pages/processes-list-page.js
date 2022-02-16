@@ -18,10 +18,11 @@ import { eventDispatch } from "../../hooks/useEventListener";
 
 const ProcessesListPage = () => {
     const { params: filters } = useQueryParams();
+    const rowsCount = useStorageListener(state => state?.tables?.PROCESSES_LIST?.rows?.length ?? 0)
+    
     const openCreateProcessModal = () => {
         ModalsHelper.showModal(MODALS.CREATE_PROCESS_MODAL);
     };
-    const rowsCount = useStorageListener(state => state?.tables?.PROCESSES_LIST?.rows?.length ?? 0)
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>

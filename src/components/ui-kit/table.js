@@ -8,6 +8,8 @@ import Markdown from "markdown-to-jsx";
 import { Frame, Checkbox, Input, Button, RowWrapper, Switch, Dropdown } from "./styled-templates";
 import Select from "./select";
 import Tooltip from "./tooltip";
+import ProcessDropdown from "../tools/process-dropdown";
+import DatasourceDropdown from "../tools/datasource-dropdown";
 
 import { convertHex } from "../../utils/colors-helper";
 import { createId, togglePush } from "../../utils/common-helper";
@@ -18,7 +20,6 @@ import useDebounce from "../../hooks/useDebounde";
 import { EVENTS, MODALS, PROCESS_STATUS, PROCESS_STATUSES, SORT_ORDERS, TABLES } from "../../constants/config";
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import usePagination from "../../hooks/usePagination";
-import ProcessDropdown from "../tools/process-dropdown";
 
 const Table = (props) => {
     const {
@@ -333,6 +334,7 @@ const TableCell = ({ cellState }) => {
                     </Frame>
                 ),
                 process_more_button: <ProcessDropdown cellState={cellState} />,
+                datasource_more_button: <DatasourceDropdown cellState={cellState} />,
                 operator: (
                     <Frame extra={`flex-direction: row;`}>
                         {transformedValue} <Icon src={`settings`} />
@@ -353,10 +355,14 @@ const TableCell = ({ cellState }) => {
             extra={(column?.extra ?? ``) + (column?.cell?.extra ?? ``)}
             clickable={column?.onCellClick}
             onClick={() => {
-                column?.onCellClick?.(cellState);
+                 column?.onCellClick?.(cellState);
             }}
         >
-            {column?.tooltip ? <Tooltip {...column?.tooltip} children={cellContent} /> : cellContent}
+            {column?.tooltip ? (
+                <Tooltip {...(_.isFunction(column?.tooltip) ? column?.tooltip(cellState) : column?.tooltip)} children={cellContent} />
+            ) : (
+                cellContent
+            )}
         </STd>
     );
 };

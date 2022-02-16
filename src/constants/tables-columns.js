@@ -28,7 +28,13 @@ const DatasourceList = {
                 to: ({ row }) => `/datasources/${row?.id}`,
             },
         },
-        { name: `description`, extra: `flex: 2;`, label: `Описание` },
+        {
+            name: `description`,
+            extra: `flex: 2;`,
+            label: `Описание`,
+            transform: ({ row }) => `${row?.description?.slice?.(0, 25) ?? `-`}${row?.description?.length > 25 ? `...` : ``}`,
+            tooltip: ({ value: label }) => ({ label }),
+        },
         { name: `host`, extra: `flex: 2;`, label: `Хост` },
         { name: `port`, extra: `flex: 1;`, label: `Порт` },
         {
@@ -38,49 +44,50 @@ const DatasourceList = {
             transform: ({ row }) => row?.url?.split?.(`/`)?.at?.(-1),
         },
         { name: `schema`, extra: `flex: 2;`, label: `Схема` },
-        {
-            name: `editbutton`,
-            extra: `width: 40px; flex: unset;`,
-            cell: {
-                type: `button`,
-                variant: `plain`,
-                leftIcon: `edit`,
-                extra: `box-shadow: unset; padding: 8px; min-width: unset;`,
-                leftIconStyles: `margin-right: 0;`,
-                onClick: (row) => {
-                    putStorage(`forms.${FORMS.EDIT_DATASOURCE_MODAL}.values`, { ...row, url: row?.url?.split?.(`/`)?.at?.(-1) ?? `` });
-                    ModalsHelper.showModal(MODALS.EDIT_DATASOURCE_MODAL);
-                },
-            },
-        },
-        {
-            name: `deletebutton`,
-            extra: `width: 40px; flex: unset;`,
-            cell: {
-                type: `button`,
-                variant: `plain`,
-                leftIcon: `delete-outline`,
-                extra: `box-shadow: unset; padding: 8px; min-width: unset;`,
-                leftIconStyles: `margin-right: 0;`,
-                onClick: (row) => {
-                    ModalsHelper.showModal(MODALS.MODALITY, {
-                        title: `Удаление источника данных`,
-                        description: `Вы действительно хотите удалить источник данных ${row?.name}?`,
-                        confirmButton: {
-                            children: `Удалить`,
-                            background: `red`,
-                            onClick: async () => {
-                                DatasourceAPI.deleteDatasource(row?.id);
-                            },
-                        },
-                        cancelButton: {
-                            background: `grey`,
-                            children: `Отмена`,
-                        },
-                    });
-                },
-            },
-        },
+        { name: `morebutton`, label: ``, cell: { type: `datasource_more_button`, extra: `justify-content: flex-end;` } },
+        // {
+        //     name: `editbutton`,
+        //     extra: `width: 40px; flex: unset;`,
+        //     cell: {
+        //         type: `button`,
+        //         variant: `plain`,
+        //         leftIcon: `edit`,
+        //         extra: `box-shadow: unset; padding: 8px; min-width: unset;`,
+        //         leftIconStyles: `margin-right: 0;`,
+        //         onClick: (row) => {
+        //             putStorage(`forms.${FORMS.EDIT_DATASOURCE_MODAL}.values`, { ...row, url: row?.url?.split?.(`/`)?.at?.(-1) ?? `` });
+        //             ModalsHelper.showModal(MODALS.EDIT_DATASOURCE_MODAL);
+        //         },
+        //     },
+        // },
+        // {
+        //     name: `deletebutton`,
+        //     extra: `width: 40px; flex: unset;`,
+        //     cell: {
+        //         type: `button`,
+        //         variant: `plain`,
+        //         leftIcon: `delete-outline`,
+        //         extra: `box-shadow: unset; padding: 8px; min-width: unset;`,
+        //         leftIconStyles: `margin-right: 0;`,
+        //         onClick: (row) => {
+        //             ModalsHelper.showModal(MODALS.MODALITY, {
+        //                 title: `Удаление источника данных`,
+        //                 description: `Вы действительно хотите удалить источник данных ${row?.name}?`,
+        //                 confirmButton: {
+        //                     children: `Удалить`,
+        //                     background: `red`,
+        //                     onClick: async () => {
+        //                         DatasourceAPI.deleteDatasource(row?.id);
+        //                     },
+        //                 },
+        //                 cancelButton: {
+        //                     background: `grey`,
+        //                     children: `Отмена`,
+        //                 },
+        //             });
+        //         },
+        //     },
+        // },
     ],
 };
 

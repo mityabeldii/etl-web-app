@@ -19,13 +19,15 @@ const DatasourcesListPage = () => {
     const openCreateDataSourceModal = () => {
         ModalsHelper.showModal(MODALS.CREATE_DATASOURCE_MODAL);
     };
+    const rowsCount = useStorageListener(state => state?.tables?.DATASOURCE_LIST?.rows?.filter?.(i => i?.type === `SOURCE`)?.length ?? 0)
+
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
     };
     return (
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
-                <Heading>Источники данных</Heading>
+                <Heading>Источники данных ({rowsCount})</Heading>
                 <Button leftIcon={`plus-in-circle-white`} background={`orange`} onClick={openCreateDataSourceModal}>
                     Добавить источник
                 </Button>
@@ -35,7 +37,7 @@ const DatasourcesListPage = () => {
                 fetchFunction={DatasourceAPI.getDatasources}
                 {...tablesColumns[TABLES.DATASOURCE_LIST]}
                 extraHeader={<Search value={search} onChange={handleSearchChange} />}
-                filters={{ host: search, port: search }}
+                filters={{ host: search, name: search, type: `SOURCE` }}
             />
         </>
     );

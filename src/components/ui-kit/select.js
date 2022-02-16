@@ -46,6 +46,7 @@ const Select = (props) => {
             callable={!multiselect}
             wrapperStyles={extra}
             closeOnToggleClick={false}
+            closeOnChildrenClick={!multiselect}
             toggleProps={{
                 extra: css`
                     width: 100%;
