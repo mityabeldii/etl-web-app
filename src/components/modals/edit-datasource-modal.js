@@ -16,7 +16,7 @@ import { eventDispatch } from "../../hooks/useEventListener";
 import useModal from "../../hooks/useModal";
 import { useLocation } from "react-router-dom";
 
-const schema = (yup) =>
+const schema = (isStorage) => (yup) =>
     yup.object().shape({
         name: yup.string().required(`Это поле обязательно`),
         host: yup.string().required(`Это поле обязательно`),
@@ -24,12 +24,18 @@ const schema = (yup) =>
         url: yup.string().required(`Это поле обязательно`),
         user: yup.string().required(`Это поле обязательно`),
         password: yup.string().required(`Это поле обязательно`),
+        ...(!isStorage && {
+            schema: yup.string().required(`Это поле обязательно`),
+        }),
     });
 
 const EditDataSourceModal = () => {
-    const { onSubmit, clearForm, setValues } = useFormControl({ name: FORMS.EDIT_DATASOURCE_MODAL, schema });
-    const { close: closeModal } = useModal(MODALS.EDIT_DATASOURCE_MODAL, { onOpen: setValues, onClose: clearForm });
     const { pathname } = useLocation();
+    const { onSubmit, clearForm, setValues } = useFormControl({
+        name: FORMS.EDIT_DATASOURCE_MODAL,
+        schema: schema(pathname?.startsWith?.(`/storage`)),
+    });
+    const { close: closeModal } = useModal(MODALS.EDIT_DATASOURCE_MODAL, { onOpen: setValues, onClose: clearForm });
     const handleSubmit = async (data) => {
         await DatasourceAPI.updateDatasource(data);
         closeModal();
@@ -49,7 +55,13 @@ const EditDataSourceModal = () => {
                 </Control.Row>
                 {!pathname?.startsWith?.(`/storage`) && (
                     <Control.Row>
-                        <Control.Input name={`schema`} label={`Cхемы`} placeholder={`Название схемы`} extra={`margin-right: calc(50% + 8px);`} />
+                        <Control.Input
+                            name={`schema`}
+                            label={`Cхемы`}
+                            placeholder={`Название схемы`}
+                            extra={`margin-right: calc(50% + 8px);`}
+                            isRequired
+                        />
                     </Control.Row>
                 )}
                 <Control.Row>
