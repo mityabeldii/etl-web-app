@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import { isna } from './common-helper';
+import { isna } from "./common-helper";
 
 const MaskHelper = {
     mask: (value = ``, pattern = ``, options = {}) => {

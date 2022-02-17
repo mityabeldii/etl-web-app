@@ -17,6 +17,8 @@ import { useStorageListener } from "../../hooks/useStorage";
 import useQueryParams from "../../hooks/useQueryParams";
 import Select from "../ui-kit/select";
 import { convertHex } from "../../utils/colors-helper";
+import FiltersToolBar from "../tools/filters-tool-bar";
+import DateRangePicker from "../tools/date-range-picker";
 
 const ProcessHistoryPage = () => {
     // const { params } = useQueryParams();
@@ -29,11 +31,19 @@ const ProcessHistoryPage = () => {
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Heading>История запуска процессов</Heading>
             </RowWrapper>
+            <RowWrapper>
+                <FiltersToolBar
+                    filters={params}
+                    onChange={setParams}
+                    tableName={`PROCESSES_HISTORY`}
+                    wrapperExtra={`margin-bottom: 28px;`}
+                />
+            </RowWrapper>
             <Table
                 name={TABLES.PROCESSES_HISTORY}
                 fetchFunction={DatasourceAPI.getProcessesHistory}
                 {...tablesColumns[TABLES.PROCESSES_HISTORY]}
-                extraHeader={<SearchBar params={params} setByKey={setByKey} />}
+                extraHeader={<SearchBar params={params} setByKey={setByKey} setParams={setParams} />}
                 filters={params}
             />
         </>
@@ -49,14 +59,43 @@ const Heading = styled(H1)`
     }
 `;
 
-const SearchBar = ({ params, setByKey }) => {
+const SearchBar = ({ params, setByKey, setParams }) => {
     const processes = useStorageListener((state) => _.get(state, `tables.${TABLES.PROCESSES_HISTORY}.rows`) ?? []);
     return (
-        <RowWrapper extra={`border-bottom: 1px solid #dadada;`}>
+        <RowWrapper extra={`border-bottom: 1px solid #dadada; height: 60px;`}>
             <Search
-                value={params?.processRunId ?? ``}
+                value={params?.id ?? ``}
                 onChange={(e) => {
-                    setByKey(`processRunId`, e.target.value ?? ``);
+                    setByKey(`id`, e.target.value ?? ``);
+                }}
+            />
+            <DateRangePicker
+                toggleComponent={() => (
+                    <RowWrapper
+                        extra={css`
+                            width: 136px;
+                            border: 0px;
+                            padding: 20px 30px;
+                            border-left: 1px solid #dadada;
+                            border-radius: 0px;
+                            background: transparent;
+                            cursor: pointer;
+                            box-sizing: border-box;
+                        `}
+                    >
+                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Календарь</Frame>
+                    </RowWrapper>
+                )}
+                value={{
+                    from: params?.processEndDate?.from?.toString() ?? ``,
+                    to: params?.processEndDate?.to?.toString() ?? ``,
+                }}
+                onChange={(value) => {
+                    setParams({
+                        ...params,
+                        processStartDate: new Date(value.from),
+                        processEndDate: new Date(value.to),
+                    });
                 }}
             />
             <Select
@@ -77,7 +116,8 @@ const SearchBar = ({ params, setByKey }) => {
                                 width: 24px;
                                 height: 24px;
                                 transform: rotate(90deg);
-                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}") no-repeat center center / contain;
+                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}")
+                                    no-repeat center center / contain;
                             }
                         `}
                     >
@@ -111,7 +151,8 @@ const SearchBar = ({ params, setByKey }) => {
                                 width: 24px;
                                 height: 24px;
                                 transform: rotate(90deg);
-                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}") no-repeat center center / contain;
+                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}")
+                                    no-repeat center center / contain;
                             }
                         `}
                     >
@@ -123,7 +164,10 @@ const SearchBar = ({ params, setByKey }) => {
                 onChange={(e) => {
                     setByKey(`state`, params?.state === e.target.value ? undefined : e.target.value);
                 }}
-                options={Object.keys(PROCESS_STATUSES)?.map?.((key) => ({ label: PROCESS_STATUSES[key]?.label, value: key }))}
+                options={Object.keys(PROCESS_STATUSES)?.map?.((key) => ({
+                    label: PROCESS_STATUSES[key]?.label,
+                    value: key,
+                }))}
             />
         </RowWrapper>
     );

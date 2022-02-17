@@ -11,7 +11,6 @@ import theme from "./constants/theme-constants";
 import { setUpInterceptors } from "./utils/api-helper";
 
 import { putStorage, StorageProvider } from "./hooks/useStorage";
-import axios from "axios";
 import UserAPI from "./api/user-api";
 
 moment.tz.setDefault("Europe/Moscow");

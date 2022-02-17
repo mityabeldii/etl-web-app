@@ -85,11 +85,10 @@ export const POSTOptions = (name) => {
     const table = getStorage((state) => state?.tables?.[name] ?? {});
     const { pagination = {}, sort = [], filters: filter = {} } = table;
     const { currentPage = 0, perPage = 10 } = pagination;
-    console.log(filter)
     return {
         params: {
             limit: perPage,
-            offset: currentPage + 1,
+            offset: (currentPage + 1) * perPage,
             ...filter,
         },
     };

@@ -369,7 +369,7 @@ const TableCell = ({ cellState }) => {
 };
 
 const ProcessStatus = styled(Frame)`
-    width: 128px;
+    width: 158px;
     padding: 4px 0;
     box-sizing: border-box;
     border-radius: 4px;

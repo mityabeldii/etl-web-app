@@ -138,4 +138,14 @@ export const PROCESS_STATUSES = {
         name: "forced completion",
         color: "grey",
     },
+    UPSTREAM_FAILED: {
+        label: "Не дошла очередь",
+        name: "upstream failed",
+        color: "grey",
+    },
+    UP_FOR_RETRY: {
+        label: "Ожидает перезапуска",
+        name: "up for retry",
+        color: "grey",
+    },
 };

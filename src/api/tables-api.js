@@ -2,7 +2,7 @@
 import axios from "axios";
 import _ from "lodash";
 
-import { convertPaginatedResponse, GETOptions, handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
+import { GETOptions, handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
 import CaseHalper from "../utils/case-helper";
 
 import { API_URL, base_url, TABLES } from "../constants/config";

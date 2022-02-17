@@ -227,15 +227,24 @@ const ASYNC_STATUSES = {
 };
 
 export const Button = (props) => {
-    const { extendedIndicators = false, onClick, disabled = false, successLabel, errorLabel, extra = ``, leftIcon, type = `button` } = props;
+    const {
+        extendedIndicators = false,
+        onClick,
+        disabled = false,
+        successLabel,
+        errorLabel,
+        extra = ``,
+        leftIcon,
+        type = `button`,
+    } = props;
     const [status, setStatus] = useState(ASYNC_STATUSES.REGULAR);
 
     const newExtra =
-        ({
-            [ASYNC_STATUSES.PENDING]: ({ theme }) => `background: ${theme.grey} !important;`,
-            [ASYNC_STATUSES.SUCCESS]: ({ theme }) => `background: ${theme.green} !important;`,
-            [ASYNC_STATUSES.ERROR]: ({ theme }) => `background: ${theme.red} !important;`,
-        }?.[status] ?? ``) + extra;
+        {
+            [ASYNC_STATUSES.PENDING]: (props) => `background: ${props.theme.grey} !important;`,
+            [ASYNC_STATUSES.SUCCESS]: (props) => `background: ${props.theme.green} !important;`,
+            [ASYNC_STATUSES.ERROR]: (props) => `background: ${props.theme.red} !important;`,
+        }?.[status] ?? ``;
 
     const newOnClick = async (e) => {
         if (!onClick) {
@@ -255,10 +264,19 @@ export const Button = (props) => {
         }
     };
 
-    const newDisabled = disabled === true || [ASYNC_STATUSES.PENDING, ASYNC_STATUSES.SUCCESS, ASYNC_STATUSES.ERROR].includes(status);
+    const newDisabled =
+        disabled === true || [ASYNC_STATUSES.PENDING, ASYNC_STATUSES.SUCCESS, ASYNC_STATUSES.ERROR].includes(status);
 
     return (
-        <ButtonWrapper {...props} extra={newExtra} onClick={newOnClick} disabled={newDisabled} leftIcon={leftIcon} type={type}>
+        <ButtonWrapper
+            {...props}
+            extra={extra}
+            importantExtra={newExtra}
+            onClick={newOnClick}
+            disabled={newDisabled}
+            leftIcon={leftIcon}
+            type={type}
+        >
             {{
                 pending: <Spinner />,
                 success: successLabel ?? `Success`,
@@ -299,7 +317,8 @@ export const ButtonWrapper = styled.button`
                 content: "";
                 width: 10px;
                 height: 10px;
-                background: url("${require(`../../assets/icons/${leftIcon}.svg`).default}") no-repeat center center / contain;
+                background: url("${require(`../../assets/icons/${leftIcon}.svg`).default}") no-repeat center center /
+                    contain;
             }
         `}
 
@@ -311,7 +330,8 @@ export const ButtonWrapper = styled.button`
                 width: 20px;
                 height: 20px;
                 margin-right: 8px;
-                background: url("${require(`../../assets/icons/${leftIcon}.svg`).default}") no-repeat center center / contain;
+                background: url("${require(`../../assets/icons/${leftIcon}.svg`).default}") no-repeat center center /
+                    contain;
                 ${leftIconStyles}
             }
         `}
@@ -355,6 +375,7 @@ export const ButtonWrapper = styled.button`
         `}
 
     ${({ extra }) => extra}
+    ${({ importantExtra }) => importantExtra}
 `;
 
 /* DROPDOWN */
@@ -396,7 +417,10 @@ const DropdownStyles = {
         z-index: 2;
         visibility: ${({ visible }) => (visible ? `visible` : `hidden`)};
         opacity: ${({ visible }) => (visible ? 1 : 0)};
-        transform: translate(0, ${({ visible, direction = `down` }) => (visible ? { down: 5, up: -5 }?.[direction] : -15)}px);
+        transform: translate(
+            0,
+            ${({ visible, direction = `down` }) => (visible ? { down: 5, up: -5 }?.[direction] : -15)}px
+        );
 
         padding: 10px;
         border-radius: 8px;
@@ -437,7 +461,8 @@ export const Dropdown = (props) => {
     const uniqueId = useRef(createId());
     const [direction, setDirection] = useState(`down`);
     useOnClickOutside(menuRef, (e) => {
-        const isCurrentDropdown = e?.path?.map?.((i) => i.className?.includes?.(uniqueId.current)).filter((i) => i).length === 0;
+        const isCurrentDropdown =
+            e?.path?.map?.((i) => i.className?.includes?.(uniqueId.current)).filter((i) => i).length === 0;
         if (isCurrentDropdown) {
             setOpened(false);
         }
@@ -449,7 +474,9 @@ export const Dropdown = (props) => {
     });
     useEffect(() => {
         setDirection(
-            window?.outerHeight - (menuRef.current.getBoundingClientRect().y + window.scrollY) - toggleRef?.current?.clientHeight >
+            window?.outerHeight -
+                (menuRef.current.getBoundingClientRect().y + window.scrollY) -
+                toggleRef?.current?.clientHeight >
                 menuRef?.current?.clientHeight
                 ? `down`
                 : `up`
@@ -469,7 +496,11 @@ export const Dropdown = (props) => {
     const handleToggleClick = (event) => {
         if (!callable || (!closeOnToggleClick && opened)) return;
         setOpened(!opened);
-        setDirection(window?.outerHeight - event?.screenY - toggleRef?.current?.clientHeight > menuRef?.current?.clientHeight ? `down` : `up`);
+        setDirection(
+            window?.outerHeight - event?.screenY - toggleRef?.current?.clientHeight > menuRef?.current?.clientHeight
+                ? `down`
+                : `up`
+        );
     };
     return (
         <DropdownStyles.Wrapper extra={wrapperStyles} className={uniqueId.current}>
@@ -514,12 +545,14 @@ export const Breadcrumb = {
     Wrapper: (props) => {
         return (
             <BreadcrumbWrapper>
-                {(Array.isArray(props.children) ? Array.from(props.children ?? []) : [props.children])?.map?.((child, index, self) => (
-                    <Fragment key={index}>
-                        {child}
-                        {index < self.length - 1 && <BreadcrumbSeparator />}
-                    </Fragment>
-                ))}
+                {(Array.isArray(props.children) ? Array.from(props.children ?? []) : [props.children])?.map?.(
+                    (child, index, self) => (
+                        <Fragment key={index}>
+                            {child}
+                            {index < self.length - 1 && <BreadcrumbSeparator />}
+                        </Fragment>
+                    )
+                )}
             </BreadcrumbWrapper>
         );
     },
@@ -553,7 +586,9 @@ export const RemoveRowButton = (props) =>
             background={`orange`}
             leftIcon={`cross-white`}
             {...props}
-            extra={`padding: 9px; &:before { margin: 0; }; min-width: unset; width: auto; flex: unset; ${props?.extra ?? ``}`}
+            extra={`padding: 9px; &:before { margin: 0; }; min-width: unset; width: auto; flex: unset; ${
+                props?.extra ?? ``
+            }`}
         />
     );
 
@@ -576,7 +611,8 @@ export const ErrorBox = {
         Sign: styled(Frame)`
             width: 24px;
             height: 24px;
-            background: url("${require(`../../assets/icons/error-outline.svg`).default}") no-repeat center center / contain;
+            background: url("${require(`../../assets/icons/error-outline.svg`).default}") no-repeat center center /
+                contain;
         `,
         Title: styled(Frame)`
             font-weight: 600;

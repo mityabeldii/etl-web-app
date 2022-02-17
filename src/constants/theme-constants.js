@@ -20,6 +20,7 @@ const theme = {
     text: {
         primary: `#292D3F`,
         secondary: `#9A9A9A`,
+        light: `#BCBEBE`
     },
 
     shadow: {

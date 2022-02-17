@@ -59,7 +59,7 @@ const SearchBar = () => {
         setByKey(`active`, !(checked === true));
     };
     return (
-        <RowWrapper extra={`border-bottom: 1px solid #dadada;`}>
+        <RowWrapper extra={`border-bottom: 1px solid #dadada; height: 60px;`}>
             <Search
                 value={params?.processName ?? ``}
                 onChange={(e) => {

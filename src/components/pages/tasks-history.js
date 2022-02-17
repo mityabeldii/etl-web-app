@@ -6,20 +6,22 @@ import _ from "lodash";
 
 import { Button, H1, RowWrapper, Input, Checkbox, Frame, Dropdown } from "../ui-kit/styled-templates";
 import Table from "../ui-kit/table";
+import Select from "../ui-kit/select";
+import FiltersToolBar from "../tools/filters-tool-bar";
+import DateRangePicker from "../tools/date-range-picker";
 
 import { MODALS, PROCESS_STATUSES, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
-import { eventDispatch } from "../../hooks/useEventListener";
 import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
-
 import DatasourceAPI from "../../api/datasource-api";
+
+import { eventDispatch } from "../../hooks/useEventListener";
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
 import useQueryParams, { etlOnlyParams } from "../../hooks/useQueryParams";
-import Select from "../ui-kit/select";
 import { convertHex } from "../../utils/colors-helper";
 
 const TasksHistoryPage = () => {
-    const { params } = useQueryParams();
+    const { params, setParams } = useQueryParams();
     useEffect(() => {
         putStorage(`tables.${TABLES.TASKS_HISTORY}.filters`, etlOnlyParams(params));
     }, [params]);
@@ -27,6 +29,9 @@ const TasksHistoryPage = () => {
         <>
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Heading>История запуска задач в ETL-процессах</Heading>
+            </RowWrapper>
+            <RowWrapper>
+                <FiltersToolBar filters={params} onChange={setParams} tableName={`TASKS_HISTORY`} wrapperExtra={`margin-bottom: 28px;`} />
             </RowWrapper>
             <Table
                 name={TABLES.TASKS_HISTORY}
@@ -52,11 +57,40 @@ const SearchBar = () => {
     const { params, setParams, setByKey } = useQueryParams();
     const tasks = useStorageListener((state) => _.get(state, `tables.${TABLES.TASKS_HISTORY}.rows`) ?? []);
     return (
-        <RowWrapper extra={`border-bottom: 1px solid #dadada;`}>
+        <RowWrapper extra={`border-bottom: 1px solid #dadada; height: 60px;`}>
             <Search
                 value={params?.id ?? ``}
                 onChange={(e) => {
                     setByKey(`id`, e.target.value ?? ``);
+                }}
+            />
+            <DateRangePicker
+                toggleComponent={() => (
+                    <RowWrapper
+                        extra={css`
+                            width: 136px;
+                            border: 0px;
+                            padding: 20px 30px;
+                            border-left: 1px solid #dadada;
+                            border-radius: 0px;
+                            background: transparent;
+                            cursor: pointer;
+                            box-sizing: border-box;
+                        `}
+                    >
+                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Календарь</Frame>
+                    </RowWrapper>
+                )}
+                value={{
+                    from: params?.processEndDate?.from?.toString() ?? ``,
+                    to: params?.processEndDate?.to?.toString() ?? ``,
+                }}
+                onChange={(value) => {
+                    setParams({
+                        ...params,
+                        startDate: new Date(value.from),
+                        endDate: new Date(value.to),
+                    });
                 }}
             />
             <Select
@@ -85,14 +119,13 @@ const SearchBar = () => {
                     </RowWrapper>
                 )}
                 menuProps={{ extra: `width: max-content;` }}
-                value={params?.processId}
+                value={params?.id}
                 onChange={(e) => {
-                    setByKey(`processId`, params?.processId == e.target.value ? undefined : e.target.value);
+                    setByKey(`id`, params?.id == e.target.value ? undefined : e.target.value);
                 }}
                 options={tasks
-                    ?.map?.(({ processId: value, processName: label }) => ({ label, value }))
-                    ?.filter?.((i, j, self) => _.map(self, `value`)?.indexOf?.(i?.value) === j)
-                }
+                    ?.map?.(({ id: value, processName: label }) => ({ label, value }))
+                    ?.filter?.((i, j, self) => _.map(self, `value`)?.indexOf?.(i?.value) === j)}
             />
             <Select
                 toggleComponent={() => (
