@@ -82,14 +82,14 @@ const SearchBar = () => {
                     </RowWrapper>
                 )}
                 value={{
-                    from: params?.processEndDate?.from?.toString() ?? ``,
-                    to: params?.processEndDate?.to?.toString() ?? ``,
+                    from: params?.taskStartDate?.from?.toString() ?? ``,
+                    to: params?.taskEndDate?.to?.toString() ?? ``,
                 }}
                 onChange={(value) => {
                     setParams({
                         ...params,
-                        startDate: new Date(value.from),
-                        endDate: new Date(value.to),
+                        taskStartDate: new Date(value.from),
+                        taskEndDate: new Date(value.to),
                     });
                 }}
             />

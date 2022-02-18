@@ -13,6 +13,7 @@ import ProcessesConfigurationPage from "../pages/processes-configuration-page";
 import ProcessesHistory from "../pages/processes-history";
 import TasksHistory from "../pages/tasks-history";
 import IntermidiateStoragePage from "../pages/intermidiate-storage-page";
+import EventLogPage from "../pages/event-log-page";
 
 import CreateDataSourceModal from "../modals/create-datasource-modal";
 import EditDataSourceModal from "../modals/edit-datasource-modal";
@@ -39,7 +40,7 @@ const UserApp = () => {
                             <Route exact path={[`/history/processes`, `/history/processes:keycloack`]} component={ProcessesHistory} />
                             <Route exact path={[`/history/tasks`, `/history/tasks:keycloack`]} component={TasksHistory} />
                             <Route exact path={[`/storage`, `/storage:keycloack`]} component={IntermidiateStoragePage} />
-                            <Route exact path={[`/bi`, `/bi:keycloack`]} component={() => <></>} />
+                            <Route exact path={[`/event-log`, `/event-log:keycloack`]} component={EventLogPage} />
                             <Route path={`/`}>
                                 <Redirect to={`/processes`} />
                             </Route>

@@ -25,7 +25,7 @@ const menuSections = [
         items: [
             { label: `История запуска ETL-процессов`, link: `/history/processes` },
             { label: `История запуска задач`, link: `/history/tasks` },
-            // { label: `Журнал событий`, link: `/events-log` },
+            { label: `Журнал событий`, link: `/event-log` },
             // { label: `Отчеты и дашборды`, link: `/bi` },
         ],
     },

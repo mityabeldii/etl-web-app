@@ -259,6 +259,45 @@ const TasksHistoryTable = {
     ],
 };
 
+const EventLogTable = {
+    useBackendProcessing: true,
+    withPagination: true,
+    booleanOperation: `disjunction`,
+    columns: [
+        // {
+        //     name: `taskName`,
+        //     label: `Задача`,
+        // },
+        // {
+        //     name: `id`,
+        //     label: `ID запуска задачи`,
+        // },
+        // {
+        //     name: `processId`,
+        //     label: `ID процесса`,
+        // },
+        // // {
+        // //     name: `processName`,
+        // //     label: `Процесс`,
+        // //     extra: `> * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
+        // //     transform: ({ row }) => `**${row?.processName}**`,
+        // // },
+        // // { name: `processRunId`, label: `ID запуска`, extra: `flex: 2;` },
+        // // { name: `processId`, label: `ID процесса`, extra: `flex: 2;` },
+        // {
+        //     name: `startAndStop`,
+        //     label: `Старт/Завершение`,
+        //     extra: `flex: 2; > * > * { &:nth-child(1) { margin: 0; }; &:nth-child(2) { color: #AEAEAE; margin: 0; margin-top: 4px; };};`,
+        //     transform: ({ row }) =>
+        //         `${row?.startDate ? moment(row?.startDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`}\n\n${
+        //             row?.endDate ? moment(row?.endDate).format(`YYYY-MM-DD hh:mm:ss`) : `-`
+        //         }`,
+        // },
+        // { name: `state`, label: `Статус`, extra: `flex: unset; width: 200px;`, cell: { type: `processstatus` } },
+        // // { name: ``, label: ``, extra: `flex: unset; width: 100px;`, cell: { type: `eventlogbutton` } },
+    ],
+};
+
 const tablesColumns = {
     [TABLES.DATASOURCE_LIST]: DatasourceList,
     [TABLES.DATASOURCE_TABLE_STRUCTURE]: DatasourceTableStructure,
@@ -267,6 +306,7 @@ const tablesColumns = {
     [TABLES.TASKS_TABLE]: ETLProcessesConfigurationTable,
     [TABLES.PROCESSES_HISTORY]: ProcessesHistoryTable,
     [TABLES.TASKS_HISTORY]: TasksHistoryTable,
+    [TABLES.EVENT_LOG]: EventLogTable,
 };
 
 export default tablesColumns;
