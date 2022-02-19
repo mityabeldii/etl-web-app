@@ -107,15 +107,15 @@ export const convertPaginatedResponse = (response) => {
 };
 
 export const convertPaginatedResponse2 = (response) => {
-    const data = {
-        rows: response?.data,
+    const { data = [], offset = 0, limit = 10, totalCount = 0 } = response;
+    return {
+        rows: data,
         pagination: {
-            perPage: response?.count,
-            currentPage: Math.max(response?.page - 1, 0),
-            totalCount: response?.totalCount,
+            currentPage: offset / limit,
+            perPage: limit,
+            totalCount,
         },
     };
-    return data;
 };
 
 export const GETOptions = (options = {}) => {

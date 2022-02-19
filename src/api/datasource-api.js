@@ -104,7 +104,9 @@ const DatasourceAPI = {
     async getDatasourceTablePreview(id, tableName) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`/api/v1/query/${id}/${tableName}`, GETOptions(TABLES.DATASOURCE_TABLE_PREVIEW))).data;
+                const response = (
+                    await axios.get(`/api/v1/query/${id}/${tableName}`, GETOptions(TABLES.DATASOURCE_TABLE_PREVIEW))
+                ).data;
                 const data = convertPaginatedResponse(response);
                 putStorage(`datasources.preview.${id}.${tableName}`, data);
                 putStorage(`tables.${TABLES.DATASOURCE_TABLE_PREVIEW}`, data);
@@ -131,10 +133,7 @@ const DatasourceAPI = {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`/process-instances`, GETOptions(`PROCESSES_HISTORY`))).data;
-                mergeStorage(`tables.${TABLES.PROCESSES_HISTORY}`, {
-                    rows: response?.sort?.((a, b) => b?.processStartDate - a?.processStartDate) ?? [],
-                    pagination: response?._meta ?? {},
-                });
+                mergeStorage(`tables.${TABLES.PROCESSES_HISTORY}`, convertPaginatedResponse2(response));
                 return response;
             } catch (error) {
                 throw handleError(error);

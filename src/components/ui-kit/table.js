@@ -242,10 +242,9 @@ const Table = (props) => {
                 <PaginationWrapper extra={paginationStyles}>
                     <Frame extra={`width: 350px;`} />
                     <Frame extra={`flex-direction: row; justify-content: center;`}>
-                        {new Array(6)
-                            .fill(0)
-                            .map((item, index) => currentPage - 3 + index)
-                            .filter((i) => i >= 0 && i >= currentPage - 2 && i < maxPageNumber)
+                        {_.times(6)
+                            .map((index) => currentPage - 3 + index)
+                            .filter((i) => i >= 0 && i >= currentPage - 1 && i < maxPageNumber)
                             .slice(0, 3)
                             .map((item, index) => (
                                 <PageNumberWrapper
