@@ -25,6 +25,20 @@ const TablesAPI = {
             }
         });
     },
+    updateTable: ({ datasourceId, newTableName, oldTableName, schemaName }) => {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.put(`/api/v1/tables`, { datasourceId, newTableName, oldTableName, schemaName }))
+                    .data;
+                await DatasourceAPI.getDatasourceTables(datasourceId, schemaName);
+                handleSuccess({ message: `Таблица ${newTableName} успешно обновлена` });
+                return response;
+            } catch (error) {
+                handleError(error);
+                throw error;
+            }
+        });
+    },
 };
 
 export default TablesAPI;

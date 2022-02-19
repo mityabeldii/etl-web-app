@@ -28,7 +28,7 @@ import CreateTableInSchemaModal from "../modals/create-table-in-schema-modal";
 import EditTableNameModal from "../modals/edit-table-name-modal";
 import DatasourceAdHocQueryModal from "../modals/datasource-ad-hoc-query-modal";
 
-import { MODALS, TABLES } from "../../constants/config";
+import { FORMS, MODALS, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
 
 import DatasourceAPI from "../../api/datasource-api";
@@ -142,7 +142,11 @@ const IntermidiateStoragePage = () => {
             });
         },
         openEditTableNameModal: () => {
-            ModalsHelper.showModal(MODALS.EDIT_TABLE_NAME);
+            ModalsHelper.showModal(MODALS.EDIT_TABLE_NAME, {
+                datasourceId: selectedDatasource?.id,
+                schemaName: selectedSchema,
+                tableName: selectedTable?.tableName,
+            });
         },
         openDeleteTableModal: () => {
             ModalsHelper.showModal(MODALS.MODALITY, {
