@@ -25,7 +25,6 @@ const schema = (yup) =>
 
 const EditTableNameModal = () => {
     const { onSubmit, clearForm, setValues, data } = useFormControl({ name: FORMS.EDIT_TABLE_NAME, schema });
-    console.log(data);
     const modal = useModal(MODALS.EDIT_TABLE_NAME, {
         onOpen: (d) => setValues({ ...d, oldTableName: d.tableName, newTableName: d.tableName }),
     });

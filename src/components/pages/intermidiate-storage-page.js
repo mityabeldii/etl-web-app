@@ -27,12 +27,14 @@ import EditSchemaNameModal from "../modals/edit-schema-name-modal";
 import CreateTableInSchemaModal from "../modals/create-table-in-schema-modal";
 import EditTableNameModal from "../modals/edit-table-name-modal";
 import DatasourceAdHocQueryModal from "../modals/datasource-ad-hoc-query-modal";
+import EditTableStructureModal from "../modals/edit-table-structure-modal";
 
 import { FORMS, MODALS, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
 
 import DatasourceAPI from "../../api/datasource-api";
 import SchemasAPI from "../../api/schemas-api";
+import TablesAPI from "../../api/tables-api";
 
 import { copyToClipboard, stringImposition } from "../../utils/common-helper";
 import ModalsHelper from "../../utils/modals-helper";
@@ -53,7 +55,7 @@ const StructureTable = ({ rows = [], wrapperExtra = ``, innerExtrra = `` }) => {
                         { name: `fieldName`, extra: `font-weight: bold;` },
                         { name: `fieldType`, extra: `flex: 2;` },
                     ]}
-                    rows={[...rows, ...rows, ...rows]}
+                    rows={rows}
                 />
             </Scrollable>
         ),
@@ -150,8 +152,8 @@ const IntermidiateStoragePage = () => {
         },
         openDeleteTableModal: () => {
             ModalsHelper.showModal(MODALS.MODALITY, {
-                title: `Удаление таблицы, содержащей данные`,
-                description: `Таблица, которую вы хотите удалить, содержит данные. Удаление таблицы приведет к их утрате.`,
+                // title: `Удаление таблицы, содержащей данные`,
+                description: `Вы действительно хотите удалить таблицу?`,
                 cancelButton: {
                     background: `#DADADA`,
                     children: `Отмена`,
@@ -159,6 +161,13 @@ const IntermidiateStoragePage = () => {
                 confirmButton: {
                     background: `red`,
                     children: `Удалить`,
+                    onClick: async () => {
+                        await TablesAPI.deleteTable({
+                            datasourceId: selectedDatasource?.id,
+                            schemaName: selectedSchema,
+                            tableName: selectedTable?.tableName,
+                        });
+                    },
                 },
             });
         },
@@ -185,8 +194,15 @@ const IntermidiateStoragePage = () => {
         },
         fetchTables: async () => {
             if (selectedDatasource?.id && selectedSchema) {
-                await DatasourceAPI.getDatasourceTables(selectedDatasource?.id, selectedSchema);
+                await TablesAPI.getTable({ datasourceId: selectedDatasource?.id, schemaName: selectedSchema });
             }
+        },
+        openEditScructurreModal: () => {
+            ModalsHelper.showModal(MODALS.EDIT_TABLE_STRUCTURE, {
+                datasourceId: selectedDatasource?.id,
+                schemaName: selectedSchema,
+                table: selectedTable,
+            });
         },
     };
 
@@ -207,8 +223,6 @@ const IntermidiateStoragePage = () => {
         }
     }, [schemas]);
 
-    console.log(selectedTable?.fields);
-
     return (
         <>
             <EditAccessCredentialsModal />
@@ -217,6 +231,7 @@ const IntermidiateStoragePage = () => {
             <CreateTableInSchemaModal />
             <EditTableNameModal />
             <DatasourceAdHocQueryModal />
+            <EditTableStructureModal />
 
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Frame extra={`flex-direction: row;`}>
@@ -405,7 +420,9 @@ const IntermidiateStoragePage = () => {
                                         <RightSectionHeader>
                                             Структура таблицы <span>{selectedTable?.tableName}</span>
                                         </RightSectionHeader>
-                                        <Button>Редактировать структуру</Button>
+                                        <Button onClick={handlers.openEditScructurreModal}>
+                                            Редактировать структуру
+                                        </Button>
                                     </RowWrapper>
                                     <StructureTable rows={selectedTable?.fields ?? []} />
                                     <RowWrapper extra={`margin-bottom: 16px; margin-top: 40px;`}>
