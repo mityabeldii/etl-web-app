@@ -355,6 +355,9 @@ const IntermidiateStoragePage = () => {
                                 extra={`width: inherit;`}
                             />
                             <Scrollable outerExtra={`max-height: 530px;`}>
+                                {tables?.filter?.((i) => stringImposition(i?.tableName, tableSearch))?.length === 0 && (
+                                    <Frame>Таблицы в выбранной схеме отсутствуют</Frame>
+                                )}
                                 {tables
                                     ?.filter?.((i) => stringImposition(i?.tableName, tableSearch))
                                     ?.map?.((table, index) => (

@@ -14,12 +14,11 @@ const TablesAPI = {
     getTable: ({ datasourceId, schemaName }) => {
         return loadingCounterWrapper(async () => {
             try {
-                // const response = (await axios.get(`/api/v1/datasource/meta/${id}/tables`)).data;
                 const { tables } = (await axios.get(`/api/v1/tables`, { params: { datasourceId, schemaName } })).data;
                 putStorage(`datasources.tables.${datasourceId}.${schemaName}`, tables);
                 return tables;
             } catch (error) {
-                throw handleError(error);
+                throw handleError(`Ошибка соединения к базе`);
             }
         });
     },
