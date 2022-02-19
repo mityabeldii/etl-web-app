@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useLocation } from "react-router";
 import _ from "lodash";
+import moment from "moment-timezone";
 
 import { Button, H1, RowWrapper, Input, Checkbox, Frame, Dropdown } from "../ui-kit/styled-templates";
 import Table from "../ui-kit/table";
@@ -87,17 +88,18 @@ const SearchBar = () => {
                         <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>
                             Дата и время запуска
                         </Frame>
+                        <CalendarIcon/>
                     </RowWrapper>
                 )}
                 value={{
-                    from: params?.eventDateStart?.from?.toString() ?? ``,
+                    from: params?.eventDateStart?.from?.format() ?? ``,
                     to: params?.eventDateEnd?.to?.toString() ?? ``,
                 }}
                 onChange={(value) => {
                     setParams({
                         ...params,
-                        eventDateStart: new Date(value.from),
-                        eventDateEnd: new Date(value.to),
+                        eventDateStart: moment(value.from).format(`YYYY-MM-DD hh:mm:ss`),
+                        eventDateEnd: moment(value.to).format(`YYYY-MM-DD hh:mm:ss`),
                     });
                 }}
             />
@@ -175,6 +177,12 @@ const SearchBar = () => {
         </RowWrapper>
     );
 };
+
+const CalendarIcon = styled(Frame)`
+    width: 16px;
+    height: 16px;
+    background: url("${require(`../../assets/icons/calendar.svg`).default}") no-repeat center center / contain;
+`;
 
 const Search = styled(Input).attrs((props) => {
     return {

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useLocation } from "react-router";
 import _ from "lodash";
+import moment from "moment-timezone";
 
 import { Button, H1, RowWrapper, Input, Checkbox, Frame, Dropdown } from "../ui-kit/styled-templates";
 import Table from "../ui-kit/table";
@@ -73,7 +74,7 @@ const SearchBar = ({ params, setByKey, setParams }) => {
                 toggleComponent={() => (
                     <RowWrapper
                         extra={css`
-                            width: 136px;
+                            width: 240px;
                             border: 0px;
                             padding: 20px 30px;
                             border-left: 1px solid #dadada;
@@ -83,7 +84,10 @@ const SearchBar = ({ params, setByKey, setParams }) => {
                             box-sizing: border-box;
                         `}
                     >
-                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Календарь</Frame>
+                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>
+                            Дата и время запуска
+                        </Frame>
+                        <CalendarIcon />
                     </RowWrapper>
                 )}
                 value={{
@@ -93,8 +97,8 @@ const SearchBar = ({ params, setByKey, setParams }) => {
                 onChange={(value) => {
                     setParams({
                         ...params,
-                        processStartDate: new Date(value.from),
-                        processEndDate: new Date(value.to),
+                        processStartDate: moment(value.from).format(`YYYY-MM-DD hh:mm:ss`),
+                        processEndDate: moment(value.to).format(`YYYY-MM-DD hh:mm:ss`),
                     });
                 }}
             />
@@ -172,6 +176,12 @@ const SearchBar = ({ params, setByKey, setParams }) => {
         </RowWrapper>
     );
 };
+
+const CalendarIcon = styled(Frame)`
+    width: 16px;
+    height: 16px;
+    background: url("${require(`../../assets/icons/calendar.svg`).default}") no-repeat center center / contain;
+`;
 
 const Search = styled(Input).attrs((props) => {
     return {

@@ -32,7 +32,8 @@ const DatasourceList = {
             name: `description`,
             extra: `flex: 2;`,
             label: `Описание`,
-            transform: ({ row }) => `${row?.description?.slice?.(0, 25) ?? `-`}${row?.description?.length > 25 ? `...` : ``}`,
+            transform: ({ row }) =>
+                `${row?.description?.slice?.(0, 25) ?? `-`}${row?.description?.length > 25 ? `...` : ``}`,
             tooltip: ({ value: label }) => ({ label }),
         },
         { name: `host`, extra: `flex: 2;`, label: `Хост` },
@@ -44,7 +45,11 @@ const DatasourceList = {
             transform: ({ row }) => row?.url?.split?.(`/`)?.at?.(-1),
         },
         { name: `schema`, extra: `flex: 2;`, label: `Схема` },
-        { name: `morebutton`, label: ``, cell: { type: `datasource_more_button`, extra: `justify-content: flex-end;` } },
+        {
+            name: `morebutton`,
+            label: ``,
+            cell: { type: `datasource_more_button`, extra: `justify-content: flex-end;` },
+        },
         // {
         //     name: `editbutton`,
         //     extra: `width: 40px; flex: unset;`,
@@ -120,7 +125,11 @@ const ProcessesList = {
                 },
             },
         },
-        { name: `processName`, label: `Имя процесса`, cell: { type: `process_name`, extra: `* { line-height: 8px; };` } },
+        {
+            name: `processName`,
+            label: `Имя процесса`,
+            cell: { type: `process_name`, extra: `* { line-height: 8px; };` },
+        },
         { name: `cron`, label: `Расписание`, cell: { type: `crontab` } },
         // {
         //     name: `lastDate`,
@@ -264,6 +273,22 @@ const EventLogTable = {
     withPagination: true,
     booleanOperation: `disjunction`,
     columns: [
+        {
+            name: `eventDate`,
+            label: `Дата и время`,
+            transform: ({ row }) => moment(row?.eventDate).format(`YYYY-MM-DD hh:mm:ss`),
+        },
+        { name: `id`, label: `ID события` },
+        { name: `processId`, label: `Процесс` },
+        { name: `taskId`, label: `Задача` },
+        // { name: ``, label: `Статус`, },
+        {
+            name: `eventInfo`,
+            label: `Текст сообщения`,
+            transform: ({ row }) =>
+                `${row?.eventInfo?.slice?.(0, 25) ?? `-`}${row?.eventInfo?.length > 25 ? `...` : ``}`,
+            tooltip: ({ value: label }) => ({ label }),
+        },
         // {
         //     name: `taskName`,
         //     label: `Задача`,

@@ -88,7 +88,7 @@ export const POSTOptions = (name) => {
     return {
         params: {
             limit: perPage,
-            offset: (currentPage + 1) * perPage,
+            offset: currentPage * perPage,
             ...filter,
         },
     };

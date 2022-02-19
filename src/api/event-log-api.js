@@ -11,12 +11,19 @@ import { objectPut, downloadURI, sleep, objectToQS } from "../utils/common-helpe
 import DatasourceAPI from "./datasource-api";
 
 const EventLogAPI = {
-    getEvents() {
+    getEvents: () => {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`/event-log`, GETOptions(`EVENT_LOG`))).data;
-                console.log(response);
-                // putStorage(`tables.`)
+                const { data = [], offset = 0, limit = 10, totalCount = 0 } = response;
+                mergeStorage(`tables.${TABLES.EVENT_LOG}`, {
+                    rows: data,
+                    pagination: {
+                        currentPage: offset / limit,
+                        perPage: limit,
+                        totalCount,
+                    },
+                });
                 return response;
             } catch (error) {
                 handleError(error);

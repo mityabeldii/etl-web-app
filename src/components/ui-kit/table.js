@@ -71,7 +71,10 @@ const Table = (props) => {
                 useBackendProcessing ||
                 Object.keys(_.pickBy(filters, _.identity)).length === 0 ||
                 Object.entries(_.pickBy(filters, _.identity))
-                    .map(([key, value], index) => !value || `${_.get(i, key)}`?.toLowerCase?.()?.includes?.(`${value}`?.toLowerCase?.()))
+                    .map(
+                        ([key, value], index) =>
+                            !value || `${_.get(i, key)}`?.toLowerCase?.()?.includes?.(`${value}`?.toLowerCase?.())
+                    )
                     ?.reduce?.(
                         ...{
                             conjunction: [(a, b) => a && b, true],
@@ -102,14 +105,21 @@ const Table = (props) => {
             const newData = await fetchFunction();
         }
     }, []);
-    useEffect(() => useBackendProcessing && putStorage(`tables.${name}.filters`, propsFilters), [propsFilters, useBackendProcessing]);
+    useEffect(
+        () => useBackendProcessing && putStorage(`tables.${name}.filters`, propsFilters),
+        [propsFilters, useBackendProcessing]
+    );
 
     return (
         <TableWrapper>
             {extraHeader}
             <STable extra={tableStyles}>
                 {withHeader && (
-                    <STr extra={({ theme }) => `border-bottom: 1px solid #DADADA; padding: 20px; box-sizing: border-box;`}>
+                    <STr
+                        extra={({ theme }) =>
+                            `border-bottom: 1px solid #DADADA; padding: 20px; box-sizing: border-box;`
+                        }
+                    >
                         {selectable && <STh extra={`flex: unset; width: 40px;`}></STh>}
                         {columns.map((column, index) => {
                             return (
@@ -120,8 +130,10 @@ const Table = (props) => {
                                             setSort(
                                                 column?.name,
                                                 column?.name === sort?.field
-                                                    ? { [SORT_ORDERS.ASC]: SORT_ORDERS.DESC, [SORT_ORDERS.DESC]: SORT_ORDERS.ASC }?.[sort?.order] ??
-                                                          SORT_ORDERS.DESC
+                                                    ? {
+                                                          [SORT_ORDERS.ASC]: SORT_ORDERS.DESC,
+                                                          [SORT_ORDERS.DESC]: SORT_ORDERS.ASC,
+                                                      }?.[sort?.order] ?? SORT_ORDERS.DESC
                                                     : SORT_ORDERS.DESC
                                             );
                                         }}
@@ -131,11 +143,17 @@ const Table = (props) => {
                                             <Frame extra={`margin-left: 10px; cursor: pointer;`}>
                                                 <SortArrow
                                                     extra={`opacity: ${
-                                                        sort?.field === column.name && sort?.order === SORT_ORDERS.ASC ? 1 : 0.2
+                                                        sort?.field === column.name && sort?.order === SORT_ORDERS.ASC
+                                                            ? 1
+                                                            : 0.2
                                                     }; transform: rotate(180deg);`}
                                                 />
                                                 <SortArrow
-                                                    extra={`opacity: ${sort?.field === column.name && sort?.order === SORT_ORDERS.DESC ? 1 : 0.2};`}
+                                                    extra={`opacity: ${
+                                                        sort?.field === column.name && sort?.order === SORT_ORDERS.DESC
+                                                            ? 1
+                                                            : 0.2
+                                                    };`}
                                                 />
                                             </Frame>
                                         )}
@@ -192,13 +210,20 @@ const Table = (props) => {
                     })}
                 </STr> */}
                 {filterRows(
-                    !useBackendProcessing && withPagination ? frontendPagination.visibleItems ?? [] : rows.length === 0 && propRows ? propRows : rows
+                    !useBackendProcessing && withPagination
+                        ? frontendPagination.visibleItems ?? []
+                        : rows.length === 0 && propRows
+                        ? propRows
+                        : rows
                 )?.map?.((row, row_index) => (
                     <STr key={row_index} extra={name === TABLES.PROCESSES_LIST && `align-items: flex-start;`}>
                         {selectable && (
                             <STd extra={`flex: unset; width: 40px;`}>
                                 <Checkbox
-                                    disabled={!selectedRows.includes(row?.[idColumnName]) && selectedRows.length === selectionLimit}
+                                    disabled={
+                                        !selectedRows.includes(row?.[idColumnName]) &&
+                                        selectedRows.length === selectionLimit
+                                    }
                                     checked={selectedRows.includes(row?.[idColumnName])}
                                     onChange={(e) => {
                                         setSelectedRows(togglePush(selectedRows, row?.[idColumnName]));
@@ -328,7 +353,13 @@ const TableCell = ({ cellState }) => {
                                 <Tooltip
                                     key={index}
                                     label={PROCESS_STATUS?.[status]}
-                                    children={<StatisticsItem key={index} status={status} value={row?.[column?.name]?.[status] ?? `0`} />}
+                                    children={
+                                        <StatisticsItem
+                                            key={index}
+                                            status={status}
+                                            value={row?.[column?.name]?.[status] ?? `0`}
+                                        />
+                                    }
                                 />
                             );
                         })}
@@ -360,7 +391,13 @@ const TableCell = ({ cellState }) => {
             }}
         >
             {column?.tooltip ? (
-                <Tooltip {...(_.isFunction(column?.tooltip) ? column?.tooltip(cellState) : column?.tooltip)} children={cellContent} />
+                <Tooltip
+                    {...(_.isFunction(column?.tooltip) ? column?.tooltip(cellState) : column?.tooltip)}
+                    children={cellContent}
+                    tooltipProps={{
+                        extra: `max-width: 450px; width: max -content; white-space: break-spaces;`,
+                    }}
+                />
             ) : (
                 cellContent
             )}
@@ -397,7 +434,8 @@ const EventLogButton = styled.button`
 const Icon = styled(Frame)`
     width: 20px;
     height: 20px;
-    background: url("${({ src }) => require(`../../assets/icons/${src}.svg`).default}") no-repeat center center / contain;
+    background: url("${({ src }) => require(`../../assets/icons/${src}.svg`).default}") no-repeat center center /
+        contain;
     cursor: pointer;
 `;
 
