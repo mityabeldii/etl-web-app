@@ -34,7 +34,7 @@ import tablesColumns from "../../constants/tables-columns";
 import DatasourceAPI from "../../api/datasource-api";
 import SchemasAPI from "../../api/schemas-api";
 
-import { copyToClipboard } from "../../utils/common-helper";
+import { copyToClipboard, stringImposition } from "../../utils/common-helper";
 import ModalsHelper from "../../utils/modals-helper";
 
 import { eventDispatch } from "../../hooks/useEventListener";
@@ -82,6 +82,7 @@ const IntermidiateStoragePage = () => {
         (state) => state?.datasources?.tables?.[selectedDatasource?.id]?.[selectedSchema] ?? []
     );
     const selectedTable = _.find(tables, { tableName: selectedTableName });
+    const [tableSearch, setTableSearch] = useState(``);
 
     const handlers = {
         openCreateDatasourceModal: () => {
@@ -328,43 +329,54 @@ const IntermidiateStoragePage = () => {
                                 Добавить схему
                             </Button>
                             <H2 extra={`margin-top: 35px; height: 35px;`}>Таблицы</H2>
-                            {tables?.map?.((table, index) => (
-                                <Fragment key={index}>
-                                    <Button
-                                        onClick={handlers.setSelectedTableName(table.tableName)}
-                                        extra={`margin-top: 12px; background: ${
-                                            selectedTable?.tableName === table?.tableName ? `#FFFFFF` : `transparent`
-                                        }; color: black; box-shadow: unset; width: 100%; border: 1px solid #DADADA; justify-content: flex-start; word-break: break-all; text-align: left;`}
-                                    >
-                                        {table.tableName}
-                                    </Button>
-                                    {selectedTable?.tableName === table?.tableName && (
-                                        <RowWrapper extra={`margin-top: 4px;`}>
-                                            <Tooltip
-                                                label={`Редактировать`}
-                                                wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}
+                            <Input
+                                value={tableSearch}
+                                onChange={(e) => setTableSearch(e.target.value)}
+                                placeholder="Поиск по названию таблицы"
+                                extra={`width: inherit;`}
+                            />
+                            <Scrollable outerExtra={`max-height: 530px;`}>
+                                {tables
+                                    ?.filter?.((i) => stringImposition(i?.tableName, tableSearch))
+                                    ?.map?.((table, index) => (
+                                        <Fragment key={index}>
+                                            <Button
+                                                onClick={handlers.setSelectedTableName(table.tableName)}
+                                                extra={`margin-top: 12px; background: ${
+                                                    selectedTable?.tableName === table?.tableName
+                                                        ? `#FFFFFF`
+                                                        : `transparent`
+                                                }; color: black; box-shadow: unset; width: 100%; border: 1px solid #DADADA; justify-content: flex-start; word-break: break-all; text-align: left;`}
                                             >
-                                                <Button
-                                                    extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
-                                                    onClick={handlers.openEditTableNameModal}
-                                                >
-                                                    <Icon src={`edit-white`} />
-                                                </Button>
-                                            </Tooltip>
-                                            <Tooltip label={`Удалить`} wrapperProps={{ extra: `width: 100%;` }}>
-                                                <Button
-                                                    extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
-                                                    background={`red`}
-                                                    onClick={handlers.openDeleteTableModal}
-                                                >
-                                                    <Icon src={`cross-white`} />
-                                                </Button>
-                                            </Tooltip>
-                                        </RowWrapper>
-                                    )}
-                                </Fragment>
-                            ))}
-
+                                                {table.tableName}
+                                            </Button>
+                                            {selectedTable?.tableName === table?.tableName && (
+                                                <RowWrapper extra={`margin-top: 4px;`}>
+                                                    <Tooltip
+                                                        label={`Редактировать`}
+                                                        wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}
+                                                    >
+                                                        <Button
+                                                            extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
+                                                            onClick={handlers.openEditTableNameModal}
+                                                        >
+                                                            <Icon src={`edit-white`} />
+                                                        </Button>
+                                                    </Tooltip>
+                                                    <Tooltip label={`Удалить`} wrapperProps={{ extra: `width: 100%;` }}>
+                                                        <Button
+                                                            extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
+                                                            background={`red`}
+                                                            onClick={handlers.openDeleteTableModal}
+                                                        >
+                                                            <Icon src={`cross-white`} />
+                                                        </Button>
+                                                    </Tooltip>
+                                                </RowWrapper>
+                                            )}
+                                        </Fragment>
+                                    ))}
+                            </Scrollable>
                             <Button
                                 extra={`width: 100%; margin-top: 12px; padding: 8px 15px; font-size: 13px;`}
                                 background={`orange`}

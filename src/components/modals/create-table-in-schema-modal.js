@@ -18,11 +18,17 @@ import TablesAPI from "../../api/tables-api";
 const schema = (yup) =>
     yup.object().shape({
         datasourceId: yup.string().required(`Это поле обязательно`),
-        schemaName: yup.string().required(`Это поле обязательно`),
+        schemaName: yup
+            .string()
+            .matches(/[a-zA-Z0-9_]/g, `Латиница, цифры и «_»`)
+            .required(`Это поле обязательно`),
         tableName: yup.string().required(`Это поле обязательно`),
         fields: yup.array().of(
             yup.object().shape({
-                fieldName: yup.string().required(`Это поле обязательно`),
+                fieldName: yup
+                    .string()
+                    .matches(/[a-zA-Z0-9_]/g, `Латиница, цифры и «_»`)
+                    .required(`Это поле обязательно`),
                 fieldType: yup.string().required(`Это поле обязательно`),
             })
         ),
@@ -30,7 +36,7 @@ const schema = (yup) =>
 
 const CreateTableInSchemaModal = () => {
     const { onSubmit, clearForm, setValues, data } = useFormControl({ name: FORMS.CREATE_TABLE_IN_SCHEMA, schema });
-    const { close: closeModal } = useModal(MODALS.CREATE_TABLE_IN_SCHEMA, {
+    const { close: closeModal, state } = useModal(MODALS.CREATE_TABLE_IN_SCHEMA, {
         onClose: clearForm,
         onOpen: ({ datasourceId, schema: schemaName }) => {
             setValues({ datasourceId, schemaName });
@@ -39,7 +45,7 @@ const CreateTableInSchemaModal = () => {
     const handlers = {
         submit: async (data) => {
             await TablesAPI.createTable(data);
-            ModalsHelpersHelper.hideModal(MODALS.CREATE_TABLE_IN_SCHEMA);
+            ModalsHelper.hideModal(MODALS.CREATE_TABLE_IN_SCHEMA);
         },
         addNewField: () => {
             setValues({
@@ -56,14 +62,16 @@ const CreateTableInSchemaModal = () => {
         <PopUpWrapper name={MODALS.CREATE_TABLE_IN_SCHEMA} onClickOutside={closeModal}>
             <Form name={FORMS.CREATE_TABLE_IN_SCHEMA} onSubmit={onSubmit(handlers.submit)}>
                 <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>
-                    Добавить таблицу в схему <span>sampleDB</span>
+                    Добавить таблицу в схему <span>{state?.schema}</span>
                 </H1>
                 <Control.Row>
                     <Control.Input
                         name={`tableName`}
                         label={`Наименование таблицы`}
-                        placeholder={`Наименование таблицы`}
+                        placeholder={`Наименование таблицы (латиница, цифры и «_»)`}
                         isRequired
+                        maxLength={25}
+                        regex="[^a-zA-Z0-9_]"
                         extra={`margin-right: calc(50% + 8px)`}
                     />
                 </Control.Row>
@@ -74,8 +82,10 @@ const CreateTableInSchemaModal = () => {
                         <Control.Input
                             name={`fields.[${index}].fieldName`}
                             label={`Наименование поля (латиница)`}
-                            placeholder={`Наименование поля (латиница)`}
+                            placeholder={`Наименование поля (латиница, цифры и «_»)`}
                             isRequired
+                            maxLength={25}
+                            regex="[^a-zA-Z0-9_]"
                         />
                         <Control.Select
                             name={`fields.[${index}].fieldType`}
@@ -91,7 +101,13 @@ const CreateTableInSchemaModal = () => {
                     Добавить поле
                 </Button>
                 <Control.Row>
-                    <Button background={`grey`} variant={`outlined`} extra={`margin-left: calc(50% + 8px);`} formNoValidate onClick={closeModal}>
+                    <Button
+                        background={`grey`}
+                        variant={`outlined`}
+                        extra={`margin-left: calc(50% + 8px);`}
+                        formNoValidate
+                        onClick={closeModal}
+                    >
                         Отменить
                     </Button>
                     <Button background={`orange`} type={`submit`}>

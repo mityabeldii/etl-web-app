@@ -16,7 +16,7 @@ const TablesAPI = {
             try {
                 const response = (await axios.post(`/api/v1/tables`, { datasourceId, fields, schemaName, tableName }))
                     .data;
-                await DatasourceAPI.getDatasourceTables(datasourceId);
+                await DatasourceAPI.getDatasourceTables(datasourceId, schemaName);
                 handleSuccess({ message: `Таблица ${tableName} успешно создана` });
                 return response;
             } catch (error) {
