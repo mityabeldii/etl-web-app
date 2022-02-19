@@ -11,10 +11,11 @@ import { objectPut, downloadURI, sleep, objectToQS } from "../utils/common-helpe
 import DatasourceAPI from "./datasource-api";
 
 const TablesAPI = {
-    createTable({ datasourceId, fields, schemaName, tableName }) {
+    createTable: ({ datasourceId, fields, schemaName, tableName }) => {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.post(`/api/v1/tables`, { datasourceId, fields, schemaName, tableName })).data;
+                const response = (await axios.post(`/api/v1/tables`, { datasourceId, fields, schemaName, tableName }))
+                    .data;
                 await DatasourceAPI.getDatasourceTables(datasourceId);
                 handleSuccess({ message: `Таблица ${tableName} успешно создана` });
                 return response;

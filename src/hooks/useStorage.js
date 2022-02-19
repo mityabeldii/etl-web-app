@@ -7,9 +7,9 @@ import useEventListener, { eventDispatch } from "./useEventListener";
 import { objectPut, objectMerge, objectCopy, objectCompare, createId, isna, path } from "../utils/common-helper";
 import { EVENTS } from "../constants/config";
 
-export const useStorageListener = (getPathContent) => {
+export const useStorageListener = (getPathContent, defaultValue) => {
     if (typeof getPathContent === `string`) {
-        getPathContent = path(getPathContent);
+        getPathContent = (state) => _.get(state, getPathContent) ?? defaultValue;
     }
     const [state, setState] = useState(objectCopy(getPathContent(window.storage)));
     useEventListener(EVENTS.UPDATE_STORAGE, (d) => {

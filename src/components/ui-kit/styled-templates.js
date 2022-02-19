@@ -635,4 +635,16 @@ export const ErrorBox = {
     },
 };
 
+export const Scrollable = ({ children, outerExtra = ``, innerExtra = `` }) => {
+    return (
+        <Frame extra={`width: inherit; min-height: min-content; ${outerExtra}`}>
+            <Frame
+                extra={`width: inherit; flex: 1; overflow: auto; justify-content: flex-start; ${innerExtra}`}
+            >
+                {children}
+            </Frame>
+        </Frame>
+    );
+};
+
 /*eslint-enable*/

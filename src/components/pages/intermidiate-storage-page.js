@@ -2,9 +2,20 @@
 import { useEffect, useState, Fragment, useMemo } from "react";
 import styled, { css } from "styled-components";
 import { useLocation } from "react-router";
-import _ from "lodash";
+import _, { get } from "lodash";
 
-import { Frame, Button, H1, H2, RowWrapper, Input, Form, Dropdown } from "../ui-kit/styled-templates";
+import {
+    Frame,
+    Button,
+    H1,
+    H2,
+    RowWrapper,
+    Input,
+    Form,
+    Dropdown,
+    ScrollWrapper,
+    Scrollable,
+} from "../ui-kit/styled-templates";
 import Select from "../ui-kit/select";
 import Table from "../ui-kit/table";
 import { Control } from "../ui-kit/control";
@@ -30,19 +41,21 @@ import { eventDispatch } from "../../hooks/useEventListener";
 import { putStorage, useStorageListener, useStorageValue } from "../../hooks/useStorage";
 import useQueryParams from "../../hooks/useQueryParams";
 
-const StructureTable = ({ rows }) => {
+const StructureTable = ({ rows = [], wrapperExtra = ``, innerExtrra = `` }) => {
     return useMemo(
         () => (
-            <Table
-                name={`DATASOURCE_TABLE_STRUCTURE`}
-                withPagination={false}
-                withHeader={false}
-                columns={[
-                    { name: `name`, extra: `font-weight: bold;` },
-                    { name: `type`, extra: `flex: 2;` },
-                ]}
-                rows={rows}
-            />
+            <Scrollable outerExtra={`max-height: 710px;`}>
+                <Table
+                    name={`DATASOURCE_TABLE_STRUCTURE`}
+                    withPagination={false}
+                    withHeader={false}
+                    columns={[
+                        { name: `fieldName`, extra: `font-weight: bold;` },
+                        { name: `fieldType`, extra: `flex: 2;` },
+                    ]}
+                    rows={[...rows, ...rows, ...rows]}
+                />
+            </Scrollable>
         ),
         [rows]
     );
@@ -53,18 +66,22 @@ const IntermidiateStoragePage = () => {
     const { type: selectedDatasourceType, table: selectedTableName } = params;
 
     const datasources = useStorageListener((state) => state?.tables?.DATASOURCE_LIST?.rows ?? []);
-    const datasourcesNames = [`STAGING`, `DWH`];
     const selectedDatasource = _.find(datasources, { type: selectedDatasourceType });
-    const structure = useStorageListener((state) => _.find(_.get(state, `datasources.structures`), { id: selectedDatasource?.id })?.data ?? {});
+    // const structure = useStorageListener(
+    //     (state) => _.find(get(state, `datasources.structures`), { id: selectedDatasource?.id })?.data ?? {}
+    // );
     const schemas = useStorageListener(
         (state) =>
-            _.get(state, `datasources.schemas[${selectedDatasource?.id}]`)?.filter?.((i) => ![`information_schema`, `pg_catalog`]?.includes?.(i)) ??
-            []
+            get(state, `datasources.schemas[${selectedDatasource?.id}]`)?.filter?.(
+                (i) => ![`information_schema`, `pg_catalog`]?.includes?.(i)
+            ) ?? []
     );
-    const { tables } = structure;
-    const selectedTable = _.find(tables, { name: selectedTableName });
     const selectedSchema = useStorageListener((state) => state?.pages?.[`INTERMIDIATE_STRAGE`]?.selectedSchema ?? ``);
     const setSelectedSchema = (newSchema) => putStorage(`pages.INTERMIDIATE_STRAGE.selectedSchema`, newSchema);
+    const tables = useStorageListener(
+        (state) => state?.datasources?.tables?.[selectedDatasource?.id]?.[selectedSchema] ?? []
+    );
+    const selectedTable = _.find(tables, { tableName: selectedTableName });
 
     const handlers = {
         openCreateDatasourceModal: () => {
@@ -77,7 +94,10 @@ const IntermidiateStoragePage = () => {
             ModalsHelper.showModal(MODALS.CREATE_SCHEMA_IN_STORAGE, selectedDatasource);
         },
         openRenameSchemaModal: () => {
-            ModalsHelper.showModal(MODALS.EDIT_SCHEMA_NAME, { datasourceId: selectedDatasource?.id, name: selectedSchema });
+            ModalsHelper.showModal(MODALS.EDIT_SCHEMA_NAME, {
+                datasourceId: selectedDatasource?.id,
+                name: selectedSchema,
+            });
         },
         openDeleteSchemeModal: async () => {
             const { tables } = await DatasourceAPI.getDatasourceTableStructure(selectedDatasource?.id);
@@ -115,7 +135,10 @@ const IntermidiateStoragePage = () => {
             }
         },
         openCreateTableInSchemaModal: () => {
-            ModalsHelper.showModal(MODALS.CREATE_TABLE_IN_SCHEMA, { datasourceId: selectedDatasource?.id, schema: selectedSchema });
+            ModalsHelper.showModal(MODALS.CREATE_TABLE_IN_SCHEMA, {
+                datasourceId: selectedDatasource?.id,
+                schema: selectedSchema,
+            });
         },
         openEditTableNameModal: () => {
             ModalsHelper.showModal(MODALS.EDIT_TABLE_NAME);
@@ -148,13 +171,22 @@ const IntermidiateStoragePage = () => {
         },
         fetchPreviewFunction: async () => {
             if (selectedDatasource?.id && selectedTableName) {
-                const response = await DatasourceAPI.getDatasourceTablePreview(selectedDatasource?.id, selectedTableName);
+                const response = await DatasourceAPI.getDatasourceTablePreview(
+                    selectedDatasource?.id,
+                    selectedTableName
+                );
                 return response;
+            }
+        },
+        fetchTables: async () => {
+            if (selectedDatasource?.id && selectedSchema) {
+                await DatasourceAPI.getDatasourceTables(selectedDatasource?.id, selectedSchema);
             }
         },
     };
 
     useEffect(handlers.fetchPreviewFunction, [selectedDatasource?.id, selectedDatasource?.schema, selectedTableName]);
+    useEffect(handlers.fetchTables, [selectedDatasource?.id, selectedSchema]);
 
     useEffect(DatasourceAPI.getDatasources, []);
     useEffect(() => {
@@ -170,6 +202,8 @@ const IntermidiateStoragePage = () => {
         }
     }, [schemas]);
 
+    console.log(selectedTable?.fields);
+
     return (
         <>
             <EditAccessCredentialsModal />
@@ -181,16 +215,16 @@ const IntermidiateStoragePage = () => {
 
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Frame extra={`flex-direction: row;`}>
-                    <Heading>{{ STAGING: `Хранилище данных`, DWH: `Промежуточное хранилище` }?.[selectedDatasourceType]}</Heading>
-                    {/* <Select
-                        value={selectedDatasourceType}
-                        onChange={handlers.setSelectedDatasourceType}
-                        options={datasourcesNames?.map?.((i) => ({ label: i, value: i }))}
-                        toggleComponent={(d) => <ToggleComponent>{d?.label}</ToggleComponent>}
-                    /> */}
+                    <Heading>
+                        {{ STAGING: `Хранилище данных`, DWH: `Промежуточное хранилище` }?.[selectedDatasourceType]}
+                    </Heading>
                 </Frame>
                 {!selectedDatasource && (
-                    <Button leftIcon={`plus-in-circle-white`} background={`orange`} onClick={handlers.openCreateDatasourceModal}>
+                    <Button
+                        leftIcon={`plus-in-circle-white`}
+                        background={`orange`}
+                        onClick={handlers.openCreateDatasourceModal}
+                    >
                         Добавить источник
                     </Button>
                 )}
@@ -260,7 +294,10 @@ const IntermidiateStoragePage = () => {
                             {!!selectedSchema && (
                                 <>
                                     <RowWrapper extra={`margin-top: 4px;`}>
-                                        <Tooltip label={`Редактировать`} wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}>
+                                        <Tooltip
+                                            label={`Редактировать`}
+                                            wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}
+                                        >
                                             <Button
                                                 extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
                                                 onClick={handlers.openRenameSchemaModal}
@@ -294,16 +331,19 @@ const IntermidiateStoragePage = () => {
                             {tables?.map?.((table, index) => (
                                 <Fragment key={index}>
                                     <Button
-                                        onClick={handlers.setSelectedTableName(table.name)}
+                                        onClick={handlers.setSelectedTableName(table.tableName)}
                                         extra={`margin-top: 12px; background: ${
-                                            selectedTable?.name === table?.name ? `#FFFFFF` : `transparent`
+                                            selectedTable?.tableName === table?.tableName ? `#FFFFFF` : `transparent`
                                         }; color: black; box-shadow: unset; width: 100%; border: 1px solid #DADADA; justify-content: flex-start; word-break: break-all; text-align: left;`}
                                     >
-                                        {table.name}
+                                        {table.tableName}
                                     </Button>
-                                    {selectedTable?.name === table?.name && (
+                                    {selectedTable?.tableName === table?.tableName && (
                                         <RowWrapper extra={`margin-top: 4px;`}>
-                                            <Tooltip label={`Редактировать`} wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}>
+                                            <Tooltip
+                                                label={`Редактировать`}
+                                                wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}
+                                            >
                                                 <Button
                                                     extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
                                                     onClick={handlers.openEditTableNameModal}
@@ -334,7 +374,11 @@ const IntermidiateStoragePage = () => {
                             >
                                 Добавить таблицу
                             </Button>
-                            <Button extra={`width: 100%; margin-top: 36px;`} background={`blue`} onClick={handlers.openAdHocModal}>
+                            <Button
+                                extra={`width: 100%; margin-top: 36px;`}
+                                background={`blue`}
+                                onClick={handlers.openAdHocModal}
+                            >
                                 Ad-Hoc запрос
                             </Button>
                         </Frame>
@@ -343,19 +387,22 @@ const IntermidiateStoragePage = () => {
                                 <>
                                     <RowWrapper extra={`margin-bottom: 16px;`}>
                                         <RightSectionHeader>
-                                            Структура таблицы <span>{selectedTable?.name}</span>
+                                            Структура таблицы <span>{selectedTable?.tableName}</span>
                                         </RightSectionHeader>
                                         <Button>Редактировать структуру</Button>
                                     </RowWrapper>
-                                    <StructureTable rows={selectedTable?.columns ?? []} />
+                                    <StructureTable rows={selectedTable?.fields ?? []} />
                                     <RowWrapper extra={`margin-bottom: 16px; margin-top: 40px;`}>
                                         <RightSectionHeader>
-                                            Предпросмотр таблицы <span>{selectedTable?.name}</span>
+                                            Предпросмотр таблицы <span>{selectedTable?.tableName}</span>
                                         </RightSectionHeader>
                                     </RowWrapper>
                                     <Table
                                         name={TABLES.DATASOURCE_TABLE_PREVIEW}
-                                        columns={_.map(selectedTable?.columns, `name`)?.map?.((i) => ({ label: i, name: i }))}
+                                        columns={_.map(selectedTable?.fields, `fieldName`)?.map?.((i) => ({
+                                            label: i,
+                                            name: i,
+                                        }))}
                                         fetchFunction={handlers.fetchPreviewFunction}
                                     />
                                 </>
@@ -391,7 +438,8 @@ const ToggleComponent = styled(Frame)`
         content: "";
         width: 24px;
         height: 24px;
-        background: url("${require(`../../assets/icons/arrow-right-blue.svg`).default}") no-repeat center center / contain;
+        background: url("${require(`../../assets/icons/arrow-right-blue.svg`).default}") no-repeat center center /
+            contain;
     }
 `;
 

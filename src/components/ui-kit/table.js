@@ -508,6 +508,7 @@ const TableWrapper = styled(Frame)`
     background: ${({ theme }) => theme.background.primary};
     border: 1px solid #dadada;
     border-radius: 4px;
+    box-sizing: border-box;
 `;
 
 const PaginationWrapper = styled(RowWrapper)`
