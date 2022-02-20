@@ -17,7 +17,6 @@ const DatasourceList = {
     useBackendProcessing: false,
     idColumnName: `id`,
     booleanOperation: `disjunction`,
-    useBackendProcessing: false,
     columns: [
         {
             name: `name`,

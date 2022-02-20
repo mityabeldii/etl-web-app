@@ -19,7 +19,9 @@ const DatasourcesListPage = () => {
     const openCreateDataSourceModal = () => {
         ModalsHelper.showModal(MODALS.CREATE_DATASOURCE_MODAL);
     };
-    const rowsCount = useStorageListener(state => state?.tables?.DATASOURCE_LIST?.rows?.filter?.(i => i?.type === `SOURCE`)?.length ?? 0)
+    const rowsCount = useStorageListener(
+        (state) => state?.tables?.DATASOURCE_LIST?.rows?.filter?.((i) => i?.type === `SOURCE`)?.length ?? 0
+    );
 
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
@@ -37,7 +39,7 @@ const DatasourcesListPage = () => {
                 fetchFunction={DatasourceAPI.getDatasources}
                 {...tablesColumns[TABLES.DATASOURCE_LIST]}
                 extraHeader={<Search value={search} onChange={handleSearchChange} />}
-                filters={{ host: search, name: search, type: `SOURCE` }}
+                filters={{ host: search, name: search }}
             />
         </>
     );

@@ -34,6 +34,21 @@ const DatasourceAPI = {
         });
     },
 
+    async getDatasourcesSourceOnly() {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.get(`/api/v1/datasource`)).data;
+                putStorage(`tables.${TABLES.DATASOURCE_LIST}`, {
+                    rows: _.filter(_.orderBy(response, [`id`], [`asc`]), { type: `SOURCE` }),
+                    pagination: response?._meta ?? {},
+                });
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
+
     async createDatasource(data) {
         return loadingCounterWrapper(async () => {
             try {
@@ -95,6 +110,7 @@ const DatasourceAPI = {
                         (i, j, self) => self?.map?.((i) => i?.id)?.indexOf(i?.id) === j
                     )
                 );
+                putStorage(`pages.datasourcesPage.schemaName`, response?.schema);
                 return response;
             } catch (error) {
                 throw handleError(error);

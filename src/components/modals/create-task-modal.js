@@ -31,7 +31,7 @@ const CrateTaskModal = () => {
     const { tasks = [] } = process;
 
     const { data, onSubmit, clearForm, setReadOnly } = useFormControl({ name: FORMS.CREATE_TASK, schema: Schemas.createTask({ tasks }) });
-    useEffect(DatasourceAPI.getDatasources, []);
+    useEffect(DatasourceAPI.getDatasourcesSourceOnly, []);
 
     const { close: closeModal } = useModal(MODALS.CREATE_TASK, {
         onOpen: (e) => {

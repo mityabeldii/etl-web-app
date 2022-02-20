@@ -12,7 +12,7 @@ import ProcessDropdown from "../tools/process-dropdown";
 import DatasourceDropdown from "../tools/datasource-dropdown";
 
 import { convertHex } from "../../utils/colors-helper";
-import { createId, togglePush } from "../../utils/common-helper";
+import { createId, stringImposition, togglePush } from "../../utils/common-helper";
 
 import { getStorage, mergeStorage, putStorage, useStorageListener } from "../../hooks/useStorage";
 import useDebounce from "../../hooks/useDebounde";
@@ -72,10 +72,7 @@ const Table = (props) => {
                 useBackendProcessing ||
                 Object.keys(_.pickBy(filters, _.identity)).length === 0 ||
                 Object.entries(_.pickBy(filters, _.identity))
-                    .map(
-                        ([key, value], index) =>
-                            !value || `${_.get(i, key)}`?.toLowerCase?.()?.includes?.(`${value}`?.toLowerCase?.())
-                    )
+                    ?.map?.(([key, value], index) => !value || stringImposition(_.get(i, key), value))
                     ?.reduce?.(
                         ...{
                             conjunction: [(a, b) => a && b, true],
@@ -106,10 +103,11 @@ const Table = (props) => {
             const newData = await fetchFunction();
         }
     }, []);
-    useEffect(
-        () => useBackendProcessing && putStorage(`tables.${name}.filters`, propsFilters),
-        [propsFilters, useBackendProcessing]
-    );
+    useEffect(() => {
+        // if (useBackendProcessing) {
+        putStorage(`tables.${name}.filters`, propsFilters);
+        // }
+    }, [propsFilters, useBackendProcessing]);
 
     return (
         <TableWrapper>
@@ -210,6 +208,13 @@ const Table = (props) => {
                         );
                     })}
                 </STr> */}
+                {filterRows(
+                    !useBackendProcessing && withPagination
+                        ? frontendPagination.visibleItems ?? []
+                        : rows.length === 0 && propRows
+                        ? propRows
+                        : rows
+                )?.length === 0 && (<PlaceholderNoData>Данные в выбранной таблице отсутствуют</PlaceholderNoData>)}
                 {filterRows(
                     !useBackendProcessing && withPagination
                         ? frontendPagination.visibleItems ?? []
@@ -404,6 +409,12 @@ const TableCell = ({ cellState }) => {
         </STd>
     );
 };
+
+const PlaceholderNoData = styled(Frame)`
+    color: ${(props) => props.theme.grey};
+    font-size: 16px;
+    padding: 40px 0;
+`;
 
 const ProcessStatus = styled(Frame)`
     width: 158px;
