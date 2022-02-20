@@ -106,7 +106,6 @@ const DatasourceTableStructure = {
 const DatasourceTablePreview = {
     useBackendProcessing: false,
     withPagination: false,
-    columns: [{ name: `name`, extra: `font-weight: bold;` }, { name: `type` }],
 };
 
 const ProcessesList = {

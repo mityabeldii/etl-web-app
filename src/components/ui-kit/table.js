@@ -604,6 +604,7 @@ const STr = styled(Frame)`
     box-sizing: border-box;
     border-bottom: 1px solid #dadada;
     align-items: flex-start;
+    white-space: nowrap;
 
     > * {
         word-break: break-word;

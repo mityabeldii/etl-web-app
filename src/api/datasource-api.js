@@ -6,6 +6,7 @@ import {
     convertPaginatedResponse,
     convertPaginatedResponse2,
     GETOptions,
+    GETOptionsForPreview,
     handleError,
     handleSuccess,
     loadingCounterWrapper,
@@ -101,14 +102,14 @@ const DatasourceAPI = {
         });
     },
 
-    async getDatasourceTablePreview(id, tableName) {
+    async getDatasourceTablePreview(datasourceId, tableName) {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (
-                    await axios.get(`/api/v1/query/${id}/${tableName}`, GETOptions(TABLES.DATASOURCE_TABLE_PREVIEW))
+                    await axios.get(`/api/v1/query/${datasourceId}/${tableName}`, GETOptionsForPreview(TABLES.DATASOURCE_TABLE_PREVIEW))
                 ).data;
                 const data = convertPaginatedResponse(response);
-                putStorage(`datasources.preview.${id}.${tableName}`, data);
+                putStorage(`datasources.preview.${datasourceId}.${tableName}`, data);
                 putStorage(`tables.${TABLES.DATASOURCE_TABLE_PREVIEW}`, data);
                 return response;
             } catch (error) {

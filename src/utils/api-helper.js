@@ -94,6 +94,22 @@ export const POSTOptions = (name) => {
     };
 };
 
+export const GETOptions = (options = {}) => {
+    return POSTOptions(options);
+};
+
+export const GETOptionsForPreview = (name) => {
+    const table = getStorage((state) => state?.tables?.[name] ?? {});
+    const { pagination = {} } = table;
+    const { currentPage = 0, perPage = 10 } = pagination;
+    return {
+        params: {
+            limit: perPage,
+            offset: currentPage,
+        },
+    };
+};
+
 export const convertPaginatedResponse = (response) => {
     const data = {
         rows: _.map(response?.rows, `cells`)?.map?.((i) => Object.fromEntries(i?.map?.((i) => [i?.column, i?.value]))),
@@ -116,10 +132,6 @@ export const convertPaginatedResponse2 = (response) => {
             totalCount,
         },
     };
-};
-
-export const GETOptions = (options = {}) => {
-    return POSTOptions(options);
 };
 
 /*eslint-enable*/

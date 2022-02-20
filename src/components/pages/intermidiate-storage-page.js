@@ -28,6 +28,7 @@ import CreateTableInSchemaModal from "../modals/create-table-in-schema-modal";
 import EditTableNameModal from "../modals/edit-table-name-modal";
 import DatasourceAdHocQueryModal from "../modals/datasource-ad-hoc-query-modal";
 import EditTableStructureModal from "../modals/edit-table-structure-modal";
+import TablePreviewModal from "../modals/table-preview-modal";
 
 import { FORMS, MODALS, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
@@ -204,6 +205,12 @@ const IntermidiateStoragePage = () => {
                 table: selectedTable,
             });
         },
+        openTablePreviewModal: () => {
+            ModalsHelper.showModal(MODALS.TABLE_PREVIEW, {
+                datasourceId: selectedDatasource?.id,
+                table: selectedTable,
+            });
+        },
     };
 
     useEffect(handlers.fetchPreviewFunction, [selectedDatasource?.id, selectedDatasource?.schema, selectedTableName]);
@@ -232,6 +239,7 @@ const IntermidiateStoragePage = () => {
             <EditTableNameModal />
             <DatasourceAdHocQueryModal />
             <EditTableStructureModal />
+            <TablePreviewModal />
 
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Frame extra={`flex-direction: row;`}>
@@ -423,24 +431,19 @@ const IntermidiateStoragePage = () => {
                                         <RightSectionHeader>
                                             Структура таблицы <span>{selectedTable?.tableName}</span>
                                         </RightSectionHeader>
-                                        <Button onClick={handlers.openEditScructurreModal}>
-                                            Редактировать структуру
-                                        </Button>
+                                        <Frame extra={`flex-direction: row;`}>
+                                            <Button
+                                                extra={`margin-right: 5px;`}
+                                                onClick={handlers.openTablePreviewModal}
+                                            >
+                                                Посмотреть данные
+                                            </Button>
+                                            <Button onClick={handlers.openEditScructurreModal}>
+                                                Редактировать структуру
+                                            </Button>
+                                        </Frame>
                                     </RowWrapper>
                                     <StructureTable rows={selectedTable?.fields ?? []} />
-                                    <RowWrapper extra={`margin-bottom: 16px; margin-top: 40px;`}>
-                                        <RightSectionHeader>
-                                            Предпросмотр таблицы <span>{selectedTable?.tableName}</span>
-                                        </RightSectionHeader>
-                                    </RowWrapper>
-                                    <Table
-                                        name={TABLES.DATASOURCE_TABLE_PREVIEW}
-                                        columns={_.map(selectedTable?.fields, `fieldName`)?.map?.((i) => ({
-                                            label: i,
-                                            name: i,
-                                        }))}
-                                        fetchFunction={handlers.fetchPreviewFunction}
-                                    />
                                 </>
                             )}
                         </Frame>

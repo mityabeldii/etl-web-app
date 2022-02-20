@@ -39,10 +39,7 @@ const EditTableStructureModal = () => {
     const { onSubmit, clearForm, setValues, data } = useFormControl({ name: FORMS.EDIT_TABLE_STRUCTURE, schema });
     const { close: closeModal, state } = useModal(MODALS.EDIT_TABLE_STRUCTURE, {
         onClose: clearForm,
-        onOpen: ({ datasourceId, schemaName, table }) => {
-            console.log(table);
-            setValues({ datasourceId, schemaName, ...table });
-        },
+        onOpen: ({ datasourceId, schemaName, table }) => setValues({ datasourceId, schemaName, ...table }),
     });
     const handlers = {
         submit: async (data) => {
