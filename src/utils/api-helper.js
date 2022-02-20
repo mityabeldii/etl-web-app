@@ -111,13 +111,10 @@ export const GETOptionsForPreview = (name) => {
 };
 
 export const convertPaginatedResponse = (response) => {
+    const { rows = [], page: currentPage = 0, rowCount: perPage = 10, totalRowCount: totalCount = 0 } = response;
     const data = {
-        rows: _.map(response?.rows, `cells`)?.map?.((i) => Object.fromEntries(i?.map?.((i) => [i?.column, i?.value]))),
-        pagination: {
-            perPage: response?.rowCount,
-            currentPage: Math.max(response?.page - 1, 0),
-            totalCount: response?.totalRowCount,
-        },
+        rows: rows.map((i) => Object.fromEntries(i?.cells?.map?.((j) => [j?.column, j?.value]))),
+        pagination: { currentPage, perPage, totalCount },
     };
     return data;
 };

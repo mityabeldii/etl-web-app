@@ -28,7 +28,9 @@ const DatasourcePage = () => {
         useStorageListener((state) => state?.datasources?.structures ?? [])
             ?.find?.((i) => i?.id === selectedSourceId)
             ?.data?.tables?.find?.((i) => i?.name === selectedTable)?.columns ?? [];
-    const preview = useStorageListener((state) => _.get(state, `datasources.preview.${selectedSourceId}.${selectedTable}.rows`)) ?? [];
+    const preview =
+        useStorageListener((state) => _.get(state, `datasources.preview.${selectedSourceId}.${selectedTable}.rows`)) ??
+        [];
 
     const fetchPreviewFunction = async () => {
         if (selectedSourceId && selectedTable) {
@@ -72,7 +74,11 @@ const DatasourcePage = () => {
             </RowWrapper>
             <RowWrapper extra={`align-items: flex-start;`}>
                 <Frame>
-                    <H1 extra={`font-size: 18px; margin-bottom: 16px; width: 100% !important; align-items: flex-start;`}>Таблицы</H1>
+                    <H1
+                        extra={`font-size: 18px; margin-bottom: 16px; width: 100% !important; align-items: flex-start;`}
+                    >
+                        Таблицы
+                    </H1>
                     {tables.map((item, index) => (
                         <SchemaName
                             key={index}
@@ -88,7 +94,10 @@ const DatasourcePage = () => {
                         background={`blue`}
                         extra={`margin-top: 24px; width: 190px;`}
                         onClick={() => {
-                            ModalsHelper.showModal(MODALS.DATASOURCE_AD_HOC_QUERY_MODAL);
+                            ModalsHelper.showModal(MODALS.DATASOURCE_AD_HOC_QUERY_MODAL, {
+                                datasourceId: selectedSourceId,
+                                schemaName: selectedTable, // TODO: Change it on schema name
+                            });
                         }}
                     >
                         Ad-Hoc запрос
@@ -98,7 +107,11 @@ const DatasourcePage = () => {
                     <TableStructureHeadeing>
                         Структура таблицы <span>{selectedTable}</span>
                     </TableStructureHeadeing>
-                    <Table name={TABLES.DATASOURCE_TABLE_STRUCTURE} {...tablesColumns[TABLES.DATASOURCE_TABLE_STRUCTURE]} rows={structure} />
+                    <Table
+                        name={TABLES.DATASOURCE_TABLE_STRUCTURE}
+                        {...tablesColumns[TABLES.DATASOURCE_TABLE_STRUCTURE]}
+                        rows={structure}
+                    />
                     <TableStructureHeadeing extra={`margin-top: 40px;`}>
                         Предпросмотр таблицы <span>{selectedTable}</span>
                     </TableStructureHeadeing>

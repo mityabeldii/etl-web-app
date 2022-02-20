@@ -106,7 +106,10 @@ const DatasourceAPI = {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (
-                    await axios.get(`/api/v1/query/${datasourceId}/${tableName}`, GETOptionsForPreview(TABLES.DATASOURCE_TABLE_PREVIEW))
+                    await axios.get(
+                        `/api/v1/query/${datasourceId}/${tableName}`,
+                        GETOptionsForPreview(TABLES.DATASOURCE_TABLE_PREVIEW)
+                    )
                 ).data;
                 const data = convertPaginatedResponse(response);
                 putStorage(`datasources.preview.${datasourceId}.${tableName}`, data);
@@ -157,9 +160,26 @@ const DatasourceAPI = {
     adHocQuery({ datasourceId, schemaName, query }) {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.post(`/api/v1/ad-hoc-query`, { datasourceId, schemaName, query })).data;
-                handleSuccess({ message: `Success` });
-                return response;
+                if (datasourceId && schemaName && query) {
+                    const table = getStorage((state) => state?.tables?.[name] ?? {});
+                    const { pagination = {} } = table;
+                    const { currentPage = 0, perPage = 10 } = pagination;
+                    const { result: response } = (
+                        await axios.post(`/api/v1/ad-hoc-query`, {
+                            datasourceId,
+                            schemaName,
+                            query,
+                            page: currentPage,
+                            pageSize: perPage,
+                        })
+                    ).data;
+                    if (!response) {
+                        throw { response: { data: { message: `Не удалось выполнить запрос` } } };
+                    }
+                    putStorage(`tables.${TABLES.DATASOURCE_TABLE_PREVIEW}`, convertPaginatedResponse(response));
+                    handleSuccess({ message: `Success` });
+                    return response;
+                }
             } catch (error) {
                 throw error;
             }

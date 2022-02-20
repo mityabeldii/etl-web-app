@@ -173,7 +173,10 @@ const IntermidiateStoragePage = () => {
             });
         },
         openAdHocModal: () => {
-            ModalsHelper.showModal(MODALS.DATASOURCE_AD_HOC_QUERY_MODAL);
+            ModalsHelper.showModal(MODALS.DATASOURCE_AD_HOC_QUERY_MODAL, {
+                datasourceId: selectedDatasource?.id,
+                schemaName: selectedSchema,
+            });
         },
         setSelectedDatasourceType: (e) => {
             setByKey(`type`, e.target.value);
@@ -420,6 +423,7 @@ const IntermidiateStoragePage = () => {
                                 extra={`width: 100%; margin-top: 36px;`}
                                 background={`blue`}
                                 onClick={handlers.openAdHocModal}
+                                disabled={!selectedSchema}
                             >
                                 Ad-Hoc запрос
                             </Button>

@@ -45,6 +45,7 @@ const Table = (props) => {
         rows: propRows = [],
         filters: propsFilters = {},
         booleanOperation = `conjunction`,
+        ignoreInitFetch = false,
     } = props;
     if (!name) {
         throw new Error(`[table.js] - name is not  defined`);
@@ -101,7 +102,7 @@ const Table = (props) => {
     }, [JSON.stringify({ debouncedParams, sort, name, currentPage, perPage, dependencies })]);
 
     useEffect(async () => {
-        if (!useBackendProcessing) {
+        if (!useBackendProcessing && !ignoreInitFetch) {
             const newData = await fetchFunction();
         }
     }, []);
