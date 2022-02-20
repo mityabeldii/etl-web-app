@@ -26,7 +26,7 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
         const taskIdSource = _.get(data, `operatorConfigData.taskIdSource`);
         const targetId = _.get(data, `operatorConfigData.target.targetId`);
         const targetSchemaName = _.get(data, `operatorConfigData.target.targetSchemaName`);
-        console.log({taskIdSource})
+        // console.log({taskIdSource})
         return {
             source: {},
             target: {
