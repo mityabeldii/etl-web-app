@@ -1,5 +1,5 @@
 /*eslint-disable*/
-const sqlLoadSchema = (yup, data) => ({
+const sqlExtractSchema = (yup, data) => ({
     source: yup.object().shape({
         // sourceId: yup.string().required(`Это поле обязательно`),
         sourceSchemaName: yup.string().required(`Это поле обязательно`),
@@ -19,5 +19,5 @@ const sqlLoadSchema = (yup, data) => ({
         })
     )
 });
-export default sqlLoadSchema;
+export default sqlExtractSchema;
 /*eslint-enable*/
