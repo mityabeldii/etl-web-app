@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
-import { Br, Frame, H1, H2, MappingArrow, RowWrapper } from "../../ui-kit/styled-templates";
+import { Br, Frame, H1, H2, MappingArrow, RowWrapper, Tab } from "../../ui-kit/styled-templates";
 import { Control } from "../../ui-kit/control";
 
 import { FORMS, TABLES, UPDATE_TYPES } from "../../../constants/config";
@@ -377,17 +377,6 @@ const SQLClone = () => {
         </>
     );
 };
-
-const Tab = styled(Frame)`
-    padding: 8px;
-    cursor: pointer;
-    &:hover {
-        background: ${({ theme }) => theme.gray};
-    }
-    border-bottom: 3px solid transparent;
-    opacity: ${({ selected }) => (selected ? 1 : 0.5)};
-    ${({ theme, selected }) => selected && `border-bottom: 3px solid ${theme.orange};`}
-`;
 
 export default SQLClone;
 /*eslint-enable*/

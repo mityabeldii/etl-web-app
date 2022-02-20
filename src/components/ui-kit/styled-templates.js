@@ -647,4 +647,15 @@ export const Scrollable = ({ children, outerExtra = ``, innerExtra = `` }) => {
     );
 };
 
+export const Tab = styled(Frame)`
+    padding: 8px;
+    cursor: pointer;
+    &:hover {
+        background: ${({ theme }) => theme.gray};
+    }
+    border-bottom: 3px solid transparent;
+    opacity: ${({ selected }) => (selected ? 1 : 0.5)};
+    ${({ theme, selected }) => selected && `border-bottom: 3px solid ${theme.orange};`}
+`;
+
 /*eslint-enable*/

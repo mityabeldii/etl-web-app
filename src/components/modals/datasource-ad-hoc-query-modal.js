@@ -77,7 +77,7 @@ const DatasourceAdHocQueryModal = () => {
                 <Scrollable outerExtra={`max-width: 90vw; max-height: 90vh;`}>
                     <Table
                         name={TABLES.DATASOURCE_TABLE_PREVIEW}
-                        columns={Object.keys(table?.rows?.[0])?.map?.((i) => ({ label: i, name: i })) ?? []}
+                        columns={Object.keys(table?.rows?.[0] ?? {})?.map?.((i) => ({ label: i, name: i })) ?? []}
                         fetchFunction={handlers.fetchPreviewFunction}
                         ignoreInitFetch={true}
                     />

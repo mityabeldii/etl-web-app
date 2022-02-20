@@ -1,6 +1,7 @@
 /*eslint-disable*/
 import { OPERATORS } from "../constants/config";
 import sqlCloneSchema from "./sql-clone-schema";
+import sqlLoadSchema from "./sql-load-schema";
 
 const createTaskSchema =
     ({ tasks }) =>
@@ -24,11 +25,12 @@ const createTaskSchema =
                         `Процесс с таким порядковым номером уже существует`
                     )
                     .required(`Это поле обязательно`),
-                ...(
-                    {
-                        [OPERATORS.SQL_CLONE]: sqlCloneSchema,
-                    }?.[values?.operator] ?? {}
-                )(yup, values),
+                operatorConfigData: yup.object().shape({
+                    ...{
+                        [OPERATORS.SQL_CLONE]: sqlCloneSchema(yup, values),
+                        [OPERATORS.SQL_LOAD]: sqlLoadSchema(yup, values),
+                    }[values?.operator],
+                }),
             });
 
 export default createTaskSchema;
