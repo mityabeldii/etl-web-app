@@ -400,7 +400,7 @@ const TableCell = ({ cellState }) => {
                     {...(_.isFunction(column?.tooltip) ? column?.tooltip(cellState) : column?.tooltip)}
                     children={cellContent}
                     tooltipProps={{
-                        extra: `max-width: 450px; width: max -content; white-space: break-spaces;`,
+                        extra: `max-width: 350px; width: max-content; white-space: break-spaces;`,
                     }}
                 />
             ) : (
