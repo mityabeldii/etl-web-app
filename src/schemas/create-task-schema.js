@@ -4,6 +4,7 @@ import sqlCloneSchema from "./sql-clone-schema";
 import sqlLoadSchema from "./sql-load-schema";
 import sqlExtractSchema from "./sql-extract-schema";
 import sqlJoinSchema from "./sql-join-schema";
+import sqlCalculatedSchema from "./sql-calculated-schema";
 
 const createTaskSchema =
     ({ tasks }) =>
@@ -33,6 +34,7 @@ const createTaskSchema =
                         [OPERATORS.SQL_LOAD]: sqlLoadSchema(yup, values),
                         [OPERATORS.SQL_EXTRACT]: sqlExtractSchema(yup, values),
                         [OPERATORS.JOIN]: sqlJoinSchema(yup, values),
+                        [OPERATORS.CALCULATED]: sqlCalculatedSchema(yup, values),
                     }[values?.operator],
                 }),
             });
