@@ -108,6 +108,7 @@ const Select = (props) => {
                                 search !== `` &&
                                 css`
                                     border: 1px solid ${selectedLabel === search ? theme.green : theme.yellow};
+                                    background: ${convertHex(selectedLabel === search ? theme.green : theme.yellow, 0.05)} !important;
                                 `}
                         `}
                         rightIcon={`select-arrow`}
