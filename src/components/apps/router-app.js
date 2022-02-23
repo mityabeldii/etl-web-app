@@ -4,14 +4,14 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { useKeycloak } from "@react-keycloak/web";
 
-import { Frame } from "../ui-kit/styled-templates";
-import UserApp from "./user-app";
-import GuestApp from "./guest-app";
+import { Frame } from "components/ui-kit/styled-templates";
+import UserApp from "components/apps/user-app";
+import GuestApp from "components/apps/guest-app";
 
-import Alerts from "../modals/alerts";
-import Modality from "../modals/modality";
+import Alerts from "components/modals/alerts";
+import Modality from "components/modals/modality";
 
-import { useStorageListener } from "../../hooks/useStorage";
+import { useStorageListener } from "hooks/useStorage";
 
 const RouterApp = () => {
     const { initialized, keycloak } = useKeycloak();

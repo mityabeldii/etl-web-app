@@ -1,7 +1,7 @@
 /*eslint-disable*/
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-const useEventListener = (key, handler, options) => {
+const useEventListener = (key: any, handler: any, options?: any) => {
     useEffect(() => {
         window.addEventListener(key, handler, options);
         return () => {
@@ -10,7 +10,7 @@ const useEventListener = (key, handler, options) => {
     });
 };
 
-export const eventDispatch = (key, detail) => {
+export const eventDispatch = (key: any, detail?: any) => {
     window.dispatchEvent(new CustomEvent(key, { detail }));
 };
 

@@ -1,27 +1,39 @@
 /*eslint-disable*/
-import { useState, useEffect } from "react";
-import _ from "lodash";
+import { useState, useEffect } from 'react';
+import _ from 'lodash';
 
-import useEventListener, { eventDispatch } from "./useEventListener";
+import { objectMerge, createId, isna, path } from 'utils/common-helper';
 
-import { objectMerge, createId, isna, path } from "../utils/common-helper";
+import useEventListener, { eventDispatch } from 'hooks/useEventListener';
 
-const STORAGE_KEY = "storage";
+const STORAGE_KEY = 'Storage';
 
-export const useStorageListener = (getPathContent) => {
+declare global {
+    interface Window {
+        [STORAGE_KEY]: any;
+    }
+}
+
+export const useStorageListener = (getPathContent: any) => {
     if (typeof getPathContent === `string`) {
-        getPathContent = (state) => _.get(state, getPathContent) ?? defaultValue;
+        getPathContent = path(getPathContent);
     }
     const [state, setState] = useState(_.cloneDeep(getPathContent(window[STORAGE_KEY])));
-    useEventListener(`UPDATE_STORAGE`, (d) => {
+    useEventListener(`UPDATE_STORAGE`, (d: any) => {
         if (!_.isEqual(getPathContent(window[STORAGE_KEY]), state)) {
-            setState(_.cloneDeep(getPathContent(window[STORAGE_KEY])));
+            setTimeout(() => {
+                setState(_.cloneDeep(getPathContent(window[STORAGE_KEY])));
+            }, 0);
         }
     });
     return state;
 };
 
-export const putStorage = (path, value, options) => {
+interface PutStorageOptions {
+    silent?: boolean;
+}
+
+export const putStorage = (path: string, value: any, options?: PutStorageOptions) => {
     const { silent = false } = options ?? {};
     if (!window?.[STORAGE_KEY]) {
         window[STORAGE_KEY] = {};
@@ -32,7 +44,7 @@ export const putStorage = (path, value, options) => {
     }
 };
 
-export const omitStorage = (path) => {
+export const omitStorage = (path: string) => {
     (Array.isArray(path) ? path : [path]).forEach((path) => {
         window[STORAGE_KEY] = _.omit(window?.[STORAGE_KEY] ?? {}, path);
         eventDispatch(`UPDATE_STORAGE`);
@@ -41,20 +53,20 @@ export const omitStorage = (path) => {
     return;
 };
 
-export const mergeStorage = (path, value) => {
+export const mergeStorage = (path: string, value: any) => {
     objectMerge(window[STORAGE_KEY], path, value);
     eventDispatch(`UPDATE_STORAGE`);
 };
 
-export const getStorage = (path = (state) => state) => {
+export const getStorage = (path = (state: any) => state) => {
     if (typeof path !== `function`) {
         throw new Error(`useStorage (getStorage): path is not a function`);
     }
     return path(window[STORAGE_KEY]);
 };
 
-export const clearStorage = (fieldsToPersist) => {
-    const temp = {};
+export const clearStorage = (fieldsToPersist?: string[]) => {
+    const temp = {} as any;
     (fieldsToPersist || []).forEach((field) => {
         const value = window[STORAGE_KEY][field];
         if (value !== undefined) {
@@ -66,27 +78,32 @@ export const clearStorage = (fieldsToPersist) => {
     return;
 };
 
-const getNested = (obj, ...args) => {
-    return args.reduce((obj, level) => obj && obj[level], obj);
+const getNested = (obj: any, ...args: any) => {
+    return args.reduce((obj: any, level: any) => obj && obj[level], obj);
 };
 
-export const useStorageValue = (initValue, path) => {
+export const useStorageValue = (initValue: any, path: string) => {
     path = path || `temp.` + createId();
 
     if (isna(getNested(window[STORAGE_KEY], ...path.split(`.`)))) {
         _.set(window[STORAGE_KEY], path, initValue);
     }
 
-    const value = useStorageListener((state) => getNested(state, ...path.split(`.`)));
+    const value = useStorageListener((state: any) => getNested(state, ...path.split(`.`)));
 
-    const setMethod = (value) => {
+    const setMethod = (value: any) => {
         putStorage(path, value);
     };
 
     return [value, setMethod, path];
 };
 
-export const StorageProvider = ({ children, defalutStorage = {} }) => {
+interface StorageProviderProps {
+    children: any;
+    defalutStorage?: any;
+}
+
+export const StorageProvider = ({ children, defalutStorage = {} }: StorageProviderProps) => {
     useEffect(() => {
         window[STORAGE_KEY] = defalutStorage;
     }, [defalutStorage]);
