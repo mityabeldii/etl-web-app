@@ -8,8 +8,11 @@ import { Control } from "../../ui-kit/control";
 
 import { FORMS, TABLES, UPDATE_TYPES } from "../../../constants/config";
 
+import TasksHelper from "../../../utils/tasks-helper";
+
 import DatasourceAPI from "../../../api/datasource-api";
 import SchemasAPI from "../../../api/schemas-api";
+import TablesAPI from "../../../api/tables-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { getStorage, useStorageListener } from "../../../hooks/useStorage";
@@ -21,29 +24,42 @@ const useDeepEffect = (effect, dependencies) => {
 const SQLExtract = () => {
     const { data, removeValue, setValue } = useFormControl({ name: FORMS.CREATE_TASK });
     const datasources = useStorageListener((state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows ?? []);
-    const params = useStorageListener((state) => ({
-        source: {
-            schemas: _.get(state, `datasources.schemas.${_.get(data, `operatorConfigData.source.sourceId`)}`) ?? [],
-            tables: _.get(state, `datasources.tables.${_.get(data, `operatorConfigData.source.sourceId`)}`) ?? [],
-            columns:
-                _.get(state, `datasources.structures`)
-                    ?.find?.((i) => i.id == _.get(data, `operatorConfigData.source.sourceId`))
-                    ?.data?.tables?.find?.((i) => i?.name === _.get(data, `operatorConfigData.source.sourceTableName`))
-                    ?.columns?.map?.(({ name: sourceFieldName, type: sourceFieldType }) => ({ sourceFieldName, sourceFieldType })) ?? [],
-        },
-    }));
+
+    const sourceId = _.get(data, `operatorConfigData.source.sourceId`);
+    const sourceSchemaName = _.get(data, `operatorConfigData.source.sourceSchemaName`);
+    const sourceTableName = _.get(data, `operatorConfigData.source.sourceTableName`);
+    const sourceTableFields = _.get(data, `operatorConfigData.source.sourceTableFields`);
+
+    const params = useStorageListener((state) => {
+        const tables = _.chain(state).get(`datasources.tables.${sourceId}.${sourceSchemaName}`);
+        return {
+            source: {
+                schemas: _.chain(state).get(`datasources.schemas.${sourceId}`).value() ?? [],
+                tables: tables.map(`tableName`).value() ?? [],
+                columns: tables.find({ tableName: sourceTableName }).get(`fields`).value(),
+            },
+        };
+    });
+
     useDeepEffect(() => {
-        if (_.get(data, `operatorConfigData.source.sourceTableName`)) {
-            DatasourceAPI.getDatasourceTableStructure(_.get(data, `operatorConfigData.source.sourceId`));
-        }
-    }, [_.get(data, `operatorConfigData.source.sourceTableName`)]);
+        sourceId && SchemasAPI.getSchemas(sourceId);
+    }, [sourceId]);
     useDeepEffect(() => {
-        const sourceId = _.get(data, `operatorConfigData.source.sourceId`);
-        if (sourceId) {
-            SchemasAPI.getSchemas(sourceId);
-            DatasourceAPI.getDatasourceTables(sourceId);
-        }
-    }, [_.get(data, `operatorConfigData.source.sourceId`)]);
+        sourceId && sourceSchemaName && TablesAPI.getTable({ datasourceId: sourceId, schemaName: sourceSchemaName });
+    }, [sourceId, sourceSchemaName]);
+    useDeepEffect(() => {
+        const newMappingStructureKeys = TasksHelper.syncMappingStructure(
+            _.chain(data).get(`operatorConfigData.source.sourceTableFields`).map(`sourceFieldName`).value(),
+            _.chain(data).get(`operatorConfigData.storageStructure`).map(`sourceFieldName`).value()
+        );
+        const newMappingStructure = newMappingStructureKeys.map((i) => ({
+            sourceFieldName: i,
+            storageFieldName:
+                _.chain(data).get(`operatorConfigData.storageStructure`).find({ sourceFieldName: i }).get(`storageFieldName`).value() ?? i,
+        }));
+        setValue(`operatorConfigData.storageStructure`, newMappingStructure);
+    }, [sourceTableFields]);
+
     const tabs = {
         [`Конфигурация оператора`]: (
             <>
@@ -90,7 +106,13 @@ const SQLExtract = () => {
                         name={`operatorConfigData.source.sourceTableFields`}
                         label={`Поля для извлечения`}
                         multiselect
-                        options={params.source?.columns?.map?.((item) => ({ label: item?.sourceFieldName, value: item }))}
+                        options={params.source?.columns?.map?.((item) => ({
+                            label: item?.fieldName,
+                            value: { sourceFieldName: item?.fieldName, sourceFieldType: item?.fieldType },
+                            details: {
+                                description: item?.fieldType,
+                            },
+                        }))}
                         readOnly={!params.source?.columns?.length}
                         isRequired
                         allowSearch
@@ -102,28 +124,19 @@ const SQLExtract = () => {
             <>
                 <Control.Row>
                     <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start;`}>Поле в источнике</Control.Label>
-                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; margin-left: 32px;`}>
+                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; margin-left: 32px;`} required>
                         Поле во вспомогательном хранилище
                     </Control.Label>
                 </Control.Row>
                 {_.get(data, `operatorConfigData.source.sourceTableFields`)?.map?.(({ sourceFieldName: item }, index) => {
                     return (
                         <Control.Row key={index} extra={`align-items: flex-start;`}>
-                            <Control.Input
-                                name={`operatorConfigData.storageStructure.${index}.sourceFieldName`}
-                                extra={`flex: 1;`}
-                                value={item}
-                                readOnly
-                            />
+                            <Control.Input name={`operatorConfigData.storageStructure.${index}.sourceFieldName`} extra={`flex: 1;`} readOnly />
                             <MappingArrow />
                             <Control.Input
                                 name={`operatorConfigData.storageStructure.${index}.storageFieldName`}
                                 extra={`flex: 1;`}
                                 readOnly={!params?.source?.columns?.length}
-                                onChange={(e) => {
-                                    setValue(`operatorConfigData.storageStructure.${index}.sourceFieldName`, item);
-                                }}
-                                isRequired
                             />
                         </Control.Row>
                     );
