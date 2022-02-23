@@ -123,7 +123,7 @@ const SQLExtract = () => {
         ["Структура выходных данных"]: (
             <>
                 <Control.Row>
-                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start;`}>Поле в источнике</Control.Label>
+                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start;`} >Поле в источнике</Control.Label>
                     <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; margin-left: 32px;`} required>
                         Поле во вспомогательном хранилище
                     </Control.Label>

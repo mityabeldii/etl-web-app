@@ -2,63 +2,73 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import styled from "styled-components";
+import { useParams } from "react-router-dom";
 
 import { Br, Frame, H1, H2, MappingArrow, Button, RemoveRowButton, RowWrapper, Tab } from "../../ui-kit/styled-templates";
 import { Control } from "../../ui-kit/control";
 
 import { FORMS, TABLES, UPDATE_TYPES, OPERATORS } from "../../../constants/config";
 
+import TasksHelper from "../../../utils/tasks-helper";
+
 import DatasourceAPI from "../../../api/datasource-api";
 import SchemasAPI from "../../../api/schemas-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { getStorage, useStorageListener } from "../../../hooks/useStorage";
-import TasksHelper from "../../../utils/tasks-helper";
 
 const useDeepEffect = (effect, dependencies) => {
     useEffect(effect, [JSON.stringify(dependencies)]);
 };
 
-const SQLLoad = ({ tasks = [], mode = `view` }) => {
+const SQLLoad = (props) => {
+    const { process = [], mode = `view` } = props;
+    const { tasks } = process;
+
     const { data, removeValue, setValue } = useFormControl({ name: FORMS.CREATE_TASK });
     const datasources = useStorageListener((state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows ?? []);
+
+    const taskIdSource = _.get(data, `operatorConfigData.taskIdSource`);
+    const targetId = _.get(data, `operatorConfigData.target.targetId`);
+    const targetSchemaName = _.get(data, `operatorConfigData.target.targetSchemaName`);
+    const targetTableName = _.get(data, `operatorConfigData.target.targetTableName`);
+    const mappingStructure = _.get(data, `operatorConfigData.target.mappingStructure`);
+
     const params = useStorageListener((state) => {
-        const taskIdSource = _.get(data, `operatorConfigData.taskIdSource`);
-        const targetId = _.get(data, `operatorConfigData.target.targetId`);
-        const targetSchemaName = _.get(data, `operatorConfigData.target.targetSchemaName`);
-        // console.log({taskIdSource})
         return {
-            source: {},
+            source: {
+                columns: TasksHelper.getMappingStructure(taskIdSource),
+            },
             target: {
-                schemas: _.get(state, `datasources.schemas.${_.get(data, `operatorConfigData.target.targetId`)}`) ?? [],
+                schemas: _.get(state, `datasources.schemas.${targetId}`) ?? [],
                 tables: _.get(state, `datasources.tables[${targetId}].${targetSchemaName}`)?.map?.((i) => i?.tableName) ?? [],
-                columns: _.get(state, `datasources.tables[${targetId}].${targetSchemaName}`)?.map?.((i) => i?.tableName),
+                columns: _.chain(state)
+                    .get(`datasources.tables[${targetId}].${targetSchemaName}`)
+                    .find({ tableName: targetTableName })
+                    .get(`fields`)
+                    .map(`fieldName`)
+                    .value(),
             },
         };
     });
-    // console.log(params.target.columns);
+
     useDeepEffect(() => {
-        const targetId = _.get(data, `operatorConfigData.target.targetId`);
-        const targetSchemaName = _.get(data, `operatorConfigData.target.targetSchemaName`);
-        if (targetId) {
-            SchemasAPI.getSchemas(targetId);
-            DatasourceAPI.getDatasourceTables(targetId, targetSchemaName);
-        }
-    }, [_.get(data, `operatorConfigData.target.targetId`), _.get(data, `operatorConfigData.target.targetSchemaName`)]);
-    // useDeepEffect(() => {
-    //     const targetId = _.get(data, `operatorConfigData.target.targetId`);
-    //     if (targetId) {
-    //         SchemasAPI.getSchemas(targetId);
-    //         DatasourceAPI.getDatasourceTables(targetId);
-    //     }
-    // }, [_.get(data, `operatorConfigData.target.targetId`)]);
-    // useDeepEffect(() => {
-    //     const targetId = _.get(data, `operatorConfigData.target.targetId`);
-    //     const targetTableName = _.get(data, `operatorConfigData.target.targetTableName`);
-    //     if (targetId && targetId) {
-    //         DatasourceAPI.getTableColumns(targetId, targetTableName);
-    //     }
-    // }, [_.get(data, `operatorConfigData.target.targetId`), _.get(data, `operatorConfigData.target.targetTableName`)]);
+        targetId && SchemasAPI.getSchemas(targetId);
+    }, [targetId]);
+    useDeepEffect(() => {
+        targetId && targetSchemaName && DatasourceAPI.getDatasourceTables(targetId, targetSchemaName);
+    }, [targetId, targetSchemaName]);
+    useDeepEffect(() => {
+        setValue(
+            `operatorConfigData.target.mappingStructure`,
+            TasksHelper.syncMappingStructure(
+                TasksHelper.getMappingStructure(taskIdSource).map((i) => ({
+                    sourceFieldName: i,
+                    targetFieldName: params?.target?.columns?.includes?.(i) ? i : ``,
+                }))
+            ) ?? []
+        );
+    }, [taskIdSource, params?.target?.columns]);
     const tabs = {
         [`Источник данных`]: (
             <>
@@ -99,8 +109,6 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                                     (i, j) => `operatorConfigData.target.mappingStructure.${j}.targetFieldName`
                                 ) ?? []),
                             ]);
-                            SchemasAPI.getSchemas(e.target.value);
-                            DatasourceAPI.getDatasourceTables(e.target.value);
                         }}
                         isRequired
                         allowSearch
@@ -129,8 +137,10 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
         [`Соответствие полей`]: (
             <>
                 <Control.Row>
-                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start;`}>Поле во вспомогательном хранилище</Control.Label>
-                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; margin-left: 32px;`}>
+                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start;`} required>
+                        Поле во вспомогательном хранилище
+                    </Control.Label>
+                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; margin-left: 32px;`} required>
                         Поле в получателе данных
                     </Control.Label>
                 </Control.Row>
@@ -142,7 +152,7 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                                 name={`operatorConfigData.target.mappingStructure.${index}.sourceFieldName`}
                                 value={item?.sourceFieldName}
                                 options={
-                                    TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                                    params?.source?.columns?.map?.((i) => ({
                                         value: i,
                                         label: i,
                                         muted: _.get(data, `operatorConfigData.target.mappingStructure`)
@@ -150,7 +160,6 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                                             ?.includes?.(i),
                                     })) ?? []
                                 }
-                                isRequired
                                 allowSearch
                             />
                             <MappingArrow />
@@ -166,7 +175,6 @@ const SQLLoad = ({ tasks = [], mode = `view` }) => {
                                         ?.includes(item),
                                 }))}
                                 readOnly={!params?.target?.columns?.length}
-                                isRequired
                                 allowSearch
                             />
                             <RemoveRowButton

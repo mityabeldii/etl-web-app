@@ -14,8 +14,8 @@ const sqlLoadSchema = (yup, data) => ({
     }),
     updateSettings: yup.object().shape({
         updateType: yup.string().required(`Это поле обязательно`),
-        primaryKey: yup.string().required(`Это поле обязательно`),
-        lastUpdatedField: yup.string().required(`Это поле обязательно`),
+        // primaryKey: yup.string().required(`Это поле обязательно`),
+        // lastUpdatedField: yup.string().required(`Это поле обязательно`),
     }),
 });
 export default sqlLoadSchema;

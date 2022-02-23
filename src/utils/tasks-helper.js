@@ -1,6 +1,6 @@
 /*eslint-disable*/
 import _ from "lodash";
-import { useParams } from "react-router";
+import { useParams, matchPath } from "react-router-dom";
 
 import { OPERATORS, TABLES } from "../constants/config";
 
@@ -8,8 +8,9 @@ import { getStorage } from "../hooks/useStorage";
 
 const TasksHelper = {
     getMappingStructure: (taskId) => {
-        const { process_id } = useParams();
-        const { tasks = [] } = getStorage((state) => state?.processes ?? [])?.[process_id] ?? {};
+        const { process_id } =
+            matchPath(window.location.hash.split(`#`)[1].split(`?`)[0], { path: `/processes/configuration/:process_id` }).params ?? {};
+        const { tasks = [] } = getStorage((state) => state?.processes ?? [])?.[+process_id] ?? {};
         const task = tasks?.find?.((i) => i?.id === taskId) ?? {};
         const structure = _.get(task, `operatorConfigData.storageStructure`);
         const { operator } = task;
