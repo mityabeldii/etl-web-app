@@ -1,3 +1,5 @@
+import { EOperators } from "./types";
+
 export const base_url = process.env.REACT_APP_BASE_URL;
 
 export const EVENTS = {
@@ -64,12 +66,12 @@ export const PROCESS_STATUS = {
 };
 
 export const OPERATORS = {
-    SQL_CLONE: `SQL_CLONE`,
-    SQL_EXTRACT: `SQL_EXTRACT`,
-    SQL_LOAD: `SQL_LOAD`,
+    SQL_CLONE: EOperators.SQL_CLONE,
+    SQL_EXTRACT: EOperators.SQL_EXTRACT,
+    SQL_LOAD: EOperators.SQL_LOAD,
     // MAPPING: `MAPPING `,
-    JOIN: `JOIN`,
-    CALCULATED: `CALCULATED`,
+    JOIN: EOperators.JOIN,
+    CALCULATED: EOperators.CALCULATED,
     // TEST: `TEST`,
     // TEST_ERROR: `TEST_ERROR`,
 };
