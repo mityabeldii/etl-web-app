@@ -88,7 +88,7 @@ export const UPDATE_TYPES = {
 export const LOGIC_OPERATOR = {
     AND: { value: `AND`, label: `AND` },
     OR: { value: `OR`, label: `OR` },
-    null: { value: null, label: `Нет` },
+    // null: { value: null, label: `Нет` },
 };
 
 export const JOIN_TYPE = {

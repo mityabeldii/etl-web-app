@@ -43,7 +43,7 @@ const Select = (props) => {
     return (
         <Dropdown
             id={dropdownId}
-            callable={!multiselect}
+            callable={!multiselect || !readOnly}
             wrapperStyles={extra}
             closeOnToggleClick={false}
             closeOnChildrenClick={!multiselect}
@@ -67,7 +67,6 @@ const Select = (props) => {
                 `,
             }}
             scrollWrapperStyles={`max-height: 200px;`}
-            callable={!readOnly}
             toggle={
                 ToggleComponent ? (
                     <ToggleComponent options={options} label={value} />
@@ -125,7 +124,7 @@ const Select = (props) => {
                         ?.filter?.((i) => !allowSearch || stringImposition(i?.label, search) || selectedLabel === search)
                         ?.map?.((option, index, self) => {
                             const selected = _.isEqual(value, option.value);
-                            const muted = option?.muted && option.value !== value;
+                            const muted = (option?.muted && option.value !== value) || option?.subheading;
                             return (
                                 <Option
                                     key={index}
@@ -151,7 +150,7 @@ const Select = (props) => {
                                         }
                                     }}
                                 >
-                                    {option.label}
+                                    {option.label ?? option?.subheading}
                                     {(_.isEqual(value, option.value) ||
                                         (!self?.map?.((i) => _.isEqual(i?.value, option.value))?.find?.((i) => !!i) &&
                                             value?.includes?.(option.value)) ||

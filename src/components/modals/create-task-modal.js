@@ -14,7 +14,7 @@ import Forms from "../tools/forms";
 import ProcessesAPI from "../../api/processes-api";
 import DatasourceAPI from "../../api/datasource-api";
 
-import { MODALS, FORMS, OPERATORS, TABLES, UPDATE_TYPES, JOIN_TYPE, LOGIC_OPERATOR } from "../../constants/config";
+import { MODALS, FORMS, OPERATORS, TABLES, UPDATE_TYPES, JOIN_TYPE } from "../../constants/config";
 import ModalsHelper from "../../utils/modals-helper";
 import Schemas from "../../schemas";
 

@@ -7,12 +7,14 @@ import { Br, Frame, H1, H2, MappingArrow, Button, RemoveRowButton, RowWrapper, T
 import { Control } from "../../ui-kit/control";
 
 import { FORMS, TABLES, UPDATE_TYPES, OPERATORS, JOIN_TYPE, LOGIC_OPERATOR } from "../../../constants/config";
+import { EComparisonOperators } from "constants/types";
+
+import TasksHelper from "../../../utils/tasks-helper";
 
 import DatasourceAPI from "../../../api/datasource-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { getStorage, useStorageListener } from "../../../hooks/useStorage";
-import TasksHelper from "../../../utils/tasks-helper";
 
 const SQLJoin = ({ tasks = [], mode = `view` }) => {
     const { data, removeValue, setValue } = useFormControl({ name: FORMS.CREATE_TASK });
@@ -21,6 +23,58 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
         leftFields:
             _.get(state, `datasources.columns.${data?.operatorConfigData?.taskIdSource}.${data?.operatorConfigData?.left?.targetTableName}`) ?? [],
     }));
+    useEffect(() => {
+        setValue(`operatorConfigData.joinSettings.conditions`, [{ leftJoinField: "", rightJoinField: "" }]);
+    }, []);
+
+    const leftJoinFields = _.chain(data)
+        .get(`operatorConfigData.joinSettings.conditions`)
+        .map(`leftJoinField`)
+        .filter((i) => !_.isEmpty(i))
+        .value();
+    const leftSourceFields = _.chain(data)
+        .get(`operatorConfigData.storageStructure.leftSourceFields`)
+        .map(`sourceFieldName`)
+        .filter((i) => !_.isEmpty(i))
+        .value();
+    useEffect(() => {
+        const newKeys = _.chain(leftJoinFields).union(leftSourceFields).uniq().value();
+        const newMappingStructure = newKeys.map((i) => ({
+            sourceFieldName: i,
+            storageFieldName:
+                _.chain(data)
+                    .get(`operatorConfigData.storageStructure.leftSourceFields`)
+                    .find({ sourceFieldName: i })
+                    .get(`storageFieldName`)
+                    .value() ?? i,
+        }));
+        setValue(`operatorConfigData.storageStructure.leftSourceFields`, newMappingStructure);
+    }, [leftJoinFields, leftSourceFields]);
+
+    const rightJoinFields = _.chain(data)
+        .get(`operatorConfigData.joinSettings.conditions`)
+        .map(`rightJoinField`)
+        .filter((i) => !_.isEmpty(i))
+        .value();
+    const rightSourceFields = _.chain(data)
+        .get(`operatorConfigData.storageStructure.rightSourceFields`)
+        .map(`sourceFieldName`)
+        .filter((i) => !_.isEmpty(i))
+        .value();
+    useEffect(() => {
+        const newKeys = _.chain(rightJoinFields).union(rightSourceFields).uniq().value();
+        const newMappingStructure = newKeys.map((i) => ({
+            sourceFieldName: i,
+            storageFieldName:
+                _.chain(data)
+                    .get(`operatorConfigData.storageStructure.rightSourceFields`)
+                    .find({ sourceFieldName: i })
+                    .get(`storageFieldName`)
+                    .value() ?? i,
+        }));
+        setValue(`operatorConfigData.storageStructure.rightSourceFields`, newMappingStructure);
+    }, [leftJoinFields, leftSourceFields]);
+
     const tabs = {
         "Источник данных": (
             <>
@@ -68,19 +122,11 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     />
                 </Control.Row>
                 <Control.Row>
-                    <Control.Select
-                        name={`operatorConfigData.joinSettings.logicOperator`}
-                        label={`Логический оператор`}
-                        options={Object.values(LOGIC_OPERATOR).map(({ value, label }, index) => ({ label, value }))}
-                        extra={`flex: 0.5; margin-right: 16px !important;`}
-                    />
-                </Control.Row>
-                <Control.Row>
-                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
-                        Имя поля в основном источнике
+                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} required>
+                        Поле в основном источнике
                     </Control.Label>
-                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
-                        Имя поля в источнике для соединения
+                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} required>
+                        Поле в источнике для соединения
                     </Control.Label>
                 </Control.Row>
                 {_.get(data, `operatorConfigData.joinSettings.conditions`)?.map?.((item, index) => (
@@ -96,6 +142,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                                         ?.includes?.(i),
                                 })) ?? []
                             }
+                            allowSearch
                         />
                         <Frame extra={({ theme }) => `flex: unset; width: 16px; height: 16px; margin-top: 20px; color: ${theme.text.secondary};`}>
                             =
@@ -111,6 +158,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                                         ?.includes?.(i),
                                 })) ?? []
                             }
+                            allowSearch
                         />
                         <RemoveRowButton
                             mode={mode}
@@ -124,6 +172,17 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                         />
                     </Control.Row>
                 ))}
+                {_.get(data, `operatorConfigData.joinSettings.conditions`)?.length > 1 && (
+                    <Control.Row>
+                        <Control.Select
+                            name={`operatorConfigData.joinSettings.logicOperator`}
+                            label={`Логический оператор`}
+                            options={Object.values(LOGIC_OPERATOR).map(({ value, label }, index) => ({ label, value }))}
+                            extra={`flex: 0.5; margin-right: 16px !important;`}
+                            isRequired
+                        />
+                    </Control.Row>
+                )}
                 {mode !== `view` && (
                     <Button
                         background={`orange`}
@@ -140,16 +199,94 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                 )}
             </>
         ),
-        "Фильтры": <>
-        </>,
+        Фильтры: (
+            <>
+                {_.get(data, `operatorConfigData.joinFilters`)?.map?.((item, index) => (
+                    <>
+                        <Control.Row>
+                            <Control.Select
+                                name={`operatorConfigData.joinFilters.[${index}].field`}
+                                label={`Поле для фильтрации`}
+                                placeholder={`Поле для фильтрации`}
+                                options={[
+                                    { subheading: `Основной источник` },
+                                    ...(TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                                        value: i,
+                                        label: i,
+                                        muted: _.get(data, `operatorConfigData.joinFilters`)
+                                            ?.map?.((i) => i?.field)
+                                            ?.includes?.(i),
+                                    })) ?? []),
+                                    { subheading: `Источник для соединения` },
+                                    ...(TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.joinTaskIdSource`))?.map?.((i) => ({
+                                        value: i,
+                                        label: i,
+                                        muted: _.get(data, `operatorConfigData.joinFilters`)
+                                            ?.map?.((i) => i?.field)
+                                            ?.includes?.(i),
+                                    })) ?? []),
+                                ]}
+                            />
+                            <Control.Select
+                                name={`operatorConfigData.joinFilters.[${index}].operator`}
+                                label={`Оператор сравнения`}
+                                placeholder={`Оператор сравнения`}
+                                options={Object.entries(EComparisonOperators).map(([_, i]) => ({ value: i, label: i }))}
+                            />
+                            <RemoveRowButton
+                                mode={mode}
+                                onClick={() => {
+                                    setValue(
+                                        `operatorConfigData.joinFilters`,
+                                        _.get(data, `operatorConfigData.joinFilters`)?.filter((i, j) => j !== index)
+                                    );
+                                }}
+                            />
+                        </Control.Row>
+                        <Control.Row>
+                            {[
+                                EComparisonOperators.EQUAL,
+                                EComparisonOperators.NOT_EQUAL,
+                                EComparisonOperators.GREATER_THEN,
+                                EComparisonOperators.LESS_THEN,
+                                EComparisonOperators.GREATER_EQUEAL,
+                                EComparisonOperators.LESS_EQUAL,
+                                EComparisonOperators.LIKE,
+                            ].includes(_.get(data, `operatorConfigData.joinFilters.[${index}].operator`)) && (
+                                <Control.Input name={`operatorConfigData.joinFilters.[${index}].value`} label={`Значение`} placeholder={`Значение`} />
+                            )}
+                            {[EComparisonOperators.IN, EComparisonOperators.NOT_IN].includes(
+                                _.get(data, `operatorConfigData.joinFilters.[${index}].operator`)
+                            ) && (
+                                <Control.Input name={`operatorConfigData.joinFilters.[${index}].value`} label={`Значение`} placeholder={`Значение`} />
+                            )}
+                        </Control.Row>
+                    </>
+                ))}
+                {mode !== `view` && (
+                    <Button
+                        background={`orange`}
+                        extra={`margin-bottom: 10px;`}
+                        onClick={() => {
+                            setValue(`operatorConfigData.joinFilters`, [
+                                ...(_.get(data, `operatorConfigData.joinFilters`) ?? []),
+                                { field: "", operator: "", value: "" },
+                            ]);
+                        }}
+                    >
+                        Добавить фильтр
+                    </Button>
+                )}
+            </>
+        ),
         "Структура выходных данных": (
             <>
                 <Control.Row>
-                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
-                        Имя поля в основном источнике
+                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} required>
+                        Поле в основном источнике
                     </Control.Label>
-                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
-                        Имя поля во вспомогательном хранилище
+                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} required>
+                        Поле во вспомогательном хранилище
                     </Control.Label>
                 </Control.Row>
                 {_.get(data, `operatorConfigData.storageStructure.leftSourceFields`)?.map?.((item, index) => (
@@ -165,6 +302,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                                         ?.includes?.(i),
                                 })) ?? []
                             }
+                            allowSearch
                         />
                         <Frame extra={({ theme }) => `flex: unset; width: 16px; height: 16px; margin-top: 20px; color: ${theme.text.secondary};`}>
                             =
@@ -198,11 +336,11 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                 )}
                 <Br />
                 <Control.Row>
-                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
-                        Имя поля в источнике для соединения
+                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} reqiured>
+                        Поле в источнике для соединения
                     </Control.Label>
-                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`}>
-                        Имя поля во вспомогательном хранилище
+                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} reqiured>
+                        Поле во вспомогательном хранилище
                     </Control.Label>
                 </Control.Row>
                 {_.get(data, `operatorConfigData.storageStructure.rightSourceFields`)?.map?.((item, index) => (
@@ -218,6 +356,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                                         ?.includes?.(i),
                                 })) ?? []
                             }
+                            allowSearch
                         />
                         <Frame extra={({ theme }) => `flex: unset; width: 16px; height: 16px; margin-top: 20px; color: ${theme.text.secondary};`}>
                             =
