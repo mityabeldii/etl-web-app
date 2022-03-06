@@ -53,6 +53,7 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                                     label={`Наименование`}
                                     onChange={(e) => {
                                         setValue(`operatorConfigData.storageStructure.[${index}].sourceFieldName`, e.target.value);
+                                        setValue(`operatorConfigData.storageStructure.[${index}].storageFieldName`, e.target.value);
                                     }}
                                     isRequired
                                 />
@@ -158,9 +159,13 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
         "Структура выходных данных": (
             <>
                 <Control.Row>
-                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; `}>Поле в источнике</Control.Label>
+                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; `} required>
+                        Поле в источнике
+                    </Control.Label>
                     <MappingArrow extra={`visibility: hidden;`} />
-                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; `}>Поле во вспомогательном хранилище</Control.Label>
+                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; `} required>
+                        Поле во вспомогательном хранилище
+                    </Control.Label>
                 </Control.Row>
                 {_.get(data, `operatorConfigData.storageStructure`)?.map?.((item, index) => (
                     <Control.Row
@@ -181,7 +186,6 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                                 extra={`flex: 1;`}
                                 readOnly
                                 allowSearch
-                                isRequired
                             />
                         ) : (
                             <Control.Select
@@ -199,16 +203,10 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                                 }
                                 readOnly={!_.get(data, `operatorConfigData.taskIdSource`)}
                                 allowSearch
-                                isRequired
                             />
                         )}
                         <MappingArrow />
-                        <Control.Input
-                            name={`operatorConfigData.storageStructure.[${index}].storageFieldName`}
-                            label={``}
-                            extra={`flex: 1;`}
-                            isRequired
-                        />
+                        <Control.Input name={`operatorConfigData.storageStructure.[${index}].storageFieldName`} label={``} extra={`flex: 1;`} />
                         {!_.get(data, `operatorConfigData.calculationSettings`)
                             ?.map?.((i) => i?.newFieldName)
                             ?.filter?.((i) => !!i)
