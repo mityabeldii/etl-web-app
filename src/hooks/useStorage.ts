@@ -1,12 +1,12 @@
 /*eslint-disable*/
-import { useState, useEffect } from 'react';
-import _ from 'lodash';
+import { useState, useEffect } from "react";
+import _ from "lodash";
 
-import { objectMerge, createId, isna, path } from 'utils/common-helper';
+import { objectMerge, createId, isna, path } from "utils/common-helper";
 
-import useEventListener, { eventDispatch } from 'hooks/useEventListener';
+import useEventListener, { eventDispatch } from "hooks/useEventListener";
 
-const STORAGE_KEY = 'Storage';
+const STORAGE_KEY = "Storage";
 
 declare global {
     interface Window {
@@ -18,14 +18,26 @@ export const useStorageListener = (getPathContent: any) => {
     if (typeof getPathContent === `string`) {
         getPathContent = path(getPathContent);
     }
+
     const [state, setState] = useState(_.cloneDeep(getPathContent(window[STORAGE_KEY])));
-    useEventListener(`UPDATE_STORAGE`, (d: any) => {
+
+    const checkAndUpdate = () => {
         if (!_.isEqual(getPathContent(window[STORAGE_KEY]), state)) {
             setTimeout(() => {
                 setState(_.cloneDeep(getPathContent(window[STORAGE_KEY])));
             }, 0);
         }
-    });
+    };
+
+    useEventListener(`UPDATE_STORAGE`, checkAndUpdate);
+    useEffect(checkAndUpdate, [
+        JSON.stringify(getPathContent, (key, val) => {
+            if (typeof val === "function") {
+                return JSON.stringify(val(window[STORAGE_KEY]));
+            }
+            return val;
+        }),
+    ]);
     return state;
 };
 
