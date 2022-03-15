@@ -64,7 +64,7 @@ const useFormControl = ({ name, schema }) => {
             console.warn(error);
             console.warn(`Form validation error`, Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? []));
             setErrors(objectNested(Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? [])));
-            error?.inner?.forEach(({ path, message }) => eventDispatch(`THROW_ERROR`, `${path}: ${message}`));
+            // error?.inner?.forEach(({ path, message }) => eventDispatch(`THROW_ERROR`, `${path}: ${message}`));
         }
     };
 

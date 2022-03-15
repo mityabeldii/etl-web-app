@@ -43,7 +43,7 @@ const CreateProcessModal = () => {
                         label={`Описание`}
                         placeholder={`Краткое описание процесса`}
                         controlStyles={`flex: 1;`}
-                        maxLength={200}
+                        maxLength={255}
                     />
                 </Control.Row>
                 <Control.Row>
