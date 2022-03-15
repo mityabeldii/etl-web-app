@@ -43,7 +43,7 @@ const Select = (props) => {
     return (
         <Dropdown
             id={dropdownId}
-            callable={!multiselect || !readOnly}
+            callable={!readOnly}
             wrapperStyles={extra}
             closeOnToggleClick={false}
             closeOnChildrenClick={!multiselect}

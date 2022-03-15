@@ -52,6 +52,7 @@ const Eye = styled.div`
 
 const Span = styled.span`
     display: flex;
+    align-items: center;
     flex-direction: row;
     flex-wrap: wrap;
     position: relative;

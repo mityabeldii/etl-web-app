@@ -64,9 +64,6 @@ const SQLExtract = () => {
         [`Конфигурация оператора`]: (
             <>
                 <Control.Row>
-                    <H2 extra={`align-items: flex-start; margin-bottom: 20px;`}>Источник данных</H2>
-                </Control.Row>
-                <Control.Row>
                     <Control.Select
                         name={`operatorConfigData.source.sourceId`}
                         label={`Источник данных`}

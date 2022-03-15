@@ -73,9 +73,6 @@ const SQLLoad = (props) => {
         [`Источник данных`]: (
             <>
                 <Control.Row>
-                    <H2 extra={`align-items: flex-start; margin-bottom: 20px;`}>Источник данных</H2>
-                </Control.Row>
-                <Control.Row>
                     <Control.Select
                         name={`operatorConfigData.taskIdSource`}
                         label={`Наименование задачи`}

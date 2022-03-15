@@ -17,6 +17,7 @@ import CaseHalper from "../utils/case-helper";
 import { API_URL, base_url, TABLES } from "../constants/config";
 import { getStorage, mergeStorage, putStorage } from "../hooks/useStorage";
 import { objectPut, downloadURI, sleep, objectToQS } from "../utils/common-helper";
+import moment from "moment-timezone";
 
 const DatasourceAPI = {
     async getDatasources() {
@@ -122,10 +123,7 @@ const DatasourceAPI = {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (
-                    await axios.get(
-                        `/api/v1/query/${datasourceId}/${tableName}`,
-                        GETOptionsForPreview(TABLES.DATASOURCE_TABLE_PREVIEW)
-                    )
+                    await axios.get(`/api/v1/query/${datasourceId}/${tableName}`, GETOptionsForPreview(TABLES.DATASOURCE_TABLE_PREVIEW))
                 ).data;
                 const data = convertPaginatedResponse(response);
                 putStorage(`datasources.preview.${datasourceId}.${tableName}`, data);

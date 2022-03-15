@@ -69,30 +69,35 @@ const CrateTaskModal = () => {
                                 ),
                                 create: `Добавить задачу`,
                                 view: (
-                                    <Frame extra={({ theme }) => `flex-direction: row; span { margin: 0 5px; color: ${theme.blue}; };`}>
-                                        Конфигурация оператора <span>{data?.operator}</span> задачи <span>{data?.taskName}</span>
-                                    </Frame>
+                                    <></>
+                                    // <Frame extra={({ theme }) => `flex-direction: row; span { margin: 0 5px; color: ${theme.blue}; };`}>
+                                    //     Конфигурация оператора <span>{data?.operator}</span> задачи <span>{data?.taskName}</span>
+                                    // </Frame>
                                 ),
                             }?.[mode]
                         }
                     </H1>
                 </Control.Row>
-                <Control.Row>
-                    <Control.Input name={`taskName`} label={`Имя`} placeholder={`Имя задачи`} isRequired maxLength={40} />
-                </Control.Row>
-                <Control.Row>
-                    <Control.Textarea name={`taskDescription`} label={`Описание`} placeholder={`Краткое описание процесса`} maxLength={255} />
-                </Control.Row>
-                <Control.Row>
-                    <Control.Select
-                        name={`operator`}
-                        label={`Имя оператора`}
-                        placeholder={`Выберите оператор для задачи`}
-                        options={Object.keys(OPERATORS).map((item) => ({ label: item, value: item }))}
-                        extra={`flex: 0.5; margin-right: 16px !important;`}
-                        isRequired
-                    />
-                </Control.Row>
+                {mode !== `view` && (
+                    <>
+                        <Control.Row>
+                            <Control.Input name={`taskName`} label={`Имя`} placeholder={`Имя задачи`} isRequired maxLength={40} />
+                        </Control.Row>
+                        <Control.Row>
+                            <Control.Textarea name={`taskDescription`} label={`Описание`} placeholder={`Краткое описание процесса`} maxLength={255} />
+                        </Control.Row>
+                        <Control.Row>
+                            <Control.Select
+                                name={`operator`}
+                                label={`Имя оператора`}
+                                placeholder={`Выберите оператор для задачи`}
+                                options={Object.keys(OPERATORS).map((item) => ({ label: item, value: item }))}
+                                extra={`flex: 0.5; margin-right: 16px !important;`}
+                                isRequired
+                            />
+                        </Control.Row>
+                    </>
+                )}
                 {
                     {
                         [OPERATORS.SQL_CLONE]: <Forms.SQLClone />,
