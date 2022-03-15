@@ -14,22 +14,23 @@ declare global {
     }
 }
 
-export const useStorageListener = (getPathContent: any) => {
+export const useStorageListener = (getPathContent: ((state: any) => any) | string) => {
+    let newGetPathContent: (state: any) => any;
     if (typeof getPathContent === `string`) {
-        getPathContent = path(getPathContent);
+        newGetPathContent = (state) => _.get(state, getPathContent);
+    } else {
+        newGetPathContent = getPathContent;
     }
-
-    const [state, setState] = useState(_.cloneDeep(getPathContent(window[STORAGE_KEY])));
+    const [state, setState] = useState(_.cloneDeep(newGetPathContent(window[STORAGE_KEY])));
 
     const checkAndUpdate = () => {
-        if (!_.isEqual(getPathContent(window[STORAGE_KEY]), state)) {
-            setTimeout(() => {
-                setState(_.cloneDeep(getPathContent(window[STORAGE_KEY])));
-            }, 0);
+        if (!_.isEqual(newGetPathContent(window[STORAGE_KEY]), state)) {
+            setState(_.cloneDeep(newGetPathContent(window[STORAGE_KEY])));
         }
     };
 
     useEventListener(`UPDATE_STORAGE`, checkAndUpdate);
+
     useEffect(checkAndUpdate, [
         JSON.stringify(getPathContent, (key, val) => {
             if (typeof val === "function") {
