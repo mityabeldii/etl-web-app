@@ -250,7 +250,7 @@ const Table = (props) => {
                     <Frame extra={`flex-direction: row; justify-content: center;`}>
                         {_.times(6)
                             .map((index) => currentPage - 3 + index)
-                            .filter((i) => i >= 0 && i >= currentPage - 1 && i < maxPageNumber)
+                            .filter((i) => i >= 0 && i < maxPageNumber)
                             .slice(0, 3)
                             .map((item, index) => (
                                 <PageNumberWrapper
