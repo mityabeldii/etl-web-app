@@ -56,7 +56,7 @@ const CrateTaskModal = () => {
         },
     };
     return (
-        <PopUpWrapper name={MODALS.CREATE_TASK} onClickOutside={clearForm}>
+        <PopUpWrapper name={MODALS.CREATE_TASK} onClickOutside={clearForm} modalStyles={`position: absolute; top: 0;`} >
             <Form name={FORMS.CREATE_TASK} onSubmit={onSubmit(handlers.submit)}>
                 <Control.Row>
                     <H1 extra={`margin-bottom: 20px;`}>

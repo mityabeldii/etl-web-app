@@ -6,7 +6,6 @@ import { Frame, ExportButton, RowWrapper } from "../ui-kit/styled-templates";
 
 import { convertHex } from "../../utils/colors-helper";
 
-import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import useComponentSize from "../../hooks/useComponentSize";
 import useModal from "../../hooks/useModal";
@@ -22,6 +21,7 @@ const PopUpWrapper = (props) => {
         onClickOutside = () => {},
         onOpen = () => {},
         onClose = () => {},
+        modalStyles = ``,
     } = props;
 
     const { isOpened, shouldMount, open, close, setPreventClosing } = useModal(name, { onOpen, onClose });
@@ -63,7 +63,6 @@ const PopUpWrapper = (props) => {
                     z-index: 3;
                     flex: 1;
                     display: flex;
-                    width: 100%;
                     overflow: auto;
                     justify-content: ${height > window.innerHeight ? `flex-start` : `center`};
                 `}
@@ -76,6 +75,7 @@ const PopUpWrapper = (props) => {
                         display: flex;
                         width: 100%;
                         min-height: min-content;
+                        ${modalStyles}
                     `}
                 >
                     <OpenProjectTab isOpened={isOpened} extra={extra} ref={ref}>
