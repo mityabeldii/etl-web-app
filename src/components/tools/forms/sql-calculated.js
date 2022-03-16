@@ -16,8 +16,21 @@ import TasksHelper from "../../../utils/tasks-helper";
 
 const SQLCalculated = ({ tasks = [], mode = `view` }) => {
     const { data, removeValue, setValue } = useFormControl({ name: FORMS.CREATE_TASK });
-    const datasources = useStorageListener((state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows ?? []);
-    const params = useStorageListener((state) => ({}));
+    // const datasources = useStorageListener((state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows ?? []);
+    // const params = useStorageListener((state) => ({}));
+    useEffect(() => {
+        const newKeys = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`));
+        const newMappingStructure = newKeys.map((i) => ({
+            sourceFieldName: i,
+            storageFieldName:
+                _.chain(data)
+                    .get(`operatorConfigData.storageStructure.leftSourceFields`)
+                    .find({ sourceFieldName: i })
+                    .get(`storageFieldName`)
+                    .value() ?? i,
+        }));
+        setValue(`operatorConfigData.storageStructure`, newMappingStructure);
+    }, [_.get(data, `operatorConfigData.taskIdSource`)]);
     const tabs = {
         "Источник данных": (
             <>
@@ -45,7 +58,7 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                     <H3 extra={`margin-bottom: 20px;`}>Элемент 1</H3>
                 </Control.Row>
                 {_.get(data, `operatorConfigData.calculationSettings`)?.map?.((item, index) => (
-                    <Control.Row key={index} >
+                    <Control.Row key={index}>
                         <Frame>
                             <Control.Row>
                                 <Control.Input
@@ -166,6 +179,7 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                     <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; `} required>
                         Поле во вспомогательном хранилище
                     </Control.Label>
+                    {mode !== `view` && <Frame extra={`width: 38px;`} />}
                 </Control.Row>
                 {_.get(data, `operatorConfigData.storageStructure`)?.map?.((item, index) => (
                     <Control.Row
@@ -229,7 +243,7 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                         extra={`margin-bottom: 10px;`}
                         onClick={() => {
                             setValue(`operatorConfigData.storageStructure`, [
-                                ...(_.get(data, `operatorConfigData.storageStructure`) ?? []),
+                                ..._.get(data, `operatorConfigData.storageStructure`, []),
                                 { sourceFieldName: "", storageFieldName: "" },
                             ]);
                         }}

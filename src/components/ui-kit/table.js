@@ -114,11 +114,7 @@ const Table = (props) => {
             {extraHeader}
             <STable extra={tableStyles}>
                 {withHeader && (
-                    <STr
-                        extra={({ theme }) =>
-                            `border-bottom: 1px solid #DADADA; padding: 20px; box-sizing: border-box;`
-                        }
-                    >
+                    <STr extra={({ theme }) => `border-bottom: 1px solid #DADADA; padding: 20px; box-sizing: border-box;`}>
                         {selectable && <STh extra={`flex: unset; width: 40px;`}></STh>}
                         {columns.map((column, index) => {
                             return (
@@ -142,17 +138,11 @@ const Table = (props) => {
                                             <Frame extra={`margin-left: 10px; cursor: pointer;`}>
                                                 <SortArrow
                                                     extra={`opacity: ${
-                                                        sort?.field === column.name && sort?.order === SORT_ORDERS.ASC
-                                                            ? 1
-                                                            : 0.2
+                                                        sort?.field === column.name && sort?.order === SORT_ORDERS.ASC ? 1 : 0.2
                                                     }; transform: rotate(180deg);`}
                                                 />
                                                 <SortArrow
-                                                    extra={`opacity: ${
-                                                        sort?.field === column.name && sort?.order === SORT_ORDERS.DESC
-                                                            ? 1
-                                                            : 0.2
-                                                    };`}
+                                                    extra={`opacity: ${sort?.field === column.name && sort?.order === SORT_ORDERS.DESC ? 1 : 0.2};`}
                                                 />
                                             </Frame>
                                         )}
@@ -209,27 +199,16 @@ const Table = (props) => {
                     })}
                 </STr> */}
                 {filterRows(
-                    !useBackendProcessing && withPagination
-                        ? frontendPagination.visibleItems ?? []
-                        : rows.length === 0 && propRows
-                        ? propRows
-                        : rows
-                )?.length === 0 && (<PlaceholderNoData>Данные в выбранной таблице отсутствуют</PlaceholderNoData>)}
+                    !useBackendProcessing && withPagination ? frontendPagination.visibleItems ?? [] : rows.length === 0 && propRows ? propRows : rows
+                )?.length === 0 && <PlaceholderNoData>Данные в выбранной таблице отсутствуют</PlaceholderNoData>}
                 {filterRows(
-                    !useBackendProcessing && withPagination
-                        ? frontendPagination.visibleItems ?? []
-                        : rows.length === 0 && propRows
-                        ? propRows
-                        : rows
+                    !useBackendProcessing && withPagination ? frontendPagination.visibleItems ?? [] : rows.length === 0 && propRows ? propRows : rows
                 )?.map?.((row, row_index) => (
                     <STr key={row_index} extra={name === TABLES.PROCESSES_LIST && `align-items: flex-start;`}>
                         {selectable && (
                             <STd extra={`flex: unset; width: 40px;`}>
                                 <Checkbox
-                                    disabled={
-                                        !selectedRows.includes(row?.[idColumnName]) &&
-                                        selectedRows.length === selectionLimit
-                                    }
+                                    disabled={!selectedRows.includes(row?.[idColumnName]) && selectedRows.length === selectionLimit}
                                     checked={selectedRows.includes(row?.[idColumnName])}
                                     onChange={(e) => {
                                         setSelectedRows(togglePush(selectedRows, row?.[idColumnName]));
@@ -358,13 +337,7 @@ const TableCell = ({ cellState }) => {
                                 <Tooltip
                                     key={index}
                                     label={PROCESS_STATUS?.[status]}
-                                    children={
-                                        <StatisticsItem
-                                            key={index}
-                                            status={status}
-                                            value={row?.[column?.name]?.[status] ?? `0`}
-                                        />
-                                    }
+                                    children={<StatisticsItem key={index} status={status} value={row?.[column?.name]?.[status] ?? `0`} />}
                                 />
                             );
                         })}
@@ -385,7 +358,7 @@ const TableCell = ({ cellState }) => {
                 ),
                 icon: <Icon {...column?.cell} />,
             }?.[column?.cell?.type ?? `text`] ?? ``),
-        [JSON.stringify(cellState)]
+        [JSON.stringify(cellState), transformedValue]
     );
     return (
         <STd
@@ -445,8 +418,7 @@ const EventLogButton = styled.button`
 const Icon = styled(Frame)`
     width: 20px;
     height: 20px;
-    background: url("${({ src }) => require(`../../assets/icons/${src}.svg`).default}") no-repeat center center /
-        contain;
+    background: url("${({ src }) => require(`../../assets/icons/${src}.svg`).default}") no-repeat center center / contain;
     cursor: pointer;
 `;
 

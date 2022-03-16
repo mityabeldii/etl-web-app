@@ -1,25 +1,23 @@
 /*eslint-disable*/
 import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
-import { useLocation } from "react-router";
 import _ from "lodash";
 import moment from "moment-timezone";
 
 import { Button, H1, RowWrapper, Input, Checkbox, Frame, Dropdown } from "../ui-kit/styled-templates";
 import Table from "../ui-kit/table";
-
-import { MODALS, PROCESS_STATUSES, TABLES } from "../../constants/config";
-import tablesColumns from "../../constants/tables-columns";
-import { eventDispatch } from "../../hooks/useEventListener";
-import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
-
-import DatasourceAPI from "../../api/datasource-api";
-import { useStorageListener } from "../../hooks/useStorage";
-import useQueryParams from "../../hooks/useQueryParams";
 import Select from "../ui-kit/select";
-import { convertHex } from "../../utils/colors-helper";
 import FiltersToolBar from "../tools/filters-tool-bar";
 import DateRangePicker from "../tools/date-range-picker";
+
+import { PROCESS_STATUSES, TABLES } from "../../constants/config";
+import tablesColumns from "../../constants/tables-columns";
+
+
+import DatasourceAPI from "../../api/datasource-api";
+import ProcessesAPI from "api/processes-api";
+
+import { useStorageListener } from "../../hooks/useStorage";
 
 const ProcessHistoryPage = () => {
     // const { params } = useQueryParams();
@@ -33,12 +31,7 @@ const ProcessHistoryPage = () => {
                 <Heading>История запуска процессов</Heading>
             </RowWrapper>
             <RowWrapper>
-                <FiltersToolBar
-                    filters={params}
-                    onChange={setParams}
-                    tableName={`PROCESSES_HISTORY`}
-                    wrapperExtra={`margin-bottom: 28px;`}
-                />
+                <FiltersToolBar filters={params} onChange={setParams} tableName={`PROCESSES_HISTORY`} wrapperExtra={`margin-bottom: 28px;`} />
             </RowWrapper>
             <Table
                 name={TABLES.PROCESSES_HISTORY}
@@ -61,7 +54,8 @@ const Heading = styled(H1)`
 `;
 
 const SearchBar = ({ params, setByKey, setParams }) => {
-    const processes = useStorageListener((state) => _.get(state, `tables.${TABLES.PROCESSES_HISTORY}.rows`) ?? []);
+    const processes = useStorageListener((state) => _.get(state, `temp.processesToFilter`) ?? []);
+    useEffect(ProcessesAPI.getProcessesForFilter, []);
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada; height: 60px;`}>
             <Search
@@ -84,9 +78,7 @@ const SearchBar = ({ params, setByKey, setParams }) => {
                             box-sizing: border-box;
                         `}
                     >
-                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>
-                            Дата и время запуска
-                        </Frame>
+                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Дата и время запуска</Frame>
                         <CalendarIcon />
                     </RowWrapper>
                 )}
@@ -120,8 +112,7 @@ const SearchBar = ({ params, setByKey, setParams }) => {
                                 width: 24px;
                                 height: 24px;
                                 transform: rotate(90deg);
-                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}")
-                                    no-repeat center center / contain;
+                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}") no-repeat center center / contain;
                             }
                         `}
                     >
@@ -134,7 +125,7 @@ const SearchBar = ({ params, setByKey, setParams }) => {
                     setByKey(`processId`, params?.processId == e.target.value ? undefined : e.target.value);
                 }}
                 options={processes
-                    ?.map?.(({ processId: value, processName: label }) => ({ label, value }))
+                    ?.map?.(({ id: value, processName: label }) => ({ label, value }))
                     .filter((item, index, self) => self.findIndex((t) => t.value === item.value) === index)}
             />
             <Select
@@ -155,8 +146,7 @@ const SearchBar = ({ params, setByKey, setParams }) => {
                                 width: 24px;
                                 height: 24px;
                                 transform: rotate(90deg);
-                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}")
-                                    no-repeat center center / contain;
+                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}") no-repeat center center / contain;
                             }
                         `}
                     >

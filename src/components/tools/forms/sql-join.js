@@ -38,7 +38,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
         .filter((i) => !_.isEmpty(i))
         .value();
     useEffect(() => {
-        const newKeys = _.chain(leftJoinFields).union(leftSourceFields).uniq().value();
+        const newKeys = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`));
         const newMappingStructure = newKeys.map((i) => ({
             sourceFieldName: i,
             storageFieldName:
@@ -48,8 +48,8 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     .get(`storageFieldName`)
                     .value() ?? i,
         }));
-        setValue(`operatorConfigData.storageStructure.leftSourceFields`, newMappingStructure);
-    }, [leftJoinFields, leftSourceFields]);
+        setValue(`operatorConfigData.storageStructure.leftSourceFields`, newMappingStructure)
+    }, [_.get(data, `operatorConfigData.taskIdSource`)]);
 
     const rightJoinFields = _.chain(data)
         .get(`operatorConfigData.joinSettings.conditions`)
@@ -76,7 +76,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
     }, [leftJoinFields, leftSourceFields]);
 
     const tabs = {
-        "Источник данных": (
+        [`Источник данных`]: (
             <>
                 <Control.Row>
                     <Control.Select
@@ -110,7 +110,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                 </Control.Row>
             </>
         ),
-        "Настройки соединения": (
+        [`Настройки соединения`]: (
             <>
                 <Control.Row>
                     <Control.Select
@@ -199,7 +199,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                 )}
             </>
         ),
-        Фильтры: (
+        [`Фильтры`]: (
             <>
                 {_.get(data, `operatorConfigData.joinFilters`)?.map?.((item, index) => (
                     <>
@@ -279,7 +279,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                 )}
             </>
         ),
-        "Структура выходных данных": (
+        [`Структура выходных данных`]: (
             <>
                 <Control.Row>
                     <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} required>
@@ -336,10 +336,10 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                 )}
                 <Br />
                 <Control.Row>
-                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} reqiured>
+                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} required>
                         Поле в источнике для соединения
                     </Control.Label>
-                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} reqiured>
+                    <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} required>
                         Поле во вспомогательном хранилище
                     </Control.Label>
                 </Control.Row>

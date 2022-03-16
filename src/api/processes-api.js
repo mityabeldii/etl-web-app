@@ -128,6 +128,17 @@ const ProcessesAPI = {
             }
         });
     },
+    async getProcessesForFilter() {
+        return loadingCounterWrapper(async () => {
+            try {
+                const response = (await axios.get(`/process/process-names`)).data;
+                putStorage(`temp.processesToFilter`, response);
+                return response;
+            } catch (error) {
+                throw handleError(error);
+            }
+        });
+    },
 };
 
 export default ProcessesAPI;

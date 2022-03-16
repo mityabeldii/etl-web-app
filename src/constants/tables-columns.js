@@ -31,8 +31,7 @@ const DatasourceList = {
             name: `description`,
             extra: `flex: 2;`,
             label: `Описание`,
-            transform: ({ row }) =>
-                `${row?.description?.slice?.(0, 25) ?? `-`}${row?.description?.length > 25 ? `...` : ``}`,
+            transform: ({ row }) => `${row?.description?.slice?.(0, 25) ?? `-`}${row?.description?.length > 25 ? `...` : ``}`,
             tooltip: ({ value: label }) => ({ label }),
         },
         { name: `host`, extra: `flex: 2;`, label: `Хост` },
@@ -283,8 +282,7 @@ const EventLogTable = {
         {
             name: `eventInfo`,
             label: `Текст сообщения`,
-            transform: ({ row }) =>
-                `${row?.eventInfo?.slice?.(0, 25) ?? `-`}${row?.eventInfo?.length > 25 ? `...` : ``}`,
+            transform: ({ row }) => `${row?.eventInfo?.slice?.(0, 25) ?? `-`}${row?.eventInfo?.length > 25 ? `...` : ``}`,
             tooltip: ({ value: label }) => ({ label }),
         },
         // {
