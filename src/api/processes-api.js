@@ -2,21 +2,24 @@
 import axios from "axios";
 import _ from "lodash";
 
-import { handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
-import CaseHalper from "../utils/case-helper";
+import { GETOptions, handleError, handleSuccess, loadingCounterWrapper, POSTOptions } from "../utils/api-helper";
 
-import { API_URL, base_url, TABLES } from "../constants/config";
-import { getStorage, mergeStorage, putStorage } from "../hooks/useStorage";
-import { objectPut, downloadURI, sleep } from "../utils/common-helper";
+import { TABLES } from "../constants/config";
+import { mergeStorage, putStorage } from "../hooks/useStorage";
 
 const ProcessesAPI = {
     async getProcesses() {
         return loadingCounterWrapper(async () => {
             try {
-                const response = (await axios.get(`/process`)).data;
-                putStorage(`tables.${TABLES.PROCESSES_LIST}`, {
-                    rows: [...response]?.sort?.((a, b) => a.id - b.id),
-                    pagination: response?._meta ?? {},
+                const response = (await axios.get(`/process/filter`, GETOptions(`PROCESSES_LIST`))).data;
+                const { data = [], offset = 0, limit = 10, totalCount = 0 } = response;
+                mergeStorage(`tables.${TABLES.PROCESSES_LIST}`, {
+                    rows: data,
+                    pagination: {
+                        currentPage: offset / limit,
+                        perPage: limit,
+                        totalCount,
+                    },
                 });
                 return response;
             } catch (error) {
