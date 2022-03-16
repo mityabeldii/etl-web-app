@@ -32,12 +32,7 @@ const TasksHistoryPage = () => {
                 <Heading>История запуска задач в ETL-процессах</Heading>
             </RowWrapper>
             <RowWrapper>
-                <FiltersToolBar
-                    filters={params}
-                    onChange={setParams}
-                    tableName={`TASKS_HISTORY`}
-                    wrapperExtra={`margin-bottom: 28px;`}
-                />
+                <FiltersToolBar filters={params} onChange={setParams} tableName={`TASKS_HISTORY`} wrapperExtra={`margin-bottom: 28px;`} />
             </RowWrapper>
             <Table
                 name={TABLES.TASKS_HISTORY}
@@ -61,7 +56,7 @@ const Heading = styled(H1)`
 
 const SearchBar = () => {
     const { params, setParams, setByKey } = useQueryParams();
-    const tasks = useStorageListener((state) => _.get(state, `tables.${TABLES.TASKS_HISTORY}.rows`) ?? []);
+    const tasks = useStorageListener((state) => _.get(state, `tables.${TABLES.TASKS_HISTORY}.rows`, []));
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada; height: 60px;`}>
             <Search
@@ -84,10 +79,8 @@ const SearchBar = () => {
                             box-sizing: border-box;
                         `}
                     >
-                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>
-                            Дата и время запуска
-                        </Frame>
-                        <CalendarIcon/>
+                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Дата и время запуска</Frame>
+                        <CalendarIcon />
                     </RowWrapper>
                 )}
                 value={{
@@ -97,8 +90,8 @@ const SearchBar = () => {
                 onChange={(value) => {
                     setParams({
                         ...params,
-                        taskStartDate: moment(value.from).format(`YYYY-MM-DD hh:mm:ss`),
-                        taskEndDate: moment(value.to).format(`YYYY-MM-DD hh:mm:ss`),
+                        taskStartDate: moment(value.from).format(`YYYY-MM-DDThh:mm:ss`),
+                        taskEndDate: moment(value.to).format(`YYYY-MM-DDThh:mm:ss`),
                     });
                 }}
             />
@@ -120,8 +113,7 @@ const SearchBar = () => {
                                 width: 24px;
                                 height: 24px;
                                 transform: rotate(90deg);
-                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}")
-                                    no-repeat center center / contain;
+                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}") no-repeat center center / contain;
                             }
                         `}
                     >
@@ -129,12 +121,12 @@ const SearchBar = () => {
                     </RowWrapper>
                 )}
                 menuProps={{ extra: `width: max-content;` }}
-                value={params?.id}
+                value={params?.processId}
                 onChange={(e) => {
-                    setByKey(`id`, params?.id == e.target.value ? undefined : e.target.value);
+                    setByKey(`processId`, params?.processId == e.target.value ? undefined : e.target.value);
                 }}
                 options={tasks
-                    ?.map?.(({ id: value, processName: label }) => ({ label, value }))
+                    ?.map?.(({ processId: value, processName: label }) => ({ label, value }))
                     ?.filter?.((i, j, self) => _.map(self, `value`)?.indexOf?.(i?.value) === j)}
             />
             <Select
@@ -155,8 +147,7 @@ const SearchBar = () => {
                                 width: 24px;
                                 height: 24px;
                                 transform: rotate(90deg);
-                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}")
-                                    no-repeat center center / contain;
+                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}") no-repeat center center / contain;
                             }
                         `}
                     >

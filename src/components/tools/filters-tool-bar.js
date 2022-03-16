@@ -7,12 +7,19 @@ import Markdown from "markdown-to-jsx";
 import { Frame } from "../ui-kit/styled-templates";
 
 import tablesColumns from "../../constants/tables-columns";
-import { TABLES } from "../../constants/config";
+import { PROCESS_STATUSES, TABLES } from "../../constants/config";
 
 const checkRequiredProps = (props, requiredProps) =>
-    requiredProps.forEach((prop) => {
-        if (!props[prop]) throw new Error(`${prop} is required`);
+    requiredProps.forEach((propertyName) => {
+        if (!props[propertyName]) throw new Error(`${propertyName} is required`);
     });
+
+const getFilterLabel = (filters, key) => {
+    const exceptions = {
+        state: PROCESS_STATUSES?.[filters?.[key]]?.label,
+    };
+    return _.get(exceptions, key, filters?.[key]);
+};
 
 const FiltersToolBar = ({ filters, onChange, tableName, wrapperExtra = `` }) => {
     checkRequiredProps({ filters, onChange, tableName }, ["filters", "onChange", "tableName"]);
@@ -23,7 +30,7 @@ const FiltersToolBar = ({ filters, onChange, tableName, wrapperExtra = `` }) => 
             {!_.keys(filters)?.length && <EmptyPlaceholder>Нет фильтров</EmptyPlaceholder>}
             {_.keys(filters)?.map?.((key, index) => (
                 <Item key={index}>
-                    <Markdown>{`${_.find(columns, { name: key })?.label ?? key}: **${filters?.[key]}**`}</Markdown>
+                    <Markdown>{`${_.find(columns, { name: key })?.label ?? key}: **${getFilterLabel(filters, key)}**`}</Markdown>
                     <Cros onClick={() => onChange(_.omit(filters, key))} />
                 </Item>
             ))}

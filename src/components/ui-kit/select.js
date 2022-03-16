@@ -82,7 +82,7 @@ const Select = (props) => {
                                     value?.map?.((_value, index) => (
                                         <SelectedOption key={index}>
                                             {_.find(options, { value: _value })?.label}
-                                            <Cros onClick={() => onChange({ target: { value: togglePush(value, _value) } })} />
+                                            {!readOnly && <Cros onClick={() => onChange({ target: { value: togglePush(value, _value) } })} />}
                                         </SelectedOption>
                                     ))}
                             </>

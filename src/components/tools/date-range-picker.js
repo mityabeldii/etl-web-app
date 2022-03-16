@@ -10,22 +10,9 @@ import Input from "../ui-kit/input";
 import FormatedInput from "../ui-kit/formated-input";
 
 const daysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
-const months = [
-    "Январь",
-    "Февраль",
-    "Март",
-    "Апрель",
-    "Май",
-    "Июнь",
-    "Июль",
-    "Август",
-    "Сентябрь",
-    "Октябрь",
-    "Ноябрь",
-    "Декабрь",
-];
+const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 
-const Calendar = ({ monthStart = moment(), onDateClick = () => {}, selectedRange = [] }) => {
+const Calendar = ({ monthStart = moment(), onDateClick = () => {}, selectedRange = [], showOnlyCurrentMonth = false }) => {
     return (
         <Frame extra={`width: calc(32px * 7); flex-direction: row; flex-wrap: wrap;`}>
             {_.times(7, (i) => (
@@ -42,7 +29,7 @@ const Calendar = ({ monthStart = moment(), onDateClick = () => {}, selectedRange
                 return (
                     <Day
                         key={i}
-                        {...{ isCurrentMonth, isFirstSelected, isLastSelected, isInSelectedRange, date }}
+                        {...{ isCurrentMonth, isFirstSelected, isLastSelected, isInSelectedRange, date, showOnlyCurrentMonth }}
                         onClick={() => onDateClick(date)}
                     >
                         {date.format("D")}
@@ -107,38 +94,32 @@ const DateRangePicker = (props) => {
             toggle={ToggleComponent ? <ToggleComponent /> : <CalendarIcon />}
             menuProps={{ extra: `padding: 0;` }}
             menu={
-                <Frame
-                    extra={({ theme }) =>
-                        `background: ${theme.background.secondary}; border: 1px solid ${theme.grey}; border-radius: 8px;`
-                    }
-                >
+                <Frame extra={({ theme }) => `background: ${theme.background.secondary}; border: 1px solid ${theme.grey}; border-radius: 8px;`}>
                     <Frame extra={({ theme }) => `flex-direction: row; border-bottom: 1px solid ${theme.grey};`}>
                         <Frame extra={({ theme }) => `padding: 19px; border-right: 1px solid ${theme.grey};`}>
                             <Frame extra={`width: 100%; flex-direction: row; justify-content: space-between;`}>
                                 <Chevron direction="left" onClick={handlers.prevMonth} />
-                                <Frame extra={`font-size: 13px; line-height: 18px;`}>
-                                    {months[monthStart.month()]}
-                                </Frame>
+                                <Frame extra={`font-size: 13px; line-height: 18px;`}>{months[monthStart.month()]}</Frame>
                                 <Frame extra={`width: 28px;`} />
                             </Frame>
                             <Calendar
                                 monthStart={monthStart}
                                 onDateClick={handlers.dateClick}
                                 selectedRange={[selectFrom, selectTo]}
+                                showOnlyCurrentMonth={true}
                             />
                         </Frame>
                         <Frame extra={`padding: 19px;`}>
                             <Frame extra={`width: 100%; flex-direction: row; justify-content: space-between;`}>
                                 <Frame extra={`width: 28px;`} />
-                                <Frame extra={`font-size: 13px; line-height: 18px;`}>
-                                    {months[(monthStart.month() + 1) % 12]}
-                                </Frame>
+                                <Frame extra={`font-size: 13px; line-height: 18px;`}>{months[(monthStart.month() + 1) % 12]}</Frame>
                                 <Chevron direction="right" onClick={handlers.nextMonth} />
                             </Frame>
                             <Calendar
                                 monthStart={monthStart.clone().add(1, "month")}
                                 onDateClick={handlers.dateClick}
                                 selectedRange={[selectFrom, selectTo]}
+                                showOnlyCurrentMonth={true}
                             />
                         </Frame>
                     </Frame>
@@ -190,11 +171,7 @@ const Day = styled(Frame)`
         `}
     ${({ theme, isFirstSelected, isLastSelected, isInSelectedRange }) =>
         css`
-            background: ${isFirstSelected || isLastSelected
-                ? theme.blue
-                : isInSelectedRange
-                ? `rgba(84, 136, 199, 0.15)`
-                : `transparent`};
+            background: ${isFirstSelected || isLastSelected ? theme.blue : isInSelectedRange ? `rgba(84, 136, 199, 0.15)` : `transparent`};
         `}
 
     ${({ isFirstSelected }) =>
@@ -213,6 +190,8 @@ const Day = styled(Frame)`
             color: white;
             font-weight: bold;
         `}
+
+    ${({ showOnlyCurrentMonth, isCurrentMonth }) => showOnlyCurrentMonth && !isCurrentMonth && `visibility: hidden;`}
 
     ${({ extra }) => extra}
 `;
