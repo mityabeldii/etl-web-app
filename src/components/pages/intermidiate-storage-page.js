@@ -4,18 +4,7 @@ import styled, { css } from "styled-components";
 import { useLocation } from "react-router";
 import _, { get } from "lodash";
 
-import {
-    Frame,
-    Button,
-    H1,
-    H2,
-    RowWrapper,
-    Input,
-    Form,
-    Dropdown,
-    ScrollWrapper,
-    Scrollable,
-} from "../ui-kit/styled-templates";
+import { Frame, Button, H1, H2, RowWrapper, Input, Form, Dropdown, ScrollWrapper, Scrollable } from "../ui-kit/styled-templates";
 import Select from "../ui-kit/select";
 import Table from "../ui-kit/table";
 import { Control } from "../ui-kit/control";
@@ -75,15 +64,11 @@ const IntermidiateStoragePage = () => {
     // );
     const schemas = useStorageListener(
         (state) =>
-            get(state, `datasources.schemas[${selectedDatasource?.id}]`)?.filter?.(
-                (i) => ![`information_schema`, `pg_catalog`]?.includes?.(i)
-            ) ?? []
+            get(state, `datasources.schemas[${selectedDatasource?.id}]`)?.filter?.((i) => ![`information_schema`, `pg_catalog`]?.includes?.(i)) ?? []
     );
     const selectedSchema = useStorageListener((state) => state?.pages?.[`INTERMIDIATE_STRAGE`]?.selectedSchema ?? ``);
     const setSelectedSchema = (newSchema) => putStorage(`pages.INTERMIDIATE_STRAGE.selectedSchema`, newSchema);
-    const tables = useStorageListener(
-        (state) => state?.datasources?.tables?.[selectedDatasource?.id]?.[selectedSchema] ?? []
-    );
+    const tables = useStorageListener((state) => state?.datasources?.tables?.[selectedDatasource?.id]?.[selectedSchema] ?? []);
     const selectedTable = _.find(tables, { tableName: selectedTableName });
     const [tableSearch, setTableSearch] = useState(``);
 
@@ -92,7 +77,10 @@ const IntermidiateStoragePage = () => {
             ModalsHelper.showModal(MODALS.CREATE_DATASOURCE_MODAL, { type: selectedDatasourceType });
         },
         openEditDatasourceModal: () => {
-            ModalsHelper.showModal(MODALS.EDIT_DATASOURCE_MODAL, selectedDatasource);
+            ModalsHelper.showModal(MODALS.EDIT_DATASOURCE_MODAL, {
+                ...selectedDatasource,
+                url: selectedDatasource?.url?.split?.(`/`)?.at?.(-1) ?? ``,
+            });
         },
         openCreateSchemaInStorageModal: () => {
             ModalsHelper.showModal(MODALS.CREATE_SCHEMA_IN_STORAGE, selectedDatasource);
@@ -189,10 +177,7 @@ const IntermidiateStoragePage = () => {
         },
         fetchPreviewFunction: async () => {
             if (selectedDatasource?.id && selectedTableName) {
-                const response = await DatasourceAPI.getDatasourceTablePreview(
-                    selectedDatasource?.id,
-                    selectedTableName
-                );
+                const response = await DatasourceAPI.getDatasourceTablePreview(selectedDatasource?.id, selectedTableName, selectedSchema);
                 return response;
             }
         },
@@ -211,6 +196,7 @@ const IntermidiateStoragePage = () => {
         openTablePreviewModal: () => {
             ModalsHelper.showModal(MODALS.TABLE_PREVIEW, {
                 datasourceId: selectedDatasource?.id,
+                schemaName: selectedSchema,
                 table: selectedTable,
             });
         },
@@ -246,16 +232,10 @@ const IntermidiateStoragePage = () => {
 
             <RowWrapper extra={`margin-bottom: 28px;`}>
                 <Frame extra={`flex-direction: row;`}>
-                    <Heading>
-                        {{ STAGING: `Хранилище данных`, DWH: `Промежуточное хранилище` }?.[selectedDatasourceType]}
-                    </Heading>
+                    <Heading>{{ STAGING: `Хранилище данных`, DWH: `Промежуточное хранилище` }?.[selectedDatasourceType]}</Heading>
                 </Frame>
                 {!selectedDatasource && (
-                    <Button
-                        leftIcon={`plus-in-circle-white`}
-                        background={`orange`}
-                        onClick={handlers.openCreateDatasourceModal}
-                    >
+                    <Button leftIcon={`plus-in-circle-white`} background={`orange`} onClick={handlers.openCreateDatasourceModal}>
                         Добавить источник
                     </Button>
                 )}
@@ -325,10 +305,7 @@ const IntermidiateStoragePage = () => {
                             {!!selectedSchema && (
                                 <>
                                     <RowWrapper extra={`margin-top: 4px;`}>
-                                        <Tooltip
-                                            label={`Редактировать`}
-                                            wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}
-                                        >
+                                        <Tooltip label={`Редактировать`} wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}>
                                             <Button
                                                 extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
                                                 onClick={handlers.openRenameSchemaModal}
@@ -376,19 +353,14 @@ const IntermidiateStoragePage = () => {
                                             <Button
                                                 onClick={handlers.setSelectedTableName(table.tableName)}
                                                 extra={`margin-top: 12px; background: ${
-                                                    selectedTable?.tableName === table?.tableName
-                                                        ? `#FFFFFF`
-                                                        : `transparent`
+                                                    selectedTable?.tableName === table?.tableName ? `#FFFFFF` : `transparent`
                                                 }; color: black; box-shadow: unset; width: 100%; border: 1px solid #DADADA; justify-content: flex-start; word-break: break-all; text-align: left;`}
                                             >
                                                 {table.tableName}
                                             </Button>
                                             {selectedTable?.tableName === table?.tableName && (
                                                 <RowWrapper extra={`margin-top: 4px;`}>
-                                                    <Tooltip
-                                                        label={`Редактировать`}
-                                                        wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}
-                                                    >
+                                                    <Tooltip label={`Редактировать`} wrapperProps={{ extra: `width: 100%; margin-right: 4px;` }}>
                                                         <Button
                                                             extra={`width: 100%; flex: 1; min-width: unset; padding: 4px;`}
                                                             onClick={handlers.openEditTableNameModal}
@@ -436,15 +408,10 @@ const IntermidiateStoragePage = () => {
                                             Структура таблицы <span>{selectedTable?.tableName}</span>
                                         </RightSectionHeader>
                                         <Frame extra={`flex-direction: row;`}>
-                                            <Button
-                                                extra={`margin-right: 5px;`}
-                                                onClick={handlers.openTablePreviewModal}
-                                            >
+                                            <Button extra={`margin-right: 5px;`} onClick={handlers.openTablePreviewModal}>
                                                 Посмотреть данные
                                             </Button>
-                                            <Button onClick={handlers.openEditScructurreModal}>
-                                                Редактировать структуру
-                                            </Button>
+                                            <Button onClick={handlers.openEditScructurreModal}>Редактировать структуру</Button>
                                         </Frame>
                                     </RowWrapper>
                                     <StructureTable rows={selectedTable?.fields ?? []} />
@@ -481,8 +448,7 @@ const ToggleComponent = styled(Frame)`
         content: "";
         width: 24px;
         height: 24px;
-        background: url("${require(`../../assets/icons/arrow-right-blue.svg`).default}") no-repeat center center /
-            contain;
+        background: url("${require(`../../assets/icons/arrow-right-blue.svg`).default}") no-repeat center center / contain;
     }
 `;
 

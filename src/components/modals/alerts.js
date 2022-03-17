@@ -67,11 +67,7 @@ const Alerts = (props) => {
                             return <span key={index}>{item}</span>;
                         })}
                     </Frame>
-                    <Cros
-                        onClick={() => {
-                            closeItem(item.id);
-                        }}
-                    />
+                    {/* <Cros onClick={() => closeItem(item.id)} /> */}
                 </Bar>
             ))}
         </>
@@ -87,39 +83,46 @@ const Cros = styled(Frame)`
 `;
 
 const Bar = styled(Frame)`
-    padding: 15px;
+    padding: 9px 15px;
     box-sizing: border-box;
     flex-direction: row;
-    justify-content: space-between;
-    margin-top: 10px;
+    justify-content: center;
+    /* margin-top: 10px; */
+    min-width: 220px;
 
-    background: ${({ theme = {} }) => theme.background.primary};
-    box-shadow: 0px 10px 20px rgba(0, 155, 232, 0.1);
-    border-radius: 4px 0px 0px 4px;
+    /* background: ${({ theme = {}, status = `error` }) => theme?.[status === `success` ? `green` : `red`]}; */
+    background: ${({ theme = {}, status = `error` }) => theme?.[{ success: `green`, warning: `yellow`, error: `red` }?.[status]]};
+    /* box-shadow: 0px 10px 20px rgba(0, 155, 232, 0.1); */
+    border-radius: 4px;
 
-    font-size: 16px;
-    line-height: 19px;
-    letter-spacing: -0.6px;
-    font-weight: 500;
-    color: ${({ theme = {} }) => theme.text.primary};
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    color: #ffffff;
 
     transition: 0.5s;
-    transform: translate(${({ visible }) => (visible ? 0 : 100)}%, ${({ index }) => `calc(${index * 100}% + ${index * 10}px)`});
+    /* transform: translate(${({ visible }) => (visible ? 0 : 100)}%, ${({ index }) => `calc(${index * 100}% + ${index * 10}px)`}); */
+    transform: translate(50%, ${({ index, visible = false }) => `calc(${index * 100}% + ${index * 10}px + ${visible ? 0 : 10}px)`})
+        scale(${({ visible }) => (visible ? 1 : 0.5)});
     visibility: ${({ visible }) => (visible ? `visible` : `hidden`)};
     opacity: ${({ visible }) => (visible ? 1 : 0)};
 
     z-index: 4;
     position: fixed;
-    top: 0;
-    right: 0;
+    bottom: 50px;
+    right: 50%;
 
-    &:before {
+    span {
+        color: #ffffff;
+    }
+
+    /* &:before {
         content: "";
         width: 43px;
         height: 43px;
         background: url("${({ status = `error` }) => require(`../../assets/icons/alert-${status}.svg`).default}") no-repeat center center / contain;
         margin-right: 9px;
-    }
+    } */
 `;
 
 export default Alerts;

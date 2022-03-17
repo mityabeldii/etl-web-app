@@ -193,7 +193,8 @@ const DatasourcePage = () => {
             if (selectedDatasource?.id && selectedTableName) {
                 const response = await DatasourceAPI.getDatasourceTablePreview(
                     selectedDatasource?.id,
-                    selectedTableName
+                    selectedTableName,
+                    selectedSchema
                 );
                 return response;
             }
@@ -213,6 +214,7 @@ const DatasourcePage = () => {
         openTablePreviewModal: () => {
             ModalsHelper.showModal(MODALS.TABLE_PREVIEW, {
                 datasourceId: selectedDatasource?.id,
+                schemaName: selectedSchema,
                 table: selectedTable,
             });
         },

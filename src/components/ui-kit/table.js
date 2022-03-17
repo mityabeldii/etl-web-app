@@ -116,40 +116,44 @@ const Table = (props) => {
                 {withHeader && (
                     <STr extra={({ theme }) => `border-bottom: 1px solid #DADADA; padding: 20px; box-sizing: border-box;`}>
                         {selectable && <STh extra={`flex: unset; width: 40px;`}></STh>}
-                        {columns.map((column, index) => {
-                            return (
-                                <STh key={index} extra={column?.extra ?? ``}>
-                                    <Frame
-                                        extra={`flex-direction: row; cursor: pointer;`}
-                                        onClick={() => {
-                                            setSort(
-                                                column?.name,
-                                                column?.name === sort?.field
-                                                    ? {
-                                                          [SORT_ORDERS.ASC]: SORT_ORDERS.DESC,
-                                                          [SORT_ORDERS.DESC]: SORT_ORDERS.ASC,
-                                                      }?.[sort?.order] ?? SORT_ORDERS.DESC
-                                                    : SORT_ORDERS.DESC
-                                            );
-                                        }}
-                                    >
-                                        {column.label}
-                                        {sortable && column.sortable !== false && (
-                                            <Frame extra={`margin-left: 10px; cursor: pointer;`}>
-                                                <SortArrow
-                                                    extra={`opacity: ${
-                                                        sort?.field === column.name && sort?.order === SORT_ORDERS.ASC ? 1 : 0.2
-                                                    }; transform: rotate(180deg);`}
-                                                />
-                                                <SortArrow
-                                                    extra={`opacity: ${sort?.field === column.name && sort?.order === SORT_ORDERS.DESC ? 1 : 0.2};`}
-                                                />
-                                            </Frame>
-                                        )}
-                                    </Frame>
-                                </STh>
-                            );
-                        })}
+                        {columns
+                            ?.filter?.((i) => i?.visible !== false)
+                            ?.map?.((column, index) => {
+                                return (
+                                    <STh key={index} extra={column?.extra ?? ``}>
+                                        <Frame
+                                            extra={`flex-direction: row; cursor: pointer;`}
+                                            onClick={() => {
+                                                setSort(
+                                                    column?.name,
+                                                    column?.name === sort?.field
+                                                        ? {
+                                                              [SORT_ORDERS.ASC]: SORT_ORDERS.DESC,
+                                                              [SORT_ORDERS.DESC]: SORT_ORDERS.ASC,
+                                                          }?.[sort?.order] ?? SORT_ORDERS.DESC
+                                                        : SORT_ORDERS.DESC
+                                                );
+                                            }}
+                                        >
+                                            {column.label}
+                                            {sortable && column.sortable !== false && (
+                                                <Frame extra={`margin-left: 10px; cursor: pointer;`}>
+                                                    <SortArrow
+                                                        extra={`opacity: ${
+                                                            sort?.field === column.name && sort?.order === SORT_ORDERS.ASC ? 1 : 0.2
+                                                        }; transform: rotate(180deg);`}
+                                                    />
+                                                    <SortArrow
+                                                        extra={`opacity: ${
+                                                            sort?.field === column.name && sort?.order === SORT_ORDERS.DESC ? 1 : 0.2
+                                                        };`}
+                                                    />
+                                                </Frame>
+                                            )}
+                                        </Frame>
+                                    </STh>
+                                );
+                            })}
                     </STr>
                 )}
                 {/* <STr>
@@ -216,10 +220,12 @@ const Table = (props) => {
                                 />
                             </STd>
                         )}
-                        {columns.map((column, column_index) => {
-                            const cellState = { row, column, value: row?.[column?.name] };
-                            return <TableCell key={column_index} cellState={cellState} />;
-                        })}
+                        {columns
+                            ?.filter?.((i) => i?.visible !== false)
+                            ?.map?.((column, column_index) => {
+                                const cellState = { row, column, value: row?.[column?.name] };
+                                return <TableCell key={column_index} cellState={cellState} />;
+                            })}
                     </STr>
                 ))}
             </STable>

@@ -24,8 +24,10 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
             _.get(state, `datasources.columns.${data?.operatorConfigData?.taskIdSource}.${data?.operatorConfigData?.left?.targetTableName}`) ?? [],
     }));
     useEffect(() => {
-        setValue(`operatorConfigData.joinSettings.conditions`, [{ leftJoinField: "", rightJoinField: "" }]);
-    }, []);
+        if (mode === `create`) {
+            setValue(`operatorConfigData.joinSettings.conditions`, [{ leftJoinField: "", rightJoinField: "" }]);
+        }
+    }, [mode]);
 
     const leftJoinFields = _.chain(data)
         .get(`operatorConfigData.joinSettings.conditions`)
@@ -48,7 +50,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     .get(`storageFieldName`)
                     .value() ?? i,
         }));
-        setValue(`operatorConfigData.storageStructure.leftSourceFields`, newMappingStructure)
+        setValue(`operatorConfigData.storageStructure.leftSourceFields`, newMappingStructure);
     }, [_.get(data, `operatorConfigData.taskIdSource`)]);
 
     const rightJoinFields = _.chain(data)
@@ -125,9 +127,11 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} required>
                         Поле в основном источнике
                     </Control.Label>
+                    <MappingArrow extra={`visibility: hidden;`} />
                     <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} required>
                         Поле в источнике для соединения
                     </Control.Label>
+                    {mode !== `view` && <Frame extra={`width: 38px;`} />}
                 </Control.Row>
                 {_.get(data, `operatorConfigData.joinSettings.conditions`)?.map?.((item, index) => (
                     <Control.Row key={index} extra={`align-items: flex-start;`}>
@@ -285,9 +289,11 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} required>
                         Поле в основном источнике
                     </Control.Label>
+                    <MappingArrow extra={`visibility: hidden;`} />
                     <Control.Label extra={`flex: 1; justify-content: flex-start; margin-right: 0px !important;`} required>
                         Поле во вспомогательном хранилище
                     </Control.Label>
+                    {mode !== `view` && <Frame extra={`width: 38px;`} />}
                 </Control.Row>
                 {_.get(data, `operatorConfigData.storageStructure.leftSourceFields`)?.map?.((item, index) => (
                     <Control.Row key={index} extra={`align-items: flex-start;`}>

@@ -98,7 +98,7 @@ export const GETOptions = (options = {}) => {
     return POSTOptions(options);
 };
 
-export const GETOptionsForPreview = (name) => {
+export const GETOptionsForPreview = (name, schemaName) => {
     const table = getStorage((state) => state?.tables?.[name] ?? {});
     const { pagination = {} } = table;
     const { currentPage = 0, perPage = 10 } = pagination;
@@ -106,6 +106,7 @@ export const GETOptionsForPreview = (name) => {
         params: {
             limit: perPage,
             offset: currentPage,
+            schemaName
         },
     };
 };

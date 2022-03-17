@@ -277,6 +277,7 @@ const EventLogTable = {
         },
         { name: `id`, label: `ID события` },
         { name: `processId`, label: `Процесс` },
+        { name: `processRunId`, label: `ID запуска процесса`, visible: false },
         { name: `taskId`, label: `Задача` },
         // { name: ``, label: `Статус`, },
         {
@@ -284,6 +285,10 @@ const EventLogTable = {
             label: `Текст сообщения`,
             transform: ({ row }) => `${row?.eventInfo?.slice?.(0, 25) ?? `-`}${row?.eventInfo?.length > 25 ? `...` : ``}`,
             tooltip: ({ value: label }) => ({ label }),
+        },
+        {
+            name: `eventType`,
+            label: `Тип события`,
         },
         // {
         //     name: `taskName`,

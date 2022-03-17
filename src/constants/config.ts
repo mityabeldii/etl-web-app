@@ -108,6 +108,12 @@ export const FIELD_TYPES = {
     uuid: `uuid`,
     jsonb: `jsonb`,
     bigint: `bigint`,
+    varchar: `varchar`,
+    int4: `int4`,
+    int8: `int8`,
+    bigserial: `bigserial`,
+    smallint: `smallint`,
+    doublePrecision: `double precision`,
 };
 
 export const CALCULATION_FUNCTION_TYPES = {

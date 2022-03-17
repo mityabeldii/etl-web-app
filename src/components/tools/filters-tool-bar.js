@@ -17,6 +17,7 @@ const checkRequiredProps = (props, requiredProps) =>
 const getFilterLabel = (filters, key) => {
     const exceptions = {
         state: PROCESS_STATUSES?.[filters?.[key]]?.label,
+        eventType: PROCESS_STATUSES?.[filters?.[key]]?.label,
     };
     return _.get(exceptions, key, filters?.[key]);
 };

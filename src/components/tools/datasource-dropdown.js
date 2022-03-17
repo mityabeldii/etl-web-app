@@ -14,7 +14,6 @@ import ModalsHelper from "../../utils/modals-helper";
 import { putStorage } from "../../hooks/useStorage";
 
 const DatasourceDropdown = ({ cellState = {} }) => {
-    const { row = {} } = cellState;
     return (
         <Dropdown
             toggle={<MoreButton />}
@@ -25,8 +24,7 @@ const DatasourceDropdown = ({ cellState = {} }) => {
                             label: `Редактировать источник`,
                             src: `processes-more-edit-attributes`,
                             onClick: ({ row }) => {
-                                putStorage(`forms.${FORMS.EDIT_DATASOURCE_MODAL}.values`, { ...row, url: row?.url?.split?.(`/`)?.at?.(-1) ?? `` });
-                                ModalsHelper.showModal(MODALS.EDIT_DATASOURCE_MODAL);
+                                ModalsHelper.showModal(MODALS.EDIT_DATASOURCE_MODAL, { ...row, url: row?.url?.split?.(`/`)?.at?.(-1) ?? `` });
                             },
                         },
                         {

@@ -33,12 +33,7 @@ const EventLogPage = () => {
                 <Heading>Журнал событий</Heading>
             </RowWrapper>
             <RowWrapper>
-                <FiltersToolBar
-                    filters={params}
-                    onChange={setParams}
-                    tableName={`TASKS_HISTORY`}
-                    wrapperExtra={`margin-bottom: 28px;`}
-                />
+                <FiltersToolBar filters={params} onChange={setParams} tableName={`EVENT_LOG`} wrapperExtra={`margin-bottom: 28px;`} />
             </RowWrapper>
             <Table
                 name={TABLES.EVENT_LOG}
@@ -66,9 +61,9 @@ const SearchBar = () => {
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada; height: 60px;`}>
             <Search
-                value={params?.id ?? ``}
+                value={params?.processRunId ?? ``}
                 onChange={(e) => {
-                    setByKey(`id`, e.target.value ?? ``);
+                    setByKey(`processRunId`, e.target.value ?? ``);
                 }}
             />
             <DateRangePicker
@@ -85,10 +80,8 @@ const SearchBar = () => {
                             box-sizing: border-box;
                         `}
                     >
-                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>
-                            Дата и время запуска
-                        </Frame>
-                        <CalendarIcon/>
+                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Дата и время события</Frame>
+                        <CalendarIcon />
                     </RowWrapper>
                 )}
                 value={{
@@ -121,8 +114,7 @@ const SearchBar = () => {
                                 width: 24px;
                                 height: 24px;
                                 transform: rotate(90deg);
-                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}")
-                                    no-repeat center center / contain;
+                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}") no-repeat center center / contain;
                             }
                         `}
                     >
@@ -156,18 +148,17 @@ const SearchBar = () => {
                                 width: 24px;
                                 height: 24px;
                                 transform: rotate(90deg);
-                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}")
-                                    no-repeat center center / contain;
+                                background: url("${require(`../../assets/icons/arrow-right-grey.svg`).default}") no-repeat center center / contain;
                             }
                         `}
                     >
-                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Статус</Frame>
+                        <Frame extra={({ theme }) => `font-size: 14px; color: ${theme.grey};`}>Тип события</Frame>
                     </RowWrapper>
                 )}
                 menuProps={{ extra: `width: max-content;` }}
-                value={params?.state}
+                value={params?.eventType}
                 onChange={(e) => {
-                    setByKey(`state`, params?.state === e.target.value ? undefined : e.target.value);
+                    setByKey(`eventType`, params?.eventType === e.target.value ? undefined : e.target.value);
                 }}
                 options={Object.keys(PROCESS_STATUSES)?.map?.((key) => ({
                     label: PROCESS_STATUSES[key]?.label,
@@ -187,7 +178,7 @@ const CalendarIcon = styled(Frame)`
 const Search = styled(Input).attrs((props) => {
     return {
         ...props,
-        placeholder: `ID события, запуска задачи или процесса`,
+        placeholder: `ID запуска процесса`,
         leftIcon: `search`,
         leftIconStyles: `left: 20px;`,
         extra: css`

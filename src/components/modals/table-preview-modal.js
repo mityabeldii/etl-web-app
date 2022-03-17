@@ -20,22 +20,18 @@ import useModal from "../../hooks/useModal";
 
 const TablePreviewModal = () => {
     const { close: closeModal, state = {} } = useModal(MODALS.TABLE_PREVIEW);
-    const { datasourceId, table = {} } = state;
+    const { datasourceId, table = {}, schemaName } = state;
     const handlers = {
         fetchPreviewFunction: async () => {
             if (datasourceId && table?.tableName) {
-                const response = await DatasourceAPI.getDatasourceTablePreview(datasourceId, table.tableName);
+                const response = await DatasourceAPI.getDatasourceTablePreview(datasourceId, table.tableName, schemaName);
                 return response;
             }
         },
     };
     return (
-        <PopUpWrapper
-            name={MODALS.TABLE_PREVIEW}
-            onClickOutside={closeModal}
-            extra={`max-width: 90vw; padding: 0; backgorund: transparent;`}
-        >
-            <Scrollable outerExtra={`max-width: 90vw; max-height: 90vh;`} >
+        <PopUpWrapper name={MODALS.TABLE_PREVIEW} onClickOutside={closeModal} extra={`max-width: 90vw; padding: 0; backgorund: transparent;`}>
+            <Scrollable outerExtra={`max-width: 90vw; max-height: 90vh;`}>
                 <Table
                     name={TABLES.DATASOURCE_TABLE_PREVIEW}
                     columns={_.map(table?.fields, `fieldName`)?.map?.((i) => ({

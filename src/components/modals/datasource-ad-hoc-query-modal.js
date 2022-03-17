@@ -97,7 +97,7 @@ const DatasourceAdHocQueryModal = () => {
                     </Control.Row>
                     <Control.Textarea
                         name={`query`}
-                        placeholder={`Enter your query here`}
+                        placeholder={`Введите SQL-запрос с указанием схемы`}
                         controlStyles={`flex: 1;`}
                         extra={css`
                             font-family: IBM Plex Mono;

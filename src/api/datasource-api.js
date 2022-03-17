@@ -119,11 +119,14 @@ const DatasourceAPI = {
         });
     },
 
-    async getDatasourceTablePreview(datasourceId, tableName) {
+    async getDatasourceTablePreview(datasourceId, tableName, schemaName) {
+        if (!schemaName) {
+            return;
+        }
         return loadingCounterWrapper(async () => {
             try {
                 const response = (
-                    await axios.get(`/api/v1/query/${datasourceId}/${tableName}`, GETOptionsForPreview(TABLES.DATASOURCE_TABLE_PREVIEW))
+                    await axios.get(`/api/v1/query/${datasourceId}/${tableName}`, GETOptionsForPreview(TABLES.DATASOURCE_TABLE_PREVIEW, schemaName))
                 ).data;
                 const data = convertPaginatedResponse(response);
                 putStorage(`datasources.preview.${datasourceId}.${tableName}`, data);

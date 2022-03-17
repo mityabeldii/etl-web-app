@@ -31,9 +31,10 @@ const schema = (isStorage) => (yup) =>
 
 const EditDataSourceModal = () => {
     const { pathname } = useLocation();
+    const isStoragePage = pathname?.startsWith?.(`/storage`);
     const { onSubmit, clearForm, setValues } = useFormControl({
         name: FORMS.EDIT_DATASOURCE_MODAL,
-        schema: schema(pathname?.startsWith?.(`/storage`)),
+        schema: schema(isStoragePage),
     });
     const { close: closeModal } = useModal(MODALS.EDIT_DATASOURCE_MODAL, { onOpen: setValues, onClose: clearForm });
     const handleSubmit = async (data) => {
@@ -43,7 +44,9 @@ const EditDataSourceModal = () => {
     return (
         <PopUpWrapper name={MODALS.EDIT_DATASOURCE_MODAL} onClickOutside={closeModal}>
             <Form name={FORMS.EDIT_DATASOURCE_MODAL} onSubmit={onSubmit(handleSubmit)}>
-                <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>Редактировать источник данных</H1>
+                <H1 extra={`width: 100%; align-items: flex-start; margin-bottom: 24px;`}>
+                    {isStoragePage ? `Редактировать реквизиты` : `Редактировать источник данных`}
+                </H1>
                 <Control.Row>
                     <Control.Input name={`name`} label={`Имя`} placeholder={`Имя источника данных`} isRequired />
                     <Control.Input name={`host`} label={`Хост`} placeholder={`IP-адрес хоста`} isRequired />
