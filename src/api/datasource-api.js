@@ -120,9 +120,7 @@ const DatasourceAPI = {
     },
 
     async getDatasourceTablePreview(datasourceId, tableName, schemaName) {
-        if (!schemaName) {
-            return;
-        }
+        if (!schemaName) return;
         return loadingCounterWrapper(async () => {
             try {
                 const response = (
@@ -133,7 +131,11 @@ const DatasourceAPI = {
                 putStorage(`tables.${TABLES.DATASOURCE_TABLE_PREVIEW}`, data);
                 return response;
             } catch (error) {
-                throw handleError(error);
+                if (error?.response?.status == 500) {
+                    handleError({ message: `Ошибка получения данных` });
+                } else {
+                    throw handleError(error);
+                }
             }
         });
     },

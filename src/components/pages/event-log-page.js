@@ -14,13 +14,15 @@ import DateRangePicker from "../tools/date-range-picker";
 import { MODALS, PROCESS_STATUSES, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
 import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
+import { convertHex } from "../../utils/colors-helper";
+
 import DatasourceAPI from "../../api/datasource-api";
 import EventLogAPI from "../../api/event-log-api";
+import ProcessesAPI from "api/processes-api";
 
 import { eventDispatch } from "../../hooks/useEventListener";
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
 import useQueryParams, { etlOnlyParams } from "../../hooks/useQueryParams";
-import { convertHex } from "../../utils/colors-helper";
 
 const EventLogPage = () => {
     const { params, setParams } = useQueryParams();
@@ -57,7 +59,8 @@ const Heading = styled(H1)`
 
 const SearchBar = () => {
     const { params, setParams, setByKey } = useQueryParams();
-    const tasks = useStorageListener((state) => _.get(state, `tables.${TABLES.TASKS_HISTORY}.rows`) ?? []);
+    const processes = useStorageListener((state) => _.get(state, `temp.processesToFilter`) ?? []);
+    useEffect(ProcessesAPI.getProcessesForFilter, []);
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada; height: 60px;`}>
             <Search
@@ -91,8 +94,8 @@ const SearchBar = () => {
                 onChange={(value) => {
                     setParams({
                         ...params,
-                        eventDateStart: moment(value.from).format(`YYYY-MM-DD hh:mm:ss`),
-                        eventDateEnd: moment(value.to).format(`YYYY-MM-DD hh:mm:ss`),
+                        eventDateStart: moment(value.from).format(`YYYY-MM-DDThh:mm:ss`),
+                        eventDateEnd: moment(value.to).format(`YYYY-MM-DDThh:mm:ss`),
                     });
                 }}
             />
@@ -126,9 +129,9 @@ const SearchBar = () => {
                 onChange={(e) => {
                     setByKey(`id`, params?.id == e.target.value ? undefined : e.target.value);
                 }}
-                options={tasks
+                options={processes
                     ?.map?.(({ id: value, processName: label }) => ({ label, value }))
-                    ?.filter?.((i, j, self) => _.map(self, `value`)?.indexOf?.(i?.value) === j)}
+                    .filter((item, index, self) => self.findIndex((t) => t.value === item.value) === index)}
             />
             <Select
                 toggleComponent={() => (

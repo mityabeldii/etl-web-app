@@ -13,7 +13,6 @@ import DateRangePicker from "../tools/date-range-picker";
 import { PROCESS_STATUSES, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
 
-
 import DatasourceAPI from "../../api/datasource-api";
 import ProcessesAPI from "api/processes-api";
 
@@ -89,8 +88,8 @@ const SearchBar = ({ params, setByKey, setParams }) => {
                 onChange={(value) => {
                     setParams({
                         ...params,
-                        processStartDate: moment(value.from).format(`YYYY-MM-DD hh:mm:ss`),
-                        processEndDate: moment(value.to).format(`YYYY-MM-DD hh:mm:ss`),
+                        processStartDate: moment(value.from).format(`YYYY-MM-DDThh:mm:ss`),
+                        processEndDate: moment(value.to).format(`YYYY-MM-DDThh:mm:ss`),
                     });
                 }}
             />

@@ -81,12 +81,7 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                                     label={`Функция`}
                                     options={Object.values(CALCULATION_FUNCTION_TYPES)}
                                     onChange={(e) => {
-                                        if (
-                                            Object?.values?.(CALCULATION_FUNCTION_TYPES)
-                                                ?.filter?.((i) => i?.twoArguments)
-                                                ?.map?.((i) => i?.value)
-                                                ?.includes?.(e.target.value)
-                                        ) {
+                                        if (!CALCULATION_FUNCTION_TYPES?.[e.target.value]?.twoArguments === true) {
                                             removeValue(`operatorConfigData.calculationSettings.[${index}].attr2`);
                                         }
                                     }}
@@ -107,31 +102,34 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                                     isRequired={_.get(data, `operatorConfigData.taskIdSource`)}
                                     allowSearch
                                 />
-                                <Control.Select
-                                    name={`operatorConfigData.calculationSettings.[${index}].attr2`}
-                                    label={`Аргумент 2`}
-                                    options={
-                                        TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
-                                            value: i,
-                                            label: i,
-                                        })) ?? []
-                                    }
-                                    readOnly={
-                                        !_.get(data, `operatorConfigData.taskIdSource`) ||
-                                        Object?.values?.(CALCULATION_FUNCTION_TYPES)
-                                            ?.filter?.((i) => i?.twoArguments)
-                                            ?.map?.(({ value }) => value)
-                                            ?.includes?.(_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`))
-                                    }
-                                    isRequired={
-                                        _.get(data, `operatorConfigData.taskIdSource`) &&
-                                        !Object?.values?.(CALCULATION_FUNCTION_TYPES)
-                                            ?.filter?.((i) => i?.twoArguments)
-                                            ?.map?.(({ value }) => value)
-                                            ?.includes?.(_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`))
-                                    }
-                                    allowSearch
-                                />
+                                {true && (
+                                    <Control.Select
+                                        name={`operatorConfigData.calculationSettings.[${index}].attr2`}
+                                        label={`Аргумент 2`}
+                                        options={
+                                            TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                                                value: i,
+                                                label: i,
+                                            })) ?? []
+                                        }
+                                        readOnly={
+                                            !_.get(data, `operatorConfigData.taskIdSource`) ||
+                                            !_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`) ||
+                                            !Object?.values?.(CALCULATION_FUNCTION_TYPES)
+                                                ?.filter?.((i) => i?.twoArguments)
+                                                ?.map?.(({ value }) => value)
+                                                ?.includes?.(_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`))
+                                        }
+                                        isRequired={
+                                            !!_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`) &&
+                                            Object?.values?.(CALCULATION_FUNCTION_TYPES)
+                                                ?.filter?.((i) => i?.twoArguments)
+                                                ?.map?.(({ value }) => value)
+                                                ?.includes?.(_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`))
+                                        }
+                                        allowSearch
+                                    />
+                                )}
                             </Control.Row>
                         </Frame>
                         {mode !== `view` && (

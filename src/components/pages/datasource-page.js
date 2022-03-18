@@ -202,7 +202,6 @@ const DatasourcePage = () => {
         },
     };
 
-    useEffect(handlers.fetchPreviewFunction, [selectedDatasource?.id, selectedDatasource?.schema, selectedTableName]);
     useEffect(handlers.fetchTables, [selectedDatasource?.id, selectedSchema]);
 
     useEffect(DatasourceAPI.getDatasources, []);

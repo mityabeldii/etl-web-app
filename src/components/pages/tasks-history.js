@@ -1,7 +1,6 @@
 /*eslint-disable*/
 import { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
-import { useLocation } from "react-router";
 import _ from "lodash";
 import moment from "moment-timezone";
 
@@ -13,13 +12,12 @@ import DateRangePicker from "../tools/date-range-picker";
 
 import { MODALS, PROCESS_STATUSES, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
-import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
-import DatasourceAPI from "../../api/datasource-api";
 
-import { eventDispatch } from "../../hooks/useEventListener";
+import DatasourceAPI from "../../api/datasource-api";
+import ProcessesAPI from "../../api/processes-api";
+
 import { putStorage, useStorageListener } from "../../hooks/useStorage";
 import useQueryParams, { etlOnlyParams } from "../../hooks/useQueryParams";
-import { convertHex } from "../../utils/colors-helper";
 
 const TasksHistoryPage = () => {
     const { params, setParams } = useQueryParams();
@@ -56,7 +54,8 @@ const Heading = styled(H1)`
 
 const SearchBar = () => {
     const { params, setParams, setByKey } = useQueryParams();
-    const tasks = useStorageListener((state) => _.get(state, `tables.${TABLES.TASKS_HISTORY}.rows`, []));
+    const processes = useStorageListener((state) => _.get(state, `temp.processesToFilter`) ?? []);
+    useEffect(ProcessesAPI.getProcessesForFilter, []);
     return (
         <RowWrapper extra={`border-bottom: 1px solid #dadada; height: 60px;`}>
             <Search
@@ -125,9 +124,9 @@ const SearchBar = () => {
                 onChange={(e) => {
                     setByKey(`processId`, params?.processId == e.target.value ? undefined : e.target.value);
                 }}
-                options={tasks
-                    ?.map?.(({ processId: value, processName: label }) => ({ label, value }))
-                    ?.filter?.((i, j, self) => _.map(self, `value`)?.indexOf?.(i?.value) === j)}
+                options={processes
+                    ?.map?.(({ id: value, processName: label }) => ({ label, value }))
+                    .filter((item, index, self) => self.findIndex((t) => t.value === item.value) === index)}
             />
             <Select
                 toggleComponent={() => (

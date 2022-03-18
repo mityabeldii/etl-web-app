@@ -117,16 +117,16 @@ export const FIELD_TYPES = {
 };
 
 export const CALCULATION_FUNCTION_TYPES = {
-    sum: { value: `sum`, label: `Сумма` },
-    multiplication: { value: `multiplication`, label: `Произведение` },
-    integerDivision: { value: `integerDivision`, label: `Целочисленное деление` },
-    nonIntegerDivision: { value: `nonIntegerDivision`, label: `Деление` },
-    subtraction: { value: `subtraction`, label: `Вычитание` },
-    arrayElementsCount: { value: `arrayElementsCount`, label: `Количество элементов массива`, twoArguments: true },
-    extractYear: { value: `extractYear`, label: `Извлечь год`, twoArguments: true },
-    extractQuarter: { value: `extractQuarter`, label: `Извлечь квартал`, twoArguments: true },
-    extractMonth: { value: `extractMonth`, label: `Извлечь месяц`, twoArguments: true },
-    extractDay: { value: `extractDay`, label: `Извлечь день`, twoArguments: true },
+    sum: { value: `sum`, label: `Сумма`, twoArguments: true },
+    multiplication: { value: `multiplication`, label: `Произведение`, twoArguments: true },
+    integerDivision: { value: `integerDivision`, label: `Целочисленное деление`, twoArguments: true },
+    nonIntegerDivision: { value: `nonIntegerDivision`, label: `Деление`, twoArguments: true },
+    subtraction: { value: `subtraction`, label: `Вычитание`, twoArguments: true },
+    arrayElementsCount: { value: `arrayElementsCount`, label: `Количество элементов массива` },
+    extractYear: { value: `extractYear`, label: `Извлечь год` },
+    extractQuarter: { value: `extractQuarter`, label: `Извлечь квартал` },
+    extractMonth: { value: `extractMonth`, label: `Извлечь месяц` },
+    extractDay: { value: `extractDay`, label: `Извлечь день` },
 };
 
 export const PROCESS_STATUSES = {
