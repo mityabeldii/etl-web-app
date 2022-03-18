@@ -29,16 +29,6 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
         }
     }, [mode]);
 
-    const leftJoinFields = _.chain(data)
-        .get(`operatorConfigData.joinSettings.conditions`)
-        .map(`leftJoinField`)
-        .filter((i) => !_.isEmpty(i))
-        .value();
-    const leftSourceFields = _.chain(data)
-        .get(`operatorConfigData.storageStructure.leftSourceFields`)
-        .map(`sourceFieldName`)
-        .filter((i) => !_.isEmpty(i))
-        .value();
     useEffect(() => {
         const newKeys = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`));
         const newMappingStructure = newKeys.map((i) => ({
@@ -53,18 +43,8 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
         setValue(`operatorConfigData.storageStructure.leftSourceFields`, newMappingStructure);
     }, [_.get(data, `operatorConfigData.taskIdSource`)]);
 
-    const rightJoinFields = _.chain(data)
-        .get(`operatorConfigData.joinSettings.conditions`)
-        .map(`rightJoinField`)
-        .filter((i) => !_.isEmpty(i))
-        .value();
-    const rightSourceFields = _.chain(data)
-        .get(`operatorConfigData.storageStructure.rightSourceFields`)
-        .map(`sourceFieldName`)
-        .filter((i) => !_.isEmpty(i))
-        .value();
     useEffect(() => {
-        const newKeys = _.chain(rightJoinFields).union(rightSourceFields).uniq().value();
+        const newKeys = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.joinTaskIdSource`));
         const newMappingStructure = newKeys.map((i) => ({
             sourceFieldName: i,
             storageFieldName:
@@ -75,7 +55,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                     .value() ?? i,
         }));
         setValue(`operatorConfigData.storageStructure.rightSourceFields`, newMappingStructure);
-    }, [leftJoinFields, leftSourceFields]);
+    }, [_.get(data, `operatorConfigData.joinTaskIdSource`)]);
 
     const tabs = {
         [`Источник данных`]: (
