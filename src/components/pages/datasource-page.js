@@ -4,18 +4,7 @@ import styled, { css } from "styled-components";
 import { useParams, Link } from "react-router-dom";
 import _, { get } from "lodash";
 
-import {
-    Frame,
-    Button,
-    H1,
-    H2,
-    RowWrapper,
-    Input,
-    Form,
-    Dropdown,
-    ScrollWrapper,
-    Scrollable,
-} from "../ui-kit/styled-templates";
+import { Frame, Button, H1, H2, RowWrapper, Input, Form, Dropdown, ScrollWrapper, Scrollable } from "../ui-kit/styled-templates";
 import Select from "../ui-kit/select";
 import Table from "../ui-kit/table";
 import { Control } from "../ui-kit/control";
@@ -77,15 +66,12 @@ const DatasourcePage = () => {
     // );
     const schemas = useStorageListener(
         (state) =>
-            get(state, `datasources.schemas[${selectedDatasource?.id}]`)?.filter?.(
-                (i) => ![`information_schema`, `pg_catalog`]?.includes?.(i)
-            ) ?? []
+            get(state, `datasources.schemas[${selectedDatasource?.id}]`)?.filter?.((i) => ![`information_schema`, `pg_catalog`]?.includes?.(i)) ?? []
     );
-    const selectedSchema = `public`;
+
+    const selectedSchema = selectedDatasource?.schema ?? `public`;
     const setSelectedSchema = (newSchema) => putStorage(`pages.INTERMIDIATE_STRAGE.selectedSchema`, newSchema);
-    const tables = useStorageListener(
-        (state) => state?.datasources?.tables?.[selectedDatasource?.id]?.[selectedSchema] ?? []
-    );
+    const tables = useStorageListener((state) => state?.datasources?.tables?.[selectedDatasource?.id]?.[selectedSchema] ?? []);
     const selectedTable = _.find(tables, { tableName: selectedTableName });
     const [tableSearch, setTableSearch] = useState(``);
 
@@ -191,11 +177,7 @@ const DatasourcePage = () => {
         },
         fetchPreviewFunction: async () => {
             if (selectedDatasource?.id && selectedTableName) {
-                const response = await DatasourceAPI.getDatasourceTablePreview(
-                    selectedDatasource?.id,
-                    selectedTableName,
-                    selectedSchema
-                );
+                const response = await DatasourceAPI.getDatasourceTablePreview(selectedDatasource?.id, selectedTableName, selectedSchema);
                 return response;
             }
         },
@@ -278,9 +260,7 @@ const DatasourcePage = () => {
                                             <Button
                                                 onClick={handlers.setSelectedTableName(table.tableName)}
                                                 extra={`margin-top: 12px; background: ${
-                                                    selectedTable?.tableName === table?.tableName
-                                                        ? `#FFFFFF`
-                                                        : `transparent`
+                                                    selectedTable?.tableName === table?.tableName ? `#FFFFFF` : `transparent`
                                                 }; color: black; box-shadow: unset; width: 100%; border: 1px solid #DADADA; justify-content: flex-start; word-break: break-all; text-align: left;`}
                                             >
                                                 {table.tableName}
@@ -305,10 +285,7 @@ const DatasourcePage = () => {
                                             Структура таблицы <span>{selectedTable?.tableName}</span>
                                         </RightSectionHeader>
                                         <Frame extra={`flex-direction: row;`}>
-                                            <Button
-                                                extra={`margin-right: 5px;`}
-                                                onClick={handlers.openTablePreviewModal}
-                                            >
+                                            <Button extra={`margin-right: 5px;`} onClick={handlers.openTablePreviewModal}>
                                                 Посмотреть данные
                                             </Button>
                                             {/* <Button onClick={handlers.openEditScructurreModal}>
@@ -362,8 +339,7 @@ const ToggleComponent = styled(Frame)`
         content: "";
         width: 24px;
         height: 24px;
-        background: url("${require(`../../assets/icons/arrow-right-blue.svg`).default}") no-repeat center center /
-            contain;
+        background: url("${require(`../../assets/icons/arrow-right-blue.svg`).default}") no-repeat center center / contain;
     }
 `;
 

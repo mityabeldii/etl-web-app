@@ -61,7 +61,7 @@ const SQLExtract = () => {
     }, [sourceTableFields]);
 
     const tabs = {
-        [`Конфигурация оператора`]: (
+        [`Источник данных`]: (
             <>
                 <Control.Row>
                     <Control.Select

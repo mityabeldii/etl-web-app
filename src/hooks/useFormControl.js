@@ -64,6 +64,7 @@ const useFormControl = ({ name, schema }) => {
             console.warn(error);
             console.warn(`Form validation error`, Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? []));
             setErrors(objectNested(Object.fromEntries(error?.inner?.map?.((e) => [e?.path, { message: e?.message }]) ?? [])));
+            eventDispatch(`THROW_ERROR`, `Не все обязательные поля заполнены`)
             // error?.inner?.forEach(({ path, message }) => eventDispatch(`THROW_ERROR`, `${path}: ${message}`));
         }
     };

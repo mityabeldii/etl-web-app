@@ -38,7 +38,7 @@ const menuSections = [
 ];
 
 const Menu = () => {
-    const { pathname } = useLocation();
+    const { pathname, search } = useLocation();
     const { keycloak = { logout } } = useKeycloak();
     return (
         <Wrapper>
@@ -54,7 +54,7 @@ const Menu = () => {
                 <Fragment key={index}>
                     <MenuSection {...section} to={section?.link} as={section.link ? Link : section?.href ? A : Frame} />
                     {section?.items?.map?.((item, index) => (
-                        <MenuItem key={item?.link} to={item?.link} selected={pathname?.startsWith?.(item?.link)}>
+                        <MenuItem key={item?.link} to={item?.link} selected={(pathname + search)?.startsWith?.(item?.link)}>
                             {item?.label}
                         </MenuItem>
                     ))}
