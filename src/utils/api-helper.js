@@ -106,7 +106,7 @@ export const GETOptionsForPreview = (name, schema) => {
         params: {
             limit: perPage,
             offset: currentPage,
-            schemaName: schema
+            schema
         },
     };
 };
