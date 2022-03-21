@@ -30,32 +30,36 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
     }, [mode]);
 
     useEffect(() => {
-        const newKeys = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`));
-        const newMappingStructure = newKeys.map((i) => ({
-            sourceFieldName: i,
-            storageFieldName:
-                _.chain(data)
-                    .get(`operatorConfigData.storageStructure.leftSourceFields`)
-                    .find({ sourceFieldName: i })
-                    .get(`storageFieldName`)
-                    .value() ?? i,
-        }));
-        setValue(`operatorConfigData.storageStructure.leftSourceFields`, newMappingStructure);
-    }, [_.get(data, `operatorConfigData.taskIdSource`)]);
+        if (mode === `create`) {
+            const newKeys = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`));
+            const newMappingStructure = newKeys.map((i) => ({
+                sourceFieldName: i,
+                storageFieldName:
+                    _.chain(data)
+                        .get(`operatorConfigData.storageStructure.leftSourceFields`)
+                        .find({ sourceFieldName: i })
+                        .get(`storageFieldName`)
+                        .value() ?? i,
+            }));
+            setValue(`operatorConfigData.storageStructure.leftSourceFields`, newMappingStructure);
+        }
+    }, [mode, _.get(data, `operatorConfigData.taskIdSource`)]);
 
     useEffect(() => {
-        const newKeys = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.joinTaskIdSource`));
-        const newMappingStructure = newKeys.map((i) => ({
-            sourceFieldName: i,
-            storageFieldName:
-                _.chain(data)
-                    .get(`operatorConfigData.storageStructure.rightSourceFields`)
-                    .find({ sourceFieldName: i })
-                    .get(`storageFieldName`)
-                    .value() ?? i,
-        }));
-        setValue(`operatorConfigData.storageStructure.rightSourceFields`, newMappingStructure);
-    }, [_.get(data, `operatorConfigData.joinTaskIdSource`)]);
+        if (mode === `create`) {
+            const newKeys = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.joinTaskIdSource`));
+            const newMappingStructure = newKeys.map((i) => ({
+                sourceFieldName: i,
+                storageFieldName:
+                    _.chain(data)
+                        .get(`operatorConfigData.storageStructure.rightSourceFields`)
+                        .find({ sourceFieldName: i })
+                        .get(`storageFieldName`)
+                        .value() ?? i,
+            }));
+            setValue(`operatorConfigData.storageStructure.rightSourceFields`, newMappingStructure);
+        }
+    }, [mode, _.get(data, `operatorConfigData.joinTaskIdSource`)]);
 
     const tabs = {
         [`Источник данных`]: (
