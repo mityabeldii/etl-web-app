@@ -11,7 +11,7 @@ import Select from "../ui-kit/select";
 import FiltersToolBar from "../tools/filters-tool-bar";
 import DateRangePicker from "../tools/date-range-picker";
 
-import { MODALS, PROCESS_STATUSES, TABLES } from "../../constants/config";
+import { EEventTypes, MODALS, PROCESS_STATUSES, TABLES } from "../../constants/config";
 import tablesColumns from "../../constants/tables-columns";
 import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
 import { convertHex } from "../../utils/colors-helper";
@@ -163,10 +163,7 @@ const SearchBar = () => {
                 onChange={(e) => {
                     setByKey(`eventType`, params?.eventType === e.target.value ? undefined : e.target.value);
                 }}
-                options={Object.keys(PROCESS_STATUSES)?.map?.((key) => ({
-                    label: PROCESS_STATUSES[key]?.label,
-                    value: key,
-                }))}
+                options={Object.entries(EEventTypes).map(([key, value]) => ({ label: value, value: key }))}
             />
         </RowWrapper>
     );

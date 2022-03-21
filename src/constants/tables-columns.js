@@ -2,7 +2,7 @@
 import _ from "lodash";
 import moment from "moment-timezone";
 
-import { SORT_ORDERS, TABLES, STATUSES, ROLES, MODALS, FORMS, OPERATORS } from "./config";
+import { SORT_ORDERS, TABLES, STATUSES, ROLES, MODALS, FORMS, OPERATORS, EEventTypes } from "./config";
 import { createId, linkTo } from "../utils/common-helper";
 
 import ProcessesAPI from "../api/processes-api";
@@ -276,9 +276,9 @@ const EventLogTable = {
             transform: ({ row }) => moment(row?.eventDate).format(`YYYY-MM-DD hh:mm:ss`),
         },
         { name: `id`, label: `ID события` },
-        { name: `processId`, label: `Процесс` },
+        { name: `processName`, label: `Процесс` },
         { name: `processRunId`, label: `ID запуска процесса`, visible: false },
-        { name: `taskId`, label: `Задача` },
+        { name: `taskName`, label: `Задача` },
         // { name: ``, label: `Статус`, },
         {
             name: `eventInfo`,
@@ -286,10 +286,7 @@ const EventLogTable = {
             transform: ({ row }) => `${row?.eventInfo?.slice?.(0, 25) ?? `-`}${row?.eventInfo?.length > 25 ? `...` : ``}`,
             tooltip: ({ value: label }) => ({ label }),
         },
-        {
-            name: `eventType`,
-            label: `Тип события`,
-        },
+        { name: `eventType`, label: `Тип события`, cell: { type: `event_type` } },
         // {
         //     name: `taskName`,
         //     label: `Задача`,

@@ -161,3 +161,8 @@ export const PROCESS_STATUSES = {
         color: "grey",
     },
 };
+
+export enum EEventTypes {
+    message = `Сообщение`,
+    error = `Ошибка`,
+}

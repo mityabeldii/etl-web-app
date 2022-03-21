@@ -7,7 +7,7 @@ import Markdown from "markdown-to-jsx";
 import { Frame } from "../ui-kit/styled-templates";
 
 import tablesColumns from "../../constants/tables-columns";
-import { PROCESS_STATUSES, TABLES } from "../../constants/config";
+import { EEventTypes, PROCESS_STATUSES, TABLES } from "../../constants/config";
 
 const checkRequiredProps = (props, requiredProps) =>
     requiredProps.forEach((propertyName) => {
@@ -17,7 +17,7 @@ const checkRequiredProps = (props, requiredProps) =>
 const getFilterLabel = (filters, key) => {
     const exceptions = {
         state: PROCESS_STATUSES?.[filters?.[key]]?.label,
-        eventType: PROCESS_STATUSES?.[filters?.[key]]?.label,
+        eventType: EEventTypes?.[filters?.[key]],
     };
     return _.get(exceptions, key, filters?.[key]);
 };

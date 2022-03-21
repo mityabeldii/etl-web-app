@@ -17,9 +17,10 @@ import { createId, stringImposition, togglePush } from "../../utils/common-helpe
 import { getStorage, mergeStorage, putStorage, useStorageListener } from "../../hooks/useStorage";
 import useDebounce from "../../hooks/useDebounde";
 
-import { EVENTS, MODALS, PROCESS_STATUS, PROCESS_STATUSES, SORT_ORDERS, TABLES } from "../../constants/config";
+import { EEventTypes, EVENTS, MODALS, PROCESS_STATUS, PROCESS_STATUSES, SORT_ORDERS, TABLES } from "../../constants/config";
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
 import usePagination from "../../hooks/usePagination";
+import theme from "constants/theme-constants";
 
 const Table = (props) => {
     const {
@@ -361,6 +362,11 @@ const TableCell = ({ cellState }) => {
                     <ProcessStatus status={PROCESS_STATUSES?.[cellState?.value] ?? PROCESS_STATUSES?.FORCED_COMPLETION}>
                         {PROCESS_STATUSES?.[cellState?.value]?.label}
                     </ProcessStatus>
+                ),
+                event_type: (
+                    <Frame extra={`color: ${EEventTypes?.[transformedValue] === EEventTypes.error ? theme.red : `black`};`}>
+                        {EEventTypes?.[transformedValue] ?? transformedValue}
+                    </Frame>
                 ),
                 icon: <Icon {...column?.cell} />,
             }?.[column?.cell?.type ?? `text`] ?? ``),
