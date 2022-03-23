@@ -12,6 +12,7 @@ import ProcessesAPI from "../../api/processes-api";
 
 import { eventDispatch } from "../../hooks/useEventListener";
 import ModalsHelper from "../../utils/modals-helper";
+import useModal from "hooks/useModal";
 
 const schema = (yup) =>
     yup.object().shape({
@@ -21,6 +22,7 @@ const schema = (yup) =>
 
 const CreateProcessModal = () => {
     const { onSubmit, clearForm } = useFormControl({ name: FORMS.CREATE_PROCESS_MODAL, schema });
+    const {} = useModal(MODALS.CREATE_PROCESS_MODAL, { onClose: clearForm });
     const handleSubmit = async (data) => {
         try {
             await ProcessesAPI.createProcess(data);

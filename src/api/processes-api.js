@@ -32,6 +32,7 @@ const ProcessesAPI = {
             try {
                 const response = (await axios.post(`/process`, _.omit(data, [`id`]))).data;
                 await ProcessesAPI.getProcesses();
+                handleSuccess({ message: `Процесс успешно сохранен` });
                 return response;
             } catch (error) {
                 throw handleError(error);
@@ -43,6 +44,7 @@ const ProcessesAPI = {
             try {
                 const response = (await axios.put(`/process/${data?.id}`, data)).data;
                 await ProcessesAPI.getProcesses();
+                handleSuccess({ message: `Процесс успешно обновлен` });
                 return response;
             } catch (error) {
                 throw handleError(error);
@@ -87,6 +89,7 @@ const ProcessesAPI = {
             try {
                 const response = (await axios.post(`/process/${processId}/tasks`, _.omit(data, [`id`]))).data;
                 await ProcessesAPI.getProcessTasks(processId);
+                handleSuccess({ message: `Задача успешно сохранена` });
                 return response;
             } catch (error) {
                 throw handleError(error);
@@ -98,6 +101,7 @@ const ProcessesAPI = {
             try {
                 const response = (await axios.put(`/process/${processId}/tasks/${data?.id}`, _.omit(data, [`id`]))).data;
                 await ProcessesAPI.getProcessTasks(processId);
+                handleSuccess({ message: `Задача успешно обновленна` });
                 return response;
             } catch (error) {
                 throw handleError(error);
