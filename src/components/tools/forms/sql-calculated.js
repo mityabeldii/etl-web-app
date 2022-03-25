@@ -19,17 +19,19 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
     // const datasources = useStorageListener((state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows ?? []);
     // const params = useStorageListener((state) => ({}));
     useEffect(() => {
-        const newKeys = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`));
-        const newMappingStructure = newKeys.map((i) => ({
-            sourceFieldName: i,
-            storageFieldName:
-                _.chain(data)
-                    .get(`operatorConfigData.storageStructure.leftSourceFields`)
-                    .find({ sourceFieldName: i })
-                    .get(`storageFieldName`)
-                    .value() ?? i,
-        }));
-        setValue(`operatorConfigData.storageStructure`, newMappingStructure);
+        if (mode === `create`) {
+            const newKeys = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`));
+            const newMappingStructure = newKeys.map((i) => ({
+                sourceFieldName: i,
+                storageFieldName:
+                    _.chain(data)
+                        .get(`operatorConfigData.storageStructure.leftSourceFields`)
+                        .find({ sourceFieldName: i })
+                        .get(`storageFieldName`)
+                        .value() ?? i,
+            }));
+            setValue(`operatorConfigData.storageStructure`, newMappingStructure);
+        }
     }, [_.get(data, `operatorConfigData.taskIdSource`)]);
     const tabs = {
         "Источник данных": (
@@ -181,6 +183,7 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                 </Control.Row>
                 {_.get(data, `operatorConfigData.storageStructure`)?.map?.((item, index) => (
                     <Control.Row
+                        key={index}
                         extra={`align-items: flex-start; ${
                             _.get(data, `operatorConfigData.calculationSettings`)
                                 ?.map?.((i) => i?.newFieldName)
