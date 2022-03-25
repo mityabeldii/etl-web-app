@@ -176,8 +176,7 @@ const ETLProcessesConfigurationTable = {
                 extra: `justify-content: flex-end;`,
             },
             onCellClick: ({ row }) => {
-                ModalsHelper.showModal(MODALS.CREATE_TASK, { mode: `edit` });
-                putStorage(`forms.${FORMS.CREATE_TASK}.values`, row);
+                ModalsHelper.showModal(MODALS.CREATE_TASK, { mode: `edit`, data: row });
             },
         },
         {
