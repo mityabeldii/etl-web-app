@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
@@ -190,7 +190,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
         [`Фильтры`]: (
             <>
                 {_.get(data, `operatorConfigData.joinFilters`)?.map?.((item, index) => (
-                    <>
+                    <Fragment key={index}>
                         <Control.Row>
                             <Control.Select
                                 name={`operatorConfigData.joinFilters.[${index}].field`}
@@ -249,7 +249,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                                 <Control.Input name={`operatorConfigData.joinFilters.[${index}].value`} label={`Значение`} placeholder={`Значение`} />
                             )}
                         </Control.Row>
-                    </>
+                    </Fragment>
                 ))}
                 {mode !== `view` && (
                     <Button

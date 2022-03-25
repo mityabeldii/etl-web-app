@@ -25,7 +25,9 @@ export const useStorageListener = (getPathContent: ((state: any) => any) | strin
 
     const checkAndUpdate = () => {
         if (!_.isEqual(newGetPathContent(window[STORAGE_KEY]), state)) {
-            setState(_.cloneDeep(newGetPathContent(window[STORAGE_KEY])));
+            setTimeout(() => {
+                setState(_.cloneDeep(newGetPathContent(window[STORAGE_KEY])));
+            }, 0);
         }
     };
 

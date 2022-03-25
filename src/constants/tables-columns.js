@@ -152,8 +152,7 @@ const ETLProcessesConfigurationTable = {
             name: `operator`,
             label: `Имя оператора`,
             onCellClick: ({ row }) => {
-                ModalsHelper.showModal(MODALS.CREATE_TASK, { mode: `view` });
-                putStorage(`forms.${FORMS.CREATE_TASK}.values`, row);
+                ModalsHelper.showModal(MODALS.CREATE_TASK, { mode: `view`, data: row });
             },
             cell: { type: `operator` },
         },

@@ -30,12 +30,13 @@ const CrateTaskModal = () => {
     const process = useStorageListener((state) => state?.processes ?? [])?.[process_id] ?? {};
     const { tasks = [] } = process;
 
-    const { data, onSubmit, clearForm, setReadOnly } = useFormControl({ name: FORMS.CREATE_TASK, schema: Schemas.createTask({ tasks }) });
+    const { data, onSubmit, clearForm, setReadOnly, setValues } = useFormControl({ name: FORMS.CREATE_TASK, schema: Schemas.createTask({ tasks }) });
     useEffect(DatasourceAPI.getDatasourcesSourceOnly, []);
 
     const { close: closeModal } = useModal(MODALS.CREATE_TASK, {
         onOpen: (e) => {
-            const { mode } = e;
+            const { mode, data = {} } = e;
+            setValues(data);
             setMode(mode);
             setReadOnly(mode === `view`);
         },
@@ -56,7 +57,7 @@ const CrateTaskModal = () => {
         },
     };
     return (
-        <PopUpWrapper name={MODALS.CREATE_TASK} onClickOutside={clearForm} modalStyles={`position: absolute; top: 0;`} >
+        <PopUpWrapper name={MODALS.CREATE_TASK} onClickOutside={clearForm} modalStyles={`position: absolute; top: 0;`}>
             <Form name={FORMS.CREATE_TASK} onSubmit={onSubmit(handlers.submit)}>
                 <Control.Row>
                     <H1 extra={`margin-bottom: 20px;`}>
