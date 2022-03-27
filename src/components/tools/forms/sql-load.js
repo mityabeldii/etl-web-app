@@ -59,15 +59,15 @@ const SQLLoad = (props) => {
         targetId && targetSchemaName && DatasourceAPI.getDatasourceTables(targetId, targetSchemaName);
     }, [targetId, targetSchemaName]);
     useDeepEffect(() => {
-        setValue(
-            `operatorConfigData.target.mappingStructure`,
+        const newMappingStructure =
             TasksHelper.syncMappingStructure(
+                _.get(data, `operatorConfigData.target.mappingStructure`),
                 TasksHelper.getMappingStructure(taskIdSource).map((i) => ({
                     sourceFieldName: i,
                     targetFieldName: params?.target?.columns?.includes?.(i) ? i : ``,
                 }))
-            ) ?? []
-        );
+            ) ?? [];
+        setValue(`operatorConfigData.target.mappingStructure`, newMappingStructure);
     }, [taskIdSource, params?.target?.columns]);
     const tabs = {
         [`Источник данных`]: (
@@ -140,6 +140,7 @@ const SQLLoad = (props) => {
                     <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; margin-left: 32px;`} required>
                         Поле в получателе данных
                     </Control.Label>
+                    {mode !== `view` && <Frame extra={`width: 38px;`} />}
                 </Control.Row>
                 {_.get(data, `operatorConfigData.target.mappingStructure`)?.map?.((item, index) => {
                     return (
