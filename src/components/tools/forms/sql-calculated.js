@@ -188,7 +188,9 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                             _.get(data, `operatorConfigData.calculationSettings`)
                                 ?.map?.((i) => i?.newFieldName)
                                 ?.filter?.((i) => !!i)
-                                ?.includes?.(item.sourceFieldName) && `padding-right: 54px; box-sizing: border-box;`
+                                ?.includes?.(item.sourceFieldName) &&
+                            mode !== `view` &&
+                            `padding-right: 54px; box-sizing: border-box;`
                         }`}
                     >
                         {_.get(data, `operatorConfigData.calculationSettings`)
