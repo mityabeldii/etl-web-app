@@ -1,10 +1,10 @@
 /*eslint-disable*/
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import _ from "lodash";
 
-import { objectMerge, createId, isna, path } from "utils/common-helper";
-
 import useEventListener, { eventDispatch } from "hooks/useEventListener";
+
+import { createId, isna, objectMerge } from "utils/common-helper";
 
 const STORAGE_KEY = "Storage";
 
@@ -14,20 +14,18 @@ declare global {
     }
 }
 
-export const useStorageListener = (getPathContent: ((state: any) => any) | string) => {
+export const useStorageListener = (getPathContent: ((state: any) => any) | string, defaultValue?: any) => {
     let newGetPathContent: (state: any) => any;
     if (typeof getPathContent === `string`) {
-        newGetPathContent = (state) => _.get(state, getPathContent);
+        newGetPathContent = (state) => _.cloneDeep(_.get(state, getPathContent, defaultValue));
     } else {
-        newGetPathContent = getPathContent;
+        newGetPathContent = (state) => _.cloneDeep(getPathContent(state));
     }
-    const [state, setState] = useState(_.cloneDeep(newGetPathContent(window[STORAGE_KEY])));
+    const [state, setState] = useState(newGetPathContent(window[STORAGE_KEY]));
 
     const checkAndUpdate = () => {
         if (!_.isEqual(newGetPathContent(window[STORAGE_KEY]), state)) {
-            setTimeout(() => {
-                setState(_.cloneDeep(newGetPathContent(window[STORAGE_KEY])));
-            }, 0);
+            setState(newGetPathContent(window[STORAGE_KEY]));
         }
     };
 
@@ -59,7 +57,7 @@ export const putStorage = (path: string, value: any, options?: PutStorageOptions
     }
 };
 
-export const omitStorage = (path: string) => {
+export const omitStorage = (path: string | string[]) => {
     (Array.isArray(path) ? path : [path]).forEach((path) => {
         window[STORAGE_KEY] = _.omit(window?.[STORAGE_KEY] ?? {}, path);
         eventDispatch(`UPDATE_STORAGE`);
@@ -73,16 +71,22 @@ export const mergeStorage = (path: string, value: any) => {
     eventDispatch(`UPDATE_STORAGE`);
 };
 
-export const getStorage = (path = (state: any) => state) => {
-    if (typeof path !== `function`) {
-        throw new Error(`useStorage (getStorage): path is not a function`);
+export const getStorage = (getPathContent?: ((state: any) => any) | string, defaultValue?: any) => {
+    if (!getPathContent) {
+        return window[STORAGE_KEY];
     }
-    return path(window[STORAGE_KEY]);
+    let newGetPathContent: (state: any) => any;
+    if (typeof getPathContent === `string`) {
+        newGetPathContent = (state) => _.get(state, getPathContent, defaultValue);
+    } else {
+        newGetPathContent = getPathContent;
+    }
+    return newGetPathContent(window[STORAGE_KEY]);
 };
 
 export const clearStorage = (fieldsToPersist?: string[]) => {
     const temp = {} as any;
-    (fieldsToPersist || []).forEach((field) => {
+    fieldsToPersist?.forEach?.((field) => {
         const value = window[STORAGE_KEY][field];
         if (value !== undefined) {
             temp[field] = value;
@@ -104,7 +108,7 @@ export const useStorageValue = (initValue: any, path: string) => {
         _.set(window[STORAGE_KEY], path, initValue);
     }
 
-    const value = useStorageListener((state: any) => getNested(state, ...path.split(`.`)));
+    const value = useStorageListener((state) => getNested(state, ...path.split(`.`)));
 
     const setMethod = (value: any) => {
         putStorage(path, value);

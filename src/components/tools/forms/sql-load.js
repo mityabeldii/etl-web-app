@@ -59,15 +59,13 @@ const SQLLoad = (props) => {
         targetId && targetSchemaName && DatasourceAPI.getDatasourceTables(targetId, targetSchemaName);
     }, [targetId, targetSchemaName]);
     useDeepEffect(() => {
-        const newMappingStructure =
-            TasksHelper.syncMappingStructure(
-                _.get(data, `operatorConfigData.target.mappingStructure`),
-                TasksHelper.getMappingStructure(taskIdSource).map((i) => ({
-                    sourceFieldName: i,
-                    targetFieldName: params?.target?.columns?.includes?.(i) ? i : ``,
-                }))
-            ) ?? [];
-        setValue(`operatorConfigData.target.mappingStructure`, newMappingStructure);
+        if (mode === `create`) {
+            const newMappingStructure = TasksHelper.getMappingStructure(taskIdSource).map((i) => ({
+                sourceFieldName: i,
+                targetFieldName: params?.target?.columns?.includes?.(i) ? i : ``,
+            }));
+            setValue(`operatorConfigData.target.mappingStructure`, newMappingStructure);
+        }
     }, [taskIdSource, params?.target?.columns]);
     const tabs = {
         [`Источник данных`]: (
