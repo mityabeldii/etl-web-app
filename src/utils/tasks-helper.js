@@ -22,7 +22,8 @@ const TasksHelper = {
         );
     },
     getSourcesNames: (task) => {
-        const { process_id } = useParams();
+        let { process_id } = useParams();
+        process_id = process_id?.split?.(`&`)?.[0];
         const sources = [
             getStorage(
                 (state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows?.find(({ id }) => id === task?.operatorConfigData?.source?.sourceId)?.name
