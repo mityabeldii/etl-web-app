@@ -14,14 +14,19 @@ import useFormControl from "../../../hooks/useFormControl";
 import { getStorage, useStorageListener } from "../../../hooks/useStorage";
 import TasksHelper from "../../../utils/tasks-helper";
 
+const useDeepEffect = (effect, dependencies) => {
+    useEffect(effect, [JSON.stringify(dependencies)]);
+};
+
 const SQLCalculated = ({ tasks = [], mode = `view` }) => {
     const { data, removeValue, setValue } = useFormControl({ name: FORMS.CREATE_TASK });
     // const datasources = useStorageListener((state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows ?? []);
     // const params = useStorageListener((state) => ({}));
-    useEffect(() => {
+    useDeepEffect(() => {
         if (mode === `create`) {
             const newKeys = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`));
-            const newMappingStructure = newKeys.map((i) => ({
+            const newCalculatedKeys = _.get(data, `operatorConfigData.calculationSettings`, []).map((i) => i?.newFieldName);
+            const newMappingStructure = [...newCalculatedKeys, ...newKeys].map((i) => ({
                 sourceFieldName: i,
                 storageFieldName:
                     _.chain(data)
@@ -32,7 +37,7 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
             }));
             setValue(`operatorConfigData.storageStructure`, newMappingStructure);
         }
-    }, [_.get(data, `operatorConfigData.taskIdSource`)]);
+    }, [_.get(data, `operatorConfigData.taskIdSource`), _.get(data, `operatorConfigData.calculationSettings`)]);
     const tabs = {
         "Источник данных": (
             <>
@@ -66,10 +71,6 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                                 <Control.Input
                                     name={`operatorConfigData.calculationSettings.[${index}].newFieldName`}
                                     label={`Наименование`}
-                                    onChange={(e) => {
-                                        setValue(`operatorConfigData.storageStructure.[${index}].sourceFieldName`, e.target.value);
-                                        setValue(`operatorConfigData.storageStructure.[${index}].storageFieldName`, e.target.value);
-                                    }}
                                     isRequired
                                 />
                                 <Control.Select
@@ -181,15 +182,14 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                     </Control.Label>
                     {mode !== `view` && <Frame extra={`width: 38px;`} />}
                 </Control.Row>
-                {_.get(data, `operatorConfigData.storageStructure`)?.map?.((item, index) => (
+                {_.get(data, `operatorConfigData.storageStructure`, [])?.map?.((item, index) => (
                     <Control.Row
                         key={index}
                         extra={`align-items: flex-start; ${
-                            _.get(data, `operatorConfigData.calculationSettings`)
+                            _.get(data, `operatorConfigData.calculationSettings`, [])
                                 ?.map?.((i) => i?.newFieldName)
                                 ?.filter?.((i) => !!i)
                                 ?.includes?.(item.sourceFieldName) &&
-                            mode !== `view` &&
                             `padding-right: 54px; box-sizing: border-box;`
                         }`}
                     >
