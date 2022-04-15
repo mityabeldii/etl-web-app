@@ -101,7 +101,7 @@ const CrateTaskModal = () => {
                 )}
                 {
                     {
-                        [OPERATORS.SQL_CLONE]: <Forms.SQLClone />,
+                        [OPERATORS.SQL_CLONE]: <Forms.SQLClone mode={mode} />,
                         [OPERATORS.SQL_EXTRACT]: <Forms.SQLExtract />,
                         [OPERATORS.SQL_LOAD]: <Forms.SQLLoad process={process} mode={mode} />,
                         [OPERATORS.JOIN]: <Forms.SQLJoin tasks={tasks} mode={mode} />,

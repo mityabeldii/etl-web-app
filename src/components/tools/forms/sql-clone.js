@@ -19,7 +19,8 @@ const useDeepEffect = (effect, dependencies) => {
     useEffect(effect, [JSON.stringify(dependencies)]);
 };
 
-const SQLClone = () => {
+const SQLClone = (props) => {
+    const { mode = `view` } = props;
     const { data, removeValue, setValue } = useFormControl({ name: FORMS.CREATE_TASK });
     const datasources = useStorageListener((state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows ?? []);
     const params = useStorageListener((state) => ({
@@ -97,11 +98,13 @@ const SQLClone = () => {
         });
     }, [_.get(data, `operatorConfigData.target.mappingStructure`), params?.target?.columns]);
     useDeepEffect(() => {
-        const newMappingStructure = TasksHelper.syncMappingStructure(
-            _.get(data, `operatorConfigData.source.sourceTableFields`),
-            _.get(data, `operatorConfigData.target.mappingStructure`)
-        );
-        setValue(`operatorConfigData.target.mappingStructure`, newMappingStructure);
+        if (mode === `create`) {
+            const newMappingStructure = TasksHelper.syncMappingStructure(
+                _.get(data, `operatorConfigData.source.sourceTableFields`),
+                _.get(data, `operatorConfigData.target.mappingStructure`)
+            );
+            setValue(`operatorConfigData.target.mappingStructure`, newMappingStructure);
+        }
     }, [_.get(data, `operatorConfigData.source.sourceTableFields`)]);
     const tabs = {
         [`Источник данных`]: (
