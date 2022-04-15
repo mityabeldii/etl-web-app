@@ -1,10 +1,10 @@
 /*eslint-disable*/
-import { useEffect, useState, Fragment, useMemo } from "react";
-import styled, { css } from "styled-components";
-import { useHistory, useLocation, useParams, Link } from "react-router-dom";
+import { useEffect, Fragment, useMemo } from "react";
+import styled from "styled-components";
+import { useLocation, useParams, Link } from "react-router-dom";
 import Markdown from "markdown-to-jsx";
 
-import { Button, H1, RowWrapper, Input, Frame } from "../ui-kit/styled-templates";
+import { Button, H1, RowWrapper, Frame } from "../ui-kit/styled-templates";
 import Table from "../ui-kit/table";
 import CreateTaskModal from "../modals/create-task-modal";
 
@@ -14,9 +14,8 @@ import tablesColumns from "../../constants/tables-columns";
 import DatasourceAPI from "../../api/datasource-api";
 import ProcessesAPI from "../../api/processes-api";
 
-import { eventDispatch } from "../../hooks/useEventListener";
-import { putStorage, useStorageListener } from "../../hooks/useStorage";
-import { linkTo, objectToQS, QSToObject } from "../../utils/common-helper";
+import { useStorageListener } from "../../hooks/useStorage";
+import { objectToQS } from "../../utils/common-helper";
 import useQueryParams from "../../hooks/useQueryParams";
 import ModalsHelper from "../../utils/modals-helper";
 
@@ -35,6 +34,9 @@ const ProcessesConfigurationPage = () => {
     const handlers = {
         openCreateTaskModal: () => {
             ModalsHelper.showModal(MODALS.CREATE_TASK, { mode: `create` });
+        },
+        openReferenceModal: () => {
+            ModalsHelper.showModal(MODALS.REFERENCE_INFO_MODAL);
         },
     };
 
@@ -57,6 +59,7 @@ const ProcessesConfigurationPage = () => {
                         </Link>
                         Конфигурация процесса <span>{process?.processName}</span>
                         <ProcessIdWrapper>ID: {process_id}</ProcessIdWrapper>
+                        <QuestionMark onClick={handlers.openReferenceModal} />
                     </Heading>
                     {edit ? (
                         <Link to={`${pathname}${objectToQS({})}`}>
@@ -105,6 +108,20 @@ const ProcessesConfigurationPage = () => {
         [process_id, process?.processName, JSON.stringify({ tasks, edit })]
     );
 };
+
+const QuestionMark = styled(Frame)`
+    width: 24px;
+    height: 24px;
+    border: 2px solid ${({ theme }) => theme.grey};
+    border-radius: 9999px;
+    cursor: pointer;
+
+    &:after {
+        content: "?";
+        font-size: 16px;
+        color: ${({ theme }) => theme.grey};
+    }
+`;
 
 const ProcessSchema = {
     Arrow: styled(Frame)`
@@ -159,7 +176,7 @@ const ProcessSchema = {
 const ProcessIdWrapper = styled(Frame)`
     font-size: 14px;
     line-height: 20px;
-    margin-left: 12px;
+    margin: 0 12px;
     height: 28px;
     justify-content: flex-end;
     color: ${({ theme }) => theme.text.secondary};
@@ -224,7 +241,6 @@ const Heading = styled(H1)`
     flex-direction: row;
 
     span {
-        margin-left: 5px;
         color: ${({ theme }) => theme.blue};
     }
 `;

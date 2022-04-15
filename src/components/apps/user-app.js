@@ -19,6 +19,7 @@ import CreateDataSourceModal from "../modals/create-datasource-modal";
 import EditDataSourceModal from "../modals/edit-datasource-modal";
 import CreateProcessModal from "../modals/create-process-modal";
 import EditProcessAttributesModal from "../modals/edit-process-attributes-modal";
+import ReferenceInfoModal from "../modals/reference-info-modal";
 
 const UserApp = () => {
     return (
@@ -27,6 +28,7 @@ const UserApp = () => {
             <EditDataSourceModal />
             <CreateProcessModal />
             <EditProcessAttributesModal />
+            <ReferenceInfoModal />
 
             <RowWrapper>
                 <Menu />
