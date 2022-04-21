@@ -56,6 +56,7 @@ const CrateTaskModal = () => {
             } catch (error) {}
         },
     };
+
     return (
         <PopUpWrapper name={MODALS.CREATE_TASK} onClickOutside={clearForm} modalStyles={`position: absolute; top: 0;`}>
             <Form name={FORMS.CREATE_TASK} onSubmit={onSubmit(handlers.submit)}>
@@ -106,6 +107,7 @@ const CrateTaskModal = () => {
                         [OPERATORS.SQL_LOAD]: <Forms.SQLLoad process={process} mode={mode} />,
                         [OPERATORS.JOIN]: <Forms.SQLJoin tasks={tasks} mode={mode} />,
                         [OPERATORS.CALCULATED]: <Forms.SQLCalculated tasks={tasks} mode={mode} />,
+                        [OPERATORS.UNION]: <Forms.SQLUnion tasks={tasks} mode={mode} />,
                     }?.[data?.operator]
                 }
                 <Control.Row>

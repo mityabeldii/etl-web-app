@@ -5,6 +5,7 @@ export enum EOperators {
     SQL_LOAD = `SQL_LOAD`,
     JOIN = `JOIN`,
     CALCULATED = `CALCULATED`,
+    UNION = `UNION`,
 }
 
 export enum EComparisonOperators {

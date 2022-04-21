@@ -75,6 +75,7 @@ export const OPERATORS = {
     // MAPPING: `MAPPING `,
     JOIN: EOperators.JOIN,
     CALCULATED: EOperators.CALCULATED,
+    UNION: EOperators.UNION,
     // TEST: `TEST`,
     // TEST_ERROR: `TEST_ERROR`,
 };

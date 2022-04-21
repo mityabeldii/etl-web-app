@@ -5,6 +5,7 @@ import sqlLoadSchema from "./sql-load-schema";
 import sqlExtractSchema from "./sql-extract-schema";
 import sqlJoinSchema from "./sql-join-schema";
 import sqlCalculatedSchema from "./sql-calculated-schema";
+import sqlUnionSchema from "./sql-union-schema";
 
 const createTaskSchema =
     ({ tasks }) =>
@@ -35,6 +36,7 @@ const createTaskSchema =
                         [OPERATORS.SQL_EXTRACT]: sqlExtractSchema(yup, values),
                         [OPERATORS.JOIN]: sqlJoinSchema(yup, values),
                         [OPERATORS.CALCULATED]: sqlCalculatedSchema(yup, values),
+                        [OPERATORS.UNION]: sqlUnionSchema(yup, values),
                     }[values?.operator],
                 }),
             });
