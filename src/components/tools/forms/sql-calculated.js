@@ -47,7 +47,7 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                         label={`Наименование задачи`}
                         options={
                             tasks
-                                ?.filter?.((i) => [OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(i?.operator))
+                                ?.filter?.((i) => TasksHelper.allowedToImportTypes.includes?.(i?.operator))
                                 ?.map?.(({ id: value, taskName: label, id }) => ({
                                     label,
                                     value,

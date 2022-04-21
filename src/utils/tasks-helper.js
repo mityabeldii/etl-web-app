@@ -16,10 +16,9 @@ const TasksHelper = {
         const structure = _.get(task, `operatorConfigData.storageStructure`);
         const { operator } = task;
         return (
-            ([OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(operator)
-                ? Object.values(structure ?? {})?.flat?.()
-                : structure
-            )?.map?.(({ storageFieldName: i }) => i) ?? []
+            (TasksHelper.allowedToImportTypes?.includes?.(operator) ? Object.values(structure ?? {})?.flat?.() : structure)?.map?.(
+                ({ storageFieldName: i }) => i
+            ) ?? []
         );
     },
     getSourcesNames: (task) => {
@@ -45,6 +44,7 @@ const TasksHelper = {
             ...(sourceFields?.filter?.((sourceFieldName) => !_.find(mappingStructure, { sourceFieldName })) ?? []),
         ];
     },
+    allowedToImportTypes: [OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED, OPERATORS.UNION],
 };
 
 export default TasksHelper;

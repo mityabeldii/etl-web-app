@@ -44,7 +44,7 @@ const SQLUnion = (props) => {
                         label={`Основной источник`}
                         options={
                             tasks
-                                ?.filter?.((i) => [OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(i?.operator))
+                                ?.filter?.((i) => TasksHelper.allowedToImportTypes?.includes?.(i?.operator))
                                 ?.map?.(({ id: value, taskName: label, id }) => ({
                                     label,
                                     value,
@@ -60,7 +60,7 @@ const SQLUnion = (props) => {
                         label={`Источник для объединения`}
                         options={
                             tasks
-                                ?.filter?.((i) => [OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(i?.operator))
+                                ?.filter?.((i) => TasksHelper.allowedToImportTypes?.includes?.(i?.operator))
                                 ?.map?.(({ id: value, taskName: label, id }) => ({
                                     label,
                                     value,

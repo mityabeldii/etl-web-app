@@ -70,7 +70,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                         label={`Основной источник (название задачи)`}
                         options={
                             tasks
-                                ?.filter?.((i) => [OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(i?.operator))
+                                ?.filter?.((i) => TasksHelper.allowedToImportTypes?.includes?.(i?.operator))
                                 ?.map?.(({ id: value, taskName: label, id }) => ({
                                     label,
                                     value,
@@ -84,7 +84,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                         label={`Источник для соединения (название задачи)`}
                         options={
                             tasks
-                                ?.filter?.((i) => [OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(i?.operator))
+                                ?.filter?.((i) => TasksHelper.allowedToImportTypes?.includes?.(i?.operator))
                                 ?.map?.(({ id: value, taskName: label, id }) => ({
                                     label,
                                     value,
