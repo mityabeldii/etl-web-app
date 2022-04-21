@@ -64,94 +64,105 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                 <Control.Row>
                     <H3 extra={`margin-bottom: 20px;`}>Элемент 1</H3>
                 </Control.Row>
-                {_.get(data, `operatorConfigData.calculationSettings`)?.map?.((item, index) => (
-                    <Control.Row key={index}>
-                        <Frame>
-                            <Control.Row>
-                                <Control.Input
-                                    name={`operatorConfigData.calculationSettings.[${index}].newFieldName`}
-                                    label={`Наименование`}
-                                    isRequired
-                                />
-                                <Control.Select
-                                    name={`operatorConfigData.calculationSettings.[${index}].newFieldType`}
-                                    label={`Тип поля`}
-                                    options={Object.values(FIELD_TYPES)?.map?.((item) => ({ label: item, value: item }))}
-                                    isRequired
-                                />
-                                <Control.Select
-                                    name={`operatorConfigData.calculationSettings.[${index}].mathFunction`}
-                                    label={`Функция`}
-                                    options={Object.values(CALCULATION_FUNCTION_TYPES)}
-                                    onChange={(e) => {
-                                        if (!CALCULATION_FUNCTION_TYPES?.[e.target.value]?.twoArguments === true) {
-                                            removeValue(`operatorConfigData.calculationSettings.[${index}].attr2`);
-                                        }
-                                    }}
-                                    isRequired
-                                />
-                            </Control.Row>
-                            <Control.Row>
-                                <Control.Select
-                                    name={`operatorConfigData.calculationSettings.[${index}].attr1`}
-                                    label={`Аргумент 1`}
-                                    options={
-                                        TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
-                                            value: i,
-                                            label: i,
-                                        })) ?? []
-                                    }
-                                    readOnly={!_.get(data, `operatorConfigData.taskIdSource`)}
-                                    isRequired={_.get(data, `operatorConfigData.taskIdSource`)}
-                                    allowSearch
-                                />
-                                {true && (
-                                    <Control.Select
-                                        name={`operatorConfigData.calculationSettings.[${index}].attr2`}
-                                        label={`Аргумент 2`}
-                                        options={
-                                            TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
-                                                value: i,
-                                                label: i,
-                                            })) ?? []
-                                        }
-                                        readOnly={
-                                            !_.get(data, `operatorConfigData.taskIdSource`) ||
-                                            !_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`) ||
-                                            !Object?.values?.(CALCULATION_FUNCTION_TYPES)
-                                                ?.filter?.((i) => i?.twoArguments)
-                                                ?.map?.(({ value }) => value)
-                                                ?.includes?.(_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`))
-                                        }
-                                        isRequired={
-                                            !!_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`) &&
-                                            Object?.values?.(CALCULATION_FUNCTION_TYPES)
-                                                ?.filter?.((i) => i?.twoArguments)
-                                                ?.map?.(({ value }) => value)
-                                                ?.includes?.(_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`))
-                                        }
-                                        allowSearch
+                {_.get(data, `operatorConfigData.calculationSettings`)?.map?.((item, index) => {
+                    console.log()
+                    return (
+                        <Control.Row key={index}>
+                            <Frame>
+                                <Control.Row>
+                                    <Control.Input
+                                        name={`operatorConfigData.calculationSettings.[${index}].newFieldName`}
+                                        label={`Наименование`}
+                                        isRequired
                                     />
+                                    <Control.Select
+                                        name={`operatorConfigData.calculationSettings.[${index}].newFieldType`}
+                                        label={`Тип поля`}
+                                        options={Object.values(FIELD_TYPES)?.map?.((item) => ({ label: item, value: item }))}
+                                        isRequired
+                                    />
+                                    <Control.Select
+                                        name={`operatorConfigData.calculationSettings.[${index}].mathFunction`}
+                                        label={`Функция`}
+                                        options={Object.values(CALCULATION_FUNCTION_TYPES)}
+                                        onChange={(e) => {
+                                            if (!CALCULATION_FUNCTION_TYPES?.[e.target.value]?.twoArguments === true) {
+                                                removeValue(`operatorConfigData.calculationSettings.[${index}].attr2`);
+                                            }
+                                        }}
+                                        isRequired
+                                    />
+                                </Control.Row>
+                                {_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`) === `defaultValue` ? (
+                                    <Control.Row>
+                                        <Control.Input
+                                            name={`operatorConfigData.calculationSettings.[${index}].value`}
+                                            label={`Значение по умолчанию`}
+                                            isRequired
+                                        />
+                                    </Control.Row>
+                                ) : (
+                                    <Control.Row>
+                                        <Control.Select
+                                            name={`operatorConfigData.calculationSettings.[${index}].attr1`}
+                                            label={`Аргумент 1`}
+                                            options={
+                                                TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                                                    value: i,
+                                                    label: i,
+                                                })) ?? []
+                                            }
+                                            readOnly={!_.get(data, `operatorConfigData.taskIdSource`)}
+                                            isRequired={_.get(data, `operatorConfigData.taskIdSource`)}
+                                            allowSearch
+                                        />
+                                        <Control.Select
+                                            name={`operatorConfigData.calculationSettings.[${index}].attr2`}
+                                            label={`Аргумент 2`}
+                                            options={
+                                                TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                                                    value: i,
+                                                    label: i,
+                                                })) ?? []
+                                            }
+                                            readOnly={
+                                                !_.get(data, `operatorConfigData.taskIdSource`) ||
+                                                !_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`) ||
+                                                !Object?.values?.(CALCULATION_FUNCTION_TYPES)
+                                                    ?.filter?.((i) => i?.twoArguments)
+                                                    ?.map?.(({ value }) => value)
+                                                    ?.includes?.(_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`))
+                                            }
+                                            isRequired={
+                                                !!_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`) &&
+                                                Object?.values?.(CALCULATION_FUNCTION_TYPES)
+                                                    ?.filter?.((i) => i?.twoArguments)
+                                                    ?.map?.(({ value }) => value)
+                                                    ?.includes?.(_.get(data, `operatorConfigData.calculationSettings.[${index}].mathFunction`))
+                                            }
+                                            allowSearch
+                                        />
+                                    </Control.Row>
                                 )}
-                            </Control.Row>
-                        </Frame>
-                        {mode !== `view` && (
-                            <RemoveRowButton
-                                extra={`height: 130px; margin-top: 3px;`}
-                                onClick={() => {
-                                    setValue(
-                                        `operatorConfigData.calculationSettings`,
-                                        _.get(data, `operatorConfigData.calculationSettings`)?.filter((i, j) => j !== index)
-                                    );
-                                    setValue(
-                                        `operatorConfigData.storageStructure`,
-                                        _.get(data, `operatorConfigData.storageStructure`)?.filter((i, j) => j !== index)
-                                    );
-                                }}
-                            />
-                        )}
-                    </Control.Row>
-                ))}
+                            </Frame>
+                            {mode !== `view` && (
+                                <RemoveRowButton
+                                    extra={`height: 130px; margin-top: 3px;`}
+                                    onClick={() => {
+                                        setValue(
+                                            `operatorConfigData.calculationSettings`,
+                                            _.get(data, `operatorConfigData.calculationSettings`)?.filter((i, j) => j !== index)
+                                        );
+                                        setValue(
+                                            `operatorConfigData.storageStructure`,
+                                            _.get(data, `operatorConfigData.storageStructure`)?.filter((i, j) => j !== index)
+                                        );
+                                    }}
+                                />
+                            )}
+                        </Control.Row>
+                    );
+                })}
                 {mode !== `view` && (
                     <Control.Row extra={`margin-bottom: 20px;`}>
                         <Button
@@ -189,8 +200,7 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                             _.get(data, `operatorConfigData.calculationSettings`, [])
                                 ?.map?.((i) => i?.newFieldName)
                                 ?.filter?.((i) => !!i)
-                                ?.includes?.(item.sourceFieldName) &&
-                            `padding-right: 54px; box-sizing: border-box;`
+                                ?.includes?.(item.sourceFieldName) && `padding-right: 54px; box-sizing: border-box;`
                         }`}
                     >
                         {_.get(data, `operatorConfigData.calculationSettings`)

@@ -131,6 +131,7 @@ export const CALCULATION_FUNCTION_TYPES = {
     extractQuarter: { value: `extractQuarter`, label: `Извлечь квартал` },
     extractMonth: { value: `extractMonth`, label: `Извлечь месяц` },
     extractDay: { value: `extractDay`, label: `Извлечь день` },
+    defaultValue: { value: `defaultValue`, label: `Значение по умолчанию` },
 };
 
 export const PROCESS_STATUSES = {
