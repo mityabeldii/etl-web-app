@@ -11,7 +11,7 @@ const TasksHelper = {
         let { process_id } =
             matchPath(window.location.hash.split(`#`)[1].split(`?`)[0], { path: `/processes/configuration/:process_id` }).params ?? {};
         process_id = process_id?.split?.(`&`)?.[0];
-        const { tasks = [] } = getStorage((state) => state?.processes ?? [])?.[+process_id] ?? {};
+        const { tasks = [] } = getStorage(`processes`, [])?.[+process_id] ?? {};
         const task = tasks?.find?.((i) => i?.id === taskId) ?? {};
         const structure = _.get(task, `operatorConfigData.storageStructure`);
         const { operator } = task;

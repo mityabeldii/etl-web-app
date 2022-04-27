@@ -35,14 +35,14 @@ const DatasourceList = {
             tooltip: ({ value: label }) => ({ label }),
         },
         { name: `host`, extra: `flex: 2;`, label: `Хост` },
-        { name: `port`, extra: `flex: 1;`, label: `Порт` },
+        { name: `port`, label: `Порт` },
         {
             name: `url`,
-            extra: `flex: 5;`,
+            extra: `flex: 1;`,
             label: `База`,
             transform: ({ row }) => row?.url?.split?.(`/`)?.at?.(-1),
         },
-        { name: `schema`, extra: `flex: 2;`, label: `Схема` },
+        { name: `schema`, label: `Схема` },
         {
             name: `morebutton`,
             label: ``,

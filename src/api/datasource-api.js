@@ -25,7 +25,7 @@ const DatasourceAPI = {
             try {
                 const response = (await axios.get(`/api/v1/datasource`)).data;
                 putStorage(`tables.${TABLES.DATASOURCE_LIST}`, {
-                    rows: _.orderBy(response, [`id`], [`asc`]),
+                    rows: _.orderBy(response, [`updated`], [`desc`]),
                     pagination: response?._meta ?? {},
                 });
                 return response;
