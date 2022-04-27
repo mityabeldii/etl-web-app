@@ -22,8 +22,6 @@ const useDeepEffect = (effect, dependencies) => {
 const SQLUnion = (props) => {
     const { mode = `view`, tasks = [] } = props;
     const { data, removeValue, setValue } = useFormControl({ name: FORMS.CREATE_TASK });
-    const datasources = useStorageListener((state) => state?.tables?.[TABLES.DATASOURCE_LIST]?.rows ?? []);
-    const params = useStorageListener((state) => ({}));
 
     useDeepEffect(() => {
         if (mode === `create` || mode === `edit`) {
@@ -34,6 +32,24 @@ const SQLUnion = (props) => {
             setValue(`operatorConfigData.storageStructure`, newMappingStructure);
         }
     }, [_.get(data, `operatorConfigData.fields`)]);
+
+    useDeepEffect(() => {
+        const taskIdFields = _.get(data, `operatorConfigData.taskIdSource`, []);
+        const unionTaskIdFields = _.get(data, `operatorConfigData.unionTaskIdSource`, []);
+        const length = Math.min(
+            TasksHelper.getMappingStructure(taskIdFields)?.length ?? 0,
+            TasksHelper.getMappingStructure(unionTaskIdFields)?.length ?? 0
+        );
+        // TODO
+        setValue(
+            `operatorConfigData.fields`,
+            _.range(length).map((i) => i)
+        );
+        setValue(
+            `operatorConfigData.unionFields`,
+            _.range(length).map((i) => i)
+        );
+    }, [_.get(data, `operatorConfigData.taskIdSource`), _.get(data, `operatorConfigData.unionTaskIdSource`)]);
 
     const tabs = {
         [`Источник`]: (
@@ -85,7 +101,7 @@ const SQLUnion = (props) => {
                         isRequired
                     />
                 </Control.Row>
-                <Control.Select
+                {/* <Control.Select
                     name="operatorConfigData.fields"
                     label="Поля для извлечения из основного источника"
                     multiselect
@@ -102,13 +118,50 @@ const SQLUnion = (props) => {
                     label="Поля для извлечения из источника для объединения"
                     multiselect
                     options={
-                        TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                        TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.unionTaskIdSource`))?.map?.((i) => ({
                             value: i,
                             label: i,
                         })) ?? []
                     }
                     isRequired
-                />
+                /> */}
+                <Control.Row>
+                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start;`} required>
+                        Поля для извлечения из основного источника
+                    </Control.Label>
+                    <Control.Label extra={`width: 100%; flex: 1; justify-content: flex-start; margin-left: 32px;`} required>
+                        Поля для извлечения из источника для объединения
+                    </Control.Label>
+                </Control.Row>
+                {_.get(data, `operatorConfigData.fields`, [])?.map?.(($, index) => {
+                    return (
+                        <Control.Row key={index} extra={`align-items: flex-start;`}>
+                            <Control.Select
+                                name={`operatorConfigData.fields[${index}]`}
+                                extra={`flex: 1;`}
+                                options={
+                                    TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`))?.map?.((i) => ({
+                                        value: i,
+                                        label: i,
+                                        muted: _.get(data, `operatorConfigData.fields`, []).includes(i),
+                                    })) ?? []
+                                }
+                            />
+                            <MappingArrow />
+                            <Control.Select
+                                name={`operatorConfigData.unionFields[${index}]`}
+                                extra={`flex: 1;`}
+                                options={
+                                    TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.unionTaskIdSource`))?.map?.((i) => ({
+                                        value: i,
+                                        label: i,
+                                        muted: _.get(data, `operatorConfigData.unionFields`, []).includes(i),
+                                    })) ?? []
+                                }
+                            />
+                        </Control.Row>
+                    );
+                })}
             </>
         ),
         [`Структура выходных данных`]: (
