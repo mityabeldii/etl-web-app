@@ -34,21 +34,19 @@ const SQLUnion = (props) => {
     }, [_.get(data, `operatorConfigData.fields`)]);
 
     useDeepEffect(() => {
-        const taskIdFields = _.get(data, `operatorConfigData.taskIdSource`, []);
-        const unionTaskIdFields = _.get(data, `operatorConfigData.unionTaskIdSource`, []);
-        const length = Math.min(
-            TasksHelper.getMappingStructure(taskIdFields)?.length ?? 0,
-            TasksHelper.getMappingStructure(unionTaskIdFields)?.length ?? 0
-        );
-        // TODO
-        setValue(
-            `operatorConfigData.fields`,
-            _.range(length).map((i) => i)
-        );
-        setValue(
-            `operatorConfigData.unionFields`,
-            _.range(length).map((i) => i)
-        );
+        if (mode === `create` || mode === `edit`) {
+            const taskIdFields = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.taskIdSource`, []));
+            const unionTaskIdFields = TasksHelper.getMappingStructure(_.get(data, `operatorConfigData.unionTaskIdSource`, []));
+            const length = Math.min(taskIdFields?.length ?? 0, unionTaskIdFields?.length ?? 0);
+            setValue(
+                `operatorConfigData.fields`,
+                _.range(length).map((i) => taskIdFields[i])
+            );
+            setValue(
+                `operatorConfigData.unionFields`,
+                _.range(length).map((i) => (taskIdFields?.includes?.(unionTaskIdFields[i]) ? unionTaskIdFields[i] : ``))
+            );
+        }
     }, [_.get(data, `operatorConfigData.taskIdSource`), _.get(data, `operatorConfigData.unionTaskIdSource`)]);
 
     const tabs = {
