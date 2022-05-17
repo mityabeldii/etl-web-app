@@ -3,6 +3,7 @@ import _ from "lodash";
 import { useParams, matchPath } from "react-router-dom";
 
 import { OPERATORS, TABLES } from "../constants/config";
+import { EComparisonOperators } from "../constants/types";
 
 import { getStorage } from "../hooks/useStorage";
 
@@ -11,15 +12,14 @@ const TasksHelper = {
         let { process_id } =
             matchPath(window.location.hash.split(`#`)[1].split(`?`)[0], { path: `/processes/configuration/:process_id` }).params ?? {};
         process_id = process_id?.split?.(`&`)?.[0];
-        const { tasks = [] } = getStorage((state) => state?.processes ?? [])?.[+process_id] ?? {};
+        const { tasks = [] } = getStorage(`processes`, [])?.[+process_id] ?? {};
         const task = tasks?.find?.((i) => i?.id === taskId) ?? {};
         const structure = _.get(task, `operatorConfigData.storageStructure`);
         const { operator } = task;
         return (
-            ([OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(operator)
-                ? Object.values(structure ?? {})?.flat?.()
-                : structure
-            )?.map?.(({ storageFieldName: i }) => i) ?? []
+            (TasksHelper.allowedToImportTypes?.includes?.(operator) ? Object.values(structure ?? {})?.flat?.() : structure)?.map?.(
+                ({ storageFieldName: i }) => i
+            ) ?? []
         );
     },
     getSourcesNames: (task) => {
@@ -45,6 +45,16 @@ const TasksHelper = {
             ...(sourceFields?.filter?.((sourceFieldName) => !_.find(mappingStructure, { sourceFieldName })) ?? []),
         ];
     },
+    allowedToImportTypes: [OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED, OPERATORS.UNION, OPERATORS.FILTER],
+    comparisonOperatorsWithRequiredValue: [
+        EComparisonOperators.EQUAL,
+        EComparisonOperators.NOT_EQUAL,
+        EComparisonOperators.GREATER_THEN,
+        EComparisonOperators.LESS_THEN,
+        EComparisonOperators.GREATER_EQUEAL,
+        EComparisonOperators.LESS_EQUAL,
+        EComparisonOperators.LIKE,
+    ],
 };
 
 export default TasksHelper;

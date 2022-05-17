@@ -75,8 +75,11 @@ export const OPERATORS = {
     // MAPPING: `MAPPING `,
     JOIN: EOperators.JOIN,
     CALCULATED: EOperators.CALCULATED,
+    UNION: EOperators.UNION,
     // TEST: `TEST`,
     // TEST_ERROR: `TEST_ERROR`,
+    SQL_DELETE: EOperators.SQL_DELETE,
+    FILTER: EOperators.FILTER,
 };
 
 export const UPDATE_TYPES = {
@@ -130,6 +133,7 @@ export const CALCULATION_FUNCTION_TYPES = {
     extractQuarter: { value: `extractQuarter`, label: `Извлечь квартал` },
     extractMonth: { value: `extractMonth`, label: `Извлечь месяц` },
     extractDay: { value: `extractDay`, label: `Извлечь день` },
+    defaultValue: { value: `defaultValue`, label: `Значение по умолчанию` },
 };
 
 export const PROCESS_STATUSES = {

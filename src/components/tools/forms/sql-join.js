@@ -70,7 +70,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                         label={`Основной источник (название задачи)`}
                         options={
                             tasks
-                                ?.filter?.((i) => [OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(i?.operator))
+                                ?.filter?.((i) => TasksHelper.allowedToImportTypes?.includes?.(i?.operator))
                                 ?.map?.(({ id: value, taskName: label, id }) => ({
                                     label,
                                     value,
@@ -84,7 +84,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                         label={`Источник для соединения (название задачи)`}
                         options={
                             tasks
-                                ?.filter?.((i) => [OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED]?.includes?.(i?.operator))
+                                ?.filter?.((i) => TasksHelper.allowedToImportTypes?.includes?.(i?.operator))
                                 ?.map?.(({ id: value, taskName: label, id }) => ({
                                     label,
                                     value,
@@ -232,15 +232,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                             />
                         </Control.Row>
                         <Control.Row>
-                            {[
-                                EComparisonOperators.EQUAL,
-                                EComparisonOperators.NOT_EQUAL,
-                                EComparisonOperators.GREATER_THEN,
-                                EComparisonOperators.LESS_THEN,
-                                EComparisonOperators.GREATER_EQUEAL,
-                                EComparisonOperators.LESS_EQUAL,
-                                EComparisonOperators.LIKE,
-                            ].includes(_.get(data, `operatorConfigData.joinFilters.[${index}].operator`)) && (
+                            {TasksHelper.comparisonOperatorsWithRequiredValue.includes(_.get(data, `operatorConfigData.joinFilters.[${index}].operator`)) && (
                                 <Control.Input name={`operatorConfigData.joinFilters.[${index}].value`} label={`Значение`} placeholder={`Значение`} />
                             )}
                             {[EComparisonOperators.IN, EComparisonOperators.NOT_IN].includes(

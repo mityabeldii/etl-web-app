@@ -1,6 +1,7 @@
 /*eslint-disable*/
 import axios from "axios";
 import _ from "lodash";
+import moment from "moment-timezone";
 
 import {
     convertPaginatedResponse,
@@ -17,15 +18,14 @@ import CaseHalper from "../utils/case-helper";
 import { API_URL, base_url, TABLES } from "../constants/config";
 import { getStorage, mergeStorage, putStorage } from "../hooks/useStorage";
 import { objectPut, downloadURI, sleep, objectToQS } from "../utils/common-helper";
-import moment from "moment-timezone";
 
 const DatasourceAPI = {
-    async getDatasources() {
+    getDatasources: async () => {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`/api/v1/datasource`)).data;
                 putStorage(`tables.${TABLES.DATASOURCE_LIST}`, {
-                    rows: _.orderBy(response, [`id`], [`asc`]),
+                    rows: _.orderBy(response, [`updated`], [`desc`]),
                     pagination: response?._meta ?? {},
                 });
                 return response;
@@ -35,7 +35,7 @@ const DatasourceAPI = {
         });
     },
 
-    async getDatasourcesSourceOnly() {
+    getDatasourcesSourceOnly: async () => {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`/api/v1/datasource`)).data;
@@ -50,7 +50,7 @@ const DatasourceAPI = {
         });
     },
 
-    async createDatasource(data) {
+    createDatasource: async (data) => {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (
@@ -74,7 +74,7 @@ const DatasourceAPI = {
         });
     },
 
-    async updateDatasource(data) {
+    updateDatasource: async (data) => {
         const dataWithNewUrl = { ...data, url: `jdbc:postgresql://${data?.host}:${data?.port}/${data?.url}` };
         return loadingCounterWrapper(async () => {
             try {
@@ -88,7 +88,7 @@ const DatasourceAPI = {
         });
     },
 
-    async getDatasourceTables(datasourceId, schemaName) {
+    getDatasourceTables: async (datasourceId, schemaName) => {
         return loadingCounterWrapper(async () => {
             try {
                 // const response = (await axios.get(`/api/v1/datasource/meta/${id}/tables`)).data;
@@ -101,7 +101,7 @@ const DatasourceAPI = {
         });
     },
 
-    async getDatasourceTableStructure(id) {
+    getDatasourceTableStructure: async (id) => {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`/api/v1/datasource/meta/${id}`)).data;
@@ -119,7 +119,7 @@ const DatasourceAPI = {
         });
     },
 
-    async getDatasourceTablePreview(datasourceId, tableName, schema) {
+    getDatasourceTablePreview: async (datasourceId, tableName, schema) => {
         if (!schema) return;
         return loadingCounterWrapper(async () => {
             try {
@@ -140,7 +140,7 @@ const DatasourceAPI = {
         });
     },
 
-    async getTableColumns(datasourceId, tableName) {
+    getTableColumns: async (datasourceId, tableName) => {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`/api/v1/datasource/meta/${datasourceId}/${tableName}/columns`)).data;
@@ -152,7 +152,7 @@ const DatasourceAPI = {
         });
     },
 
-    async getProcessesHistory() {
+    getProcessesHistory: async () => {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`/process-instances`, GETOptions(`PROCESSES_HISTORY`))).data;
@@ -164,7 +164,7 @@ const DatasourceAPI = {
         });
     },
 
-    async getTasksHistory() {
+    getTasksHistory: async () => {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.get(`/api/v1/task-instances`, POSTOptions(`TASKS_HISTORY`))).data;
@@ -176,7 +176,7 @@ const DatasourceAPI = {
         });
     },
 
-    adHocQuery({ datasourceId, schemaName, query }) {
+    adHocQuery: async ({ datasourceId, schemaName, query }) => {
         return loadingCounterWrapper(async () => {
             try {
                 if (datasourceId && schemaName && query) {
@@ -205,7 +205,7 @@ const DatasourceAPI = {
         });
     },
 
-    deleteDatasource(id) {
+    deleteDatasource: async (id) => {
         return loadingCounterWrapper(async () => {
             try {
                 const response = (await axios.delete(`/api/v1/datasource/${id}`)).data;

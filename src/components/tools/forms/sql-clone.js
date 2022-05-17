@@ -1,9 +1,9 @@
 /*eslint-disable*/
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
-import { Br, Frame, H1, H2, MappingArrow, RowWrapper, Tab } from "../../ui-kit/styled-templates";
+import { Br, Frame, H1, H2, MappingArrow, RowWrapper, Tab, Button, RemoveRowButton } from "../../ui-kit/styled-templates";
 import { Control } from "../../ui-kit/control";
 
 import { FORMS, TABLES, UPDATE_TYPES } from "../../../constants/config";
@@ -14,6 +14,7 @@ import SchemasAPI from "../../../api/schemas-api";
 
 import useFormControl from "../../../hooks/useFormControl";
 import { useStorageListener } from "../../../hooks/useStorage";
+import { EComparisonOperators } from "constants/types";
 
 const useDeepEffect = (effect, dependencies) => {
     useEffect(effect, [JSON.stringify(dependencies)]);
@@ -214,6 +215,59 @@ const SQLClone = (props) => {
                         allowSearch
                     />
                 </Control.Row>
+            </>
+        ),
+        [`Фильтры`]: (
+            <>
+                {_.get(data, `operatorConfigData.filter`)?.map?.((item, index) => (
+                    <Fragment key={index}>
+                        <Control.Row>
+                            <Control.Select
+                                name={`operatorConfigData.filter.[${index}].field`}
+                                label={`Поле для фильтрации`}
+                                placeholder={`Поле для фильтрации`}
+                                options={params?.source?.columns?.map?.((item) => ({ label: item, value: item }))}
+                            />
+                            <Control.Select
+                                name={`operatorConfigData.filter.[${index}].operator`}
+                                label={`Оператор сравнения`}
+                                placeholder={`Оператор сравнения`}
+                                options={Object.entries(EComparisonOperators).map(([_, i]) => ({ value: i, label: i }))}
+                            />
+                            <RemoveRowButton
+                                mode={mode}
+                                onClick={() => {
+                                    setValue(
+                                        `operatorConfigData.filter`,
+                                        _.get(data, `operatorConfigData.filter`)?.filter((i, j) => j !== index)
+                                    );
+                                }}
+                            />
+                        </Control.Row>
+                        <Control.Row>
+                            {TasksHelper.comparisonOperatorsWithRequiredValue.includes(_.get(data, `operatorConfigData.filter.[${index}].operator`)) && (
+                                <Control.Input name={`operatorConfigData.filter.[${index}].value`} label={`Значение`} placeholder={`Значение`} />
+                            )}
+                            {[EComparisonOperators.IN, EComparisonOperators.NOT_IN].includes(
+                                _.get(data, `operatorConfigData.filter.[${index}].operator`)
+                            ) && <Control.Input name={`operatorConfigData.filter.[${index}].value`} label={`Значение`} placeholder={`Значение`} />}
+                        </Control.Row>
+                    </Fragment>
+                ))}
+                {mode !== `view` && (
+                    <Button
+                        background={`orange`}
+                        extra={`margin-bottom: 10px;`}
+                        onClick={() => {
+                            setValue(`operatorConfigData.filter`, [
+                                ..._.get(data, `operatorConfigData.filter`, []),
+                                { field: "", operator: "", value: "" },
+                            ]);
+                        }}
+                    >
+                        Добавить фильтр
+                    </Button>
+                )}
             </>
         ),
         [`Соответствие полей`]: (

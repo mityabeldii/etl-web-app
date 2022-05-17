@@ -5,7 +5,8 @@ import styled, { css } from "styled-components";
 import { Frame, Button, Input, Dropdown, H1, P, Link } from "../ui-kit/styled-templates";
 import Tooltip from "../ui-kit/tooltip";
 
-import ProcessesAPI from "../../api/processes-api";
+import ProcessesAPI from "api/processes-api";
+import DatasourceAPI from "api/datasource-api";
 
 import { eventDispatch } from "../../hooks/useEventListener";
 import { FORMS, MODALS } from "../../constants/config";
@@ -31,7 +32,7 @@ const DatasourceDropdown = ({ cellState = {} }) => {
                             label: `Удалить источник`,
                             src: `processes-more-delete`,
                             // tooltip: (() => row?.active && { label: `Невозможно удалить активный процесс`, side: `left` })(),
-                            onClick: (row) => {
+                            onClick: ({ row }) => {
                                 ModalsHelper.showModal(MODALS.MODALITY, {
                                     title: `Удаление источника данных`,
                                     description: `Вы действительно хотите удалить источник данных ${row?.name}?`,
@@ -39,7 +40,7 @@ const DatasourceDropdown = ({ cellState = {} }) => {
                                         children: `Удалить`,
                                         background: `red`,
                                         onClick: async () => {
-                                            DatasourceAPI.deleteDatasource(row?.id);
+                                            await DatasourceAPI.deleteDatasource(row?.id);
                                         },
                                     },
                                     cancelButton: {
