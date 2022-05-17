@@ -40,11 +40,12 @@ const SQLUnion = (props) => {
             const length = Math.min(taskIdFields?.length ?? 0, unionTaskIdFields?.length ?? 0);
             setValue(
                 `operatorConfigData.fields`,
-                _.range(length).map((i) => taskIdFields[i])
+                taskIdFields.slice(0, length)
             );
+            console.log(_.range(length).map((i) => (taskIdFields?.includes?.(unionTaskIdFields[i]) ? unionTaskIdFields[i] : ``)));
             setValue(
                 `operatorConfigData.unionFields`,
-                _.range(length).map((i) => (taskIdFields?.includes?.(unionTaskIdFields[i]) ? unionTaskIdFields[i] : ``))
+                _.range(length).map((i) => (unionTaskIdFields?.includes?.(taskIdFields[i]) ? taskIdFields[i] : ``))
             );
         }
     }, [_.get(data, `operatorConfigData.taskIdSource`), _.get(data, `operatorConfigData.unionTaskIdSource`)]);
