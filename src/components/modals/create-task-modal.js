@@ -108,6 +108,8 @@ const CrateTaskModal = () => {
                         [OPERATORS.JOIN]: <Forms.SQLJoin tasks={tasks} mode={mode} />,
                         [OPERATORS.CALCULATED]: <Forms.SQLCalculated tasks={tasks} mode={mode} />,
                         [OPERATORS.UNION]: <Forms.SQLUnion tasks={tasks} mode={mode} />,
+                        [OPERATORS.SQL_DELETE]: <Forms.SQLDelete tasks={tasks} mode={mode} />,
+                        [OPERATORS.FILTER]: <Forms.SQLFilter tasks={tasks} mode={mode} />,
                     }?.[data?.operator]
                 }
                 <Control.Row>

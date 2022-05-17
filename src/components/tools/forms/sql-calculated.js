@@ -65,7 +65,6 @@ const SQLCalculated = ({ tasks = [], mode = `view` }) => {
                     <H3 extra={`margin-bottom: 20px;`}>Элемент 1</H3>
                 </Control.Row>
                 {_.get(data, `operatorConfigData.calculationSettings`)?.map?.((item, index) => {
-                    console.log()
                     return (
                         <Control.Row key={index}>
                             <Frame>

@@ -78,6 +78,8 @@ export const OPERATORS = {
     UNION: EOperators.UNION,
     // TEST: `TEST`,
     // TEST_ERROR: `TEST_ERROR`,
+    SQL_DELETE: EOperators.SQL_DELETE,
+    FILTER: EOperators.FILTER,
 };
 
 export const UPDATE_TYPES = {

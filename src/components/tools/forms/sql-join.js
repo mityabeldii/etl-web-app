@@ -232,15 +232,7 @@ const SQLJoin = ({ tasks = [], mode = `view` }) => {
                             />
                         </Control.Row>
                         <Control.Row>
-                            {[
-                                EComparisonOperators.EQUAL,
-                                EComparisonOperators.NOT_EQUAL,
-                                EComparisonOperators.GREATER_THEN,
-                                EComparisonOperators.LESS_THEN,
-                                EComparisonOperators.GREATER_EQUEAL,
-                                EComparisonOperators.LESS_EQUAL,
-                                EComparisonOperators.LIKE,
-                            ].includes(_.get(data, `operatorConfigData.joinFilters.[${index}].operator`)) && (
+                            {TasksHelper.comparisonOperatorsWithRequiredValue.includes(_.get(data, `operatorConfigData.joinFilters.[${index}].operator`)) && (
                                 <Control.Input name={`operatorConfigData.joinFilters.[${index}].value`} label={`Значение`} placeholder={`Значение`} />
                             )}
                             {[EComparisonOperators.IN, EComparisonOperators.NOT_IN].includes(

@@ -3,6 +3,7 @@ import _ from "lodash";
 import { useParams, matchPath } from "react-router-dom";
 
 import { OPERATORS, TABLES } from "../constants/config";
+import { EComparisonOperators } from "../constants/types";
 
 import { getStorage } from "../hooks/useStorage";
 
@@ -44,7 +45,16 @@ const TasksHelper = {
             ...(sourceFields?.filter?.((sourceFieldName) => !_.find(mappingStructure, { sourceFieldName })) ?? []),
         ];
     },
-    allowedToImportTypes: [OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED, OPERATORS.UNION],
+    allowedToImportTypes: [OPERATORS.JOIN, OPERATORS.SQL_EXTRACT, OPERATORS.CALCULATED, OPERATORS.UNION, OPERATORS.FILTER],
+    comparisonOperatorsWithRequiredValue: [
+        EComparisonOperators.EQUAL,
+        EComparisonOperators.NOT_EQUAL,
+        EComparisonOperators.GREATER_THEN,
+        EComparisonOperators.LESS_THEN,
+        EComparisonOperators.GREATER_EQUEAL,
+        EComparisonOperators.LESS_EQUAL,
+        EComparisonOperators.LIKE,
+    ],
 };
 
 export default TasksHelper;

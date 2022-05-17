@@ -1,11 +1,16 @@
 /*eslint-disable*/
+import _ from "lodash";
+
 import { OPERATORS } from "../constants/config";
+
 import sqlCloneSchema from "./sql-clone-schema";
 import sqlLoadSchema from "./sql-load-schema";
 import sqlExtractSchema from "./sql-extract-schema";
 import sqlJoinSchema from "./sql-join-schema";
 import sqlCalculatedSchema from "./sql-calculated-schema";
 import sqlUnionSchema from "./sql-union-schema";
+import sqlDeleteSchema from "./sql-delete-schema";
+import sqlFilterSchema from "./sql-filter-schema";
 
 const createTaskSchema =
     ({ tasks }) =>
@@ -37,6 +42,8 @@ const createTaskSchema =
                         [OPERATORS.JOIN]: sqlJoinSchema(yup, values),
                         [OPERATORS.CALCULATED]: sqlCalculatedSchema(yup, values),
                         [OPERATORS.UNION]: sqlUnionSchema(yup, values),
+                        [OPERATORS.SQL_DELETE]: sqlDeleteSchema(yup, values),
+                        [OPERATORS.FILTER]: sqlFilterSchema(yup, values),
                     }[values?.operator],
                 }),
             });
